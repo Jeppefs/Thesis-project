@@ -4,14 +4,19 @@ import (
 	"fmt"
 )
 
+// Malaria : .
 type Malaria struct {
-	Antigens []int
-	Hosts    [][][]int
+	// Counts
+	NHosts         int
+	NInfectedHosts int
+	NAntigens      int
+	NStrains       int
 
-	NHosts         float64
-	NInfectedHosts float64
+	Antigens [][]int   // This is the antigens that person would spread to another person.
+	Hosts    [][][]int // This is all the strains that infects a particular host.
 }
 
+// Parameters : Sets the parameters for a particular run.
 type Parameters struct {
 	ImmunitySpeed  float64
 	InfectionSpeed float64
@@ -20,11 +25,11 @@ type Parameters struct {
 }
 
 func main() {
-
+	InitiateRunningModel()
 	fmt.Println("The end. Congrats!")
 }
 
-// RunMalariaModel : Starts the whole simulation. Also sets parameters and calls the saving function.
+// InitiateRunningModel : Starts the whole simulation and sets the parameter-grid.
 func InitiateRunningModel() {
 	parameterGrid := MakeParameterGrid()
 	for i := 0; i < len(parameterGrid); i++ {
@@ -48,13 +53,32 @@ func RunMalariaModel(param Parameters) {
 	for run := 0; run < param.Runs; run++ {
 
 	}
-	fmt.Println("This set of Parameters, done. \n It had the following parameters:", parameterGrid[i], "\n It took intime:", time, "\n It took" "\n")
+	fmt.Println("This set of Parameters, done.", "\n It had the following parameters:", param, "\n It took intime:", time, "\n It took")
 }
 
+// ConstructMalariaStruct : Initiates a malaria struct and starts initial conditions.
 func ConstructMalariaStruct() {
+	var m Malaria
+
+	// Sets initial values.
+	m.NHosts = 1000 // Constant
+	m.NInfectedHosts = 10
+	m.NAntigens = 3
+	m.NStrains = 1
+
+	// Make initial antigens
+	m.Antigens = make([][]int, m.NHosts)
+
+	for host := 0; host < m.NHosts; host++ {
+
+	}
+
+	// Make initial hosts
+	m.Hosts = make([][][]int, m.NHosts)
 
 }
 
+// ChooseEvent : Choose which event should happen with probability proportional to the rates.
 func ChooseEvent() {
 
 }
