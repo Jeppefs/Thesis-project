@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math/rand"
 	"time"
 )
 
@@ -24,6 +25,7 @@ type Malaria struct {
 type Parameters struct {
 	ImmunitySpeed  float64
 	InfectionSpeed float64
+	MutationSpeed  float64
 
 	Runs int
 }
@@ -90,7 +92,7 @@ func ConstructMalariaStruct() Malaria {
 		m.Antigens[host] = make([]int8, m.NAntigens)
 		for antigen := 0; antigen < m.NAntigens; antigen++ {
 			if host < m.NInfectedHosts {
-				m.Antigens[host][antigen] = int8(antigen + 1)
+				m.Antigens[host][antigen] = int8(rand.Intn(m.MaxAntigenValue))
 			}
 		}
 	}
@@ -101,7 +103,7 @@ func ConstructMalariaStruct() Malaria {
 		m.Infections[host] = make([]int8, m.NAntigens)
 		for antigen := 0; antigen < m.NAntigens; antigen++ {
 			if host < m.NInfectedHosts {
-				m.Infections[host][antigen] = int8(antigen + 1)
+				m.Infections[host][antigen] = m.Antigens[host][antigen]
 			}
 		}
 	}
@@ -111,32 +113,57 @@ func ConstructMalariaStruct() Malaria {
 		m.Antibodies[host] = make([]bool, m.MaxAntigenValue)
 	}
 
+	fmt.Println(m.Antigens, '\n', m.Infections, '\n', m.Antibodies, '\n')
 	return m
 
 }
 
+// EventHappens : ...
 func (m *Malaria) EventHappens(param *Parameters) {
-
+	event := ChooseEvent(m, param)
+	switch event {
+	case 1:
+		m.Spread()
+	case 2:
+		m.ImmunityGained()
+	}
 	return
 }
 
 // ChooseEvent : Choose which event should happen with probability proportional to the rates.
-func ChooseEvent() {
+func ChooseEvent(m *Malaria, param *Parameters) int {
 
 	rates := CalcRates(m, param)
-	ratesTotal := SumSlice(r)
+	ratesTotal := SumSlice(rates)
 
-	return
+	return 1
 }
 
 // CalcRates : Calculates all the rates.
 func CalcRates(m *Malaria, param *Parameters) []float64 {
-	r = make([]float64, 3)
-	r[0] = param.InfectionSpeed * float64(m.NHosts) * (float64(m.NHosts) - 1)
+	r := make([]float64, 3)
+	r[0] = param.InfectionSpeed * float64(m.NInfectedHosts) * (float64(m.NHosts) - 1)
 	r[1] = param.ImmunitySpeed * float64(m.NInfectedHosts)
-	r[2] = param.MutationSepped * m.NInfectedHosts
+	//r[2] = param.MutationSpeed * float64(m.NInfectedHosts)
 
 	return r
+}
+
+// Spread : Another person gets infected.
+func (m *Malaria) Spread() {
+	infectFrom := 1
+	infectTo := 1
+	return
+}
+
+// ImmunityGained : An infected person get immunity from one strain. If that one already exist, the parasite dies.
+func (m *Malaria) ImmunityGained() {
+	return
+}
+
+// CombineParasites : When a host becomes infected with another parasite (so it is inficted buy mulitple parasites), it has a combination
+func (m *Malaria) CombineParasites() {
+	return
 }
 
 // SumSlice : Returns the sum a float64 slice.
