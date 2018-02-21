@@ -16,6 +16,8 @@ type Malaria struct {
 
 	MaxAntigenValue int
 
+	InfectedHosts []int
+
 	Antigens   [][]int8 // This is the antigens that person would spread to another person.
 	Infections [][]int8 // This is all the strains that infects a particular host.
 	Antibodies [][]bool // The immunities for the antigens in each host.
@@ -117,6 +119,11 @@ func ConstructMalariaStruct() Malaria {
 		m.Antibodies[host] = make([]bool, m.MaxAntigenValue)
 	}
 
+	m.InfectedHosts = make([]int, m.NInfectedHosts)
+	for host := 0; host < m.NInfectedHosts; host++ {
+		m.InfectedHosts[host] = host
+	}
+
 	fmt.Println(m.Antigens, "\n", m.Infections, "\n", m.Antibodies, "\n")
 	return m
 
@@ -125,6 +132,7 @@ func ConstructMalariaStruct() Malaria {
 // EventHappens : ...
 func (m *Malaria) EventHappens(param Parameters) {
 	event := ChooseEvent(m, param)
+	event = 0
 	switch event {
 	case 1:
 		m.Spread()
@@ -158,15 +166,20 @@ func ChooseEvent(m *Malaria, param Parameters) int {
 // CalcRates : Calculates all the rates.
 func CalcRates(m *Malaria, param Parameters) []float64 {
 	r := make([]float64, 3)
-	r[0] = param.InfectionSpeed * float64(m.NInfectedHosts) * (float64(m.NHosts) - 1)
+	r[0] = param.InfectionSpeed * float64(m.NInfectedHosts) * (float64(m.NHosts))
 	r[1] = param.ImmunitySpeed * float64(m.NInfectedHosts)
 	//r[2] = param.MutationSpeed * float64(m.NInfectedHosts)
-
 	return r
 }
 
 // Spread : Another person gets infected.
 func (m *Malaria) Spread() {
+	SpreadTo := rand.Intn(r.NHosts)
+	SpreadFrom := rand.Intn(r.NInfectedHosts)
+	// If spread to is equal to spread from, do not spread.
+	if SpreadTo == SpreadFrom {
+		return
+	}
 
 	return
 }
