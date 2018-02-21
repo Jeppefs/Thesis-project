@@ -53,9 +53,9 @@ func InitiateRunningModel() {
 // MakeParameterGrid : Creates a parameter grid to search through. Also where settings a applied.
 func MakeParameterGrid() []Parameters {
 	parameterGrid := make([]Parameters, 1)
-	parameterGrid[0].ImmunitySpeed = 1
 	parameterGrid[0].InfectionSpeed = 1
-	parameterGrid[0].Runs = 1000
+	parameterGrid[0].ImmunitySpeed = 20
+	parameterGrid[0].Runs = 1
 	return parameterGrid
 }
 
@@ -93,6 +93,8 @@ func ConstructMalariaStruct() Malaria {
 		for antigen := 0; antigen < m.NAntigens; antigen++ {
 			if host < m.NInfectedHosts {
 				m.Antigens[host][antigen] = int8(rand.Intn(m.MaxAntigenValue))
+			} else {
+				m.Antigens[host][antigen]--
 			}
 		}
 	}
@@ -104,6 +106,8 @@ func ConstructMalariaStruct() Malaria {
 		for antigen := 0; antigen < m.NAntigens; antigen++ {
 			if host < m.NInfectedHosts {
 				m.Infections[host][antigen] = m.Antigens[host][antigen]
+			} else {
+				m.Infections[host][antigen]--
 			}
 		}
 	}
@@ -113,13 +117,13 @@ func ConstructMalariaStruct() Malaria {
 		m.Antibodies[host] = make([]bool, m.MaxAntigenValue)
 	}
 
-	fmt.Println(m.Antigens, '\n', m.Infections, '\n', m.Antibodies, '\n')
+	fmt.Println(m.Antigens, "\n", m.Infections, "\n", m.Antibodies, "\n")
 	return m
 
 }
 
 // EventHappens : ...
-func (m *Malaria) EventHappens(param *Parameters) {
+func (m *Malaria) EventHappens(param Parameters) {
 	event := ChooseEvent(m, param)
 	switch event {
 	case 1:
@@ -127,20 +131,32 @@ func (m *Malaria) EventHappens(param *Parameters) {
 	case 2:
 		m.ImmunityGained()
 	}
+	fmt.Println(event)
 	return
 }
 
 // ChooseEvent : Choose which event should happen with probability proportional to the rates.
-func ChooseEvent(m *Malaria, param *Parameters) int {
+func ChooseEvent(m *Malaria, param Parameters) int {
 
 	rates := CalcRates(m, param)
 	ratesTotal := SumSlice(rates)
 
-	return 1
+	choice := rand.Float64()
+	rProb := 0.0
+	var event int
+	for i := 0; i < 2; i++ {
+		rProb += rates[i] / ratesTotal
+		if choice < rProb {
+			event = i
+			break
+		}
+	}
+
+	return event
 }
 
 // CalcRates : Calculates all the rates.
-func CalcRates(m *Malaria, param *Parameters) []float64 {
+func CalcRates(m *Malaria, param Parameters) []float64 {
 	r := make([]float64, 3)
 	r[0] = param.InfectionSpeed * float64(m.NInfectedHosts) * (float64(m.NHosts) - 1)
 	r[1] = param.ImmunitySpeed * float64(m.NInfectedHosts)
@@ -151,8 +167,7 @@ func CalcRates(m *Malaria, param *Parameters) []float64 {
 
 // Spread : Another person gets infected.
 func (m *Malaria) Spread() {
-	infectFrom := 1
-	infectTo := 1
+
 	return
 }
 
