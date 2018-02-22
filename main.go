@@ -124,7 +124,7 @@ func ConstructMalariaStruct() Malaria {
 		m.InfectedHosts[host] = host
 	}
 
-	fmt.Println(m.Antigens, "\n", m.Infections, "\n", m.Antibodies, "\n")
+	//fmt.Println(m.Antigens, "\n", m.Infections, "\n", m.Antibodies, "\n")
 	return m
 
 }
@@ -192,11 +192,13 @@ func (m *Malaria) InfectHost(spreadTo int, spreadFrom int) {
 	if m.Infections[spreadTo][0] < 0 {
 		for antigenSpot := 0; antigenSpot < m.NAntigens; antigenSpot++ {
 			m.Infections[spreadTo][antigenSpot] = m.Antigens[spreadFrom][antigenSpot]
+			m.Antigens[spreadTo][antigenSpot] = m.Antigens[spreadFrom][antigenSpot]
 		}
 	} else {
 		for i := 0; i < m.NAntigens; i++ {
 			m.Infections[spreadTo] = append(m.Infections[spreadTo], m.Antigens[spreadFrom][i])
 		}
+		m.CombineParasites(spreadTo)
 	}
 	return
 }
@@ -207,7 +209,13 @@ func (m *Malaria) ImmunityGained() {
 }
 
 // CombineParasites : When a host becomes infected with another parasite (so it is inficted buy mulitple parasites), it has a combination
-func (m *Malaria) CombineParasites() {
+func (m *Malaria) CombineParasites(host int) {
+	//nParasites := len(m.Antigens[host]) / m.NAntigens
+	for antigen := 0; antigen < m.NAntigens; antigen++ {
+		randomNumber := rand.Intn(2)
+		fmt.Println(antigen+randomNumber*m.NAntigens, m.Infections[host])
+		m.Antigens[host][antigen] = m.Infections[host][antigen+randomNumber*m.NAntigens]
+	}
 	return
 }
 

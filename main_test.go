@@ -12,9 +12,12 @@ func TestSpread(t *testing.T) {
 	fmt.Println("Check if the struct looks correct: \n", m.Antigens, "\n", m.Infections, "\n", m.Antibodies, "\n")
 
 	m.InfectHost(2, 0)
-	fmt.Println(m.Infections)
+	fmt.Println(m.Infections, "\n", m.Antigens)
 	m.InfectHost(2, 1)
-	fmt.Println(m.Infections)
+	fmt.Println(m.Infections, "\n", m.Antigens)
+
+	m.CombineParasites(2)
+	fmt.Println(m.Antigens)
 
 	fmt.Println("Test was completely succesfull, congrats! :D")
 }
