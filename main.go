@@ -134,9 +134,9 @@ func (m *Malaria) EventHappens(param Parameters) {
 	event := ChooseEvent(m, param)
 	event = 0
 	switch event {
-	case 1:
+	case 0:
 		m.Spread()
-	case 2:
+	case 1:
 		m.ImmunityGained()
 	}
 	fmt.Println(event)
@@ -174,13 +174,30 @@ func CalcRates(m *Malaria, param Parameters) []float64 {
 
 // Spread : Another person gets infected.
 func (m *Malaria) Spread() {
-	SpreadTo := rand.Intn(r.NHosts)
-	SpreadFrom := rand.Intn(r.NInfectedHosts)
+
+	spreadTo := rand.Intn(m.NHosts)
+	spreadFrom := rand.Intn(m.NInfectedHosts)
 	// If spread to is equal to spread from, do not spread.
-	if SpreadTo == SpreadFrom {
+	if spreadTo == spreadFrom {
 		return
 	}
+	m.InfectHost(spreadTo, spreadFrom)
 
+	return
+}
+
+// InfectHost :
+func (m *Malaria) InfectHost(spreadTo int, spreadFrom int) {
+	// Check if the person spreading to has any infections. If true make him sick. If false append the parasite.
+	if m.Infections[spreadTo][0] < 0 {
+		for antigenSpot := 0; antigenSpot < m.NAntigens; antigenSpot++ {
+			m.Infections[spreadTo][antigenSpot] = m.Antigens[spreadFrom][antigenSpot]
+		}
+	} else {
+		for i := 0; i < m.NAntigens; i++ {
+			m.Infections[spreadTo] = append(m.Infections[spreadTo], m.Antigens[spreadFrom][i])
+		}
+	}
 	return
 }
 
