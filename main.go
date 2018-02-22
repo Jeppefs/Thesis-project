@@ -17,6 +17,7 @@ type Malaria struct {
 	MaxAntigenValue int
 
 	InfectedHosts []int
+	Lookout       []int
 
 	Antigens   [][]int8 // This is the antigens that person would spread to another person.
 	Infections [][]int8 // This is all the strains that infects a particular host.
@@ -124,6 +125,8 @@ func ConstructMalariaStruct() Malaria {
 		m.InfectedHosts[host] = host
 	}
 
+	m.Lookout = make([]int, m.NHosts)
+
 	//fmt.Println(m.Antigens, "\n", m.Infections, "\n", m.Antibodies, "\n")
 	return m
 
@@ -205,14 +208,27 @@ func (m *Malaria) InfectHost(spreadTo int, spreadFrom int) {
 
 // ImmunityGained : An infected person get immunity from one strain. If that one already exist, the parasite dies.
 func (m *Malaria) ImmunityGained() {
+	infectedHost := m.InfectedHosts[rand.Intn(m.NInfectedHosts)]
+	if m.Antibodies[infectedHost][m.Lookout[infectedHost]] {
+
+	} else {
+		// If at end, make him healthy
+		if m.Lookout == len(m.Antibodies[infectedHost])-1 {
+
+		} else {
+			// Make immunity in the hosts antibody and set the lookout one up
+			m.Antibodies[infectedHost][m.Antigens[infectedHost][m.Lookout[infectedHost]]] = true
+			m.Lookout[infectedHost]++
+		}
+	}
 	return
 }
 
 // CombineParasites : When a host becomes infected with another parasite (so it is inficted buy mulitple parasites), it has a combination
 func (m *Malaria) CombineParasites(host int) {
-	//nParasites := len(m.Antigens[host]) / m.NAntigens
+	nParasites := len(m.Antigens[host]) / m.NAntigens
 	for antigen := 0; antigen < m.NAntigens; antigen++ {
-		randomNumber := rand.Intn(2)
+		randomNumber := rand.Intn(nParasites)
 		fmt.Println(antigen+randomNumber*m.NAntigens, m.Infections[host])
 		m.Antigens[host][antigen] = m.Infections[host][antigen+randomNumber*m.NAntigens]
 	}
