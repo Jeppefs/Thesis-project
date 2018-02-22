@@ -1,13 +1,25 @@
+package main
+
 import (
 	"fmt"
 	"math/rand"
+	"testing"
 )
 
-func TestSpread() {
+func TestSpread(t *testing.T) {
+	rand.Seed(1)
+	m := CreateDummyMalariaStruct()
+	fmt.Println("Check if the struct looks correct: \n", m.Antigens, "\n", m.Infections, "\n", m.Antibodies, "\n")
 
+	m.InfectHost(2, 0)
+	fmt.Println(m.Infections)
+	m.InfectHost(2, 1)
+	fmt.Println(m.Infections)
+
+	fmt.Println("Test was completely succesfull, congrats! :D")
 }
 
-func CreateDummyMalariaStruct() {
+func CreateDummyMalariaStruct() Malaria {
 	var m Malaria
 
 	// Sets initial values.
@@ -54,7 +66,6 @@ func CreateDummyMalariaStruct() {
 		m.InfectedHosts[host] = host
 	}
 
-	fmt.Println(m.Antigens, "\n", m.Infections, "\n", m.Antibodies, "\n")
 	return m
 
 }
