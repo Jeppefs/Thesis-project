@@ -14,10 +14,10 @@ type Malaria struct {
 	NAntigens      int
 	NStrains       int
 
-	MaxAntigenValue int
+	MaxAntigenValue int // The maximum number an antigen can have
 
-	InfectedHosts []int
-	Lookout       []int
+	InfectedHosts []int // A list of hosts that are infected by one or more malaria strains
+	Lookout       []int // This is the current antigen index which they a looking to immunize against. When the immunization method is chosen, this is the point where it checks if is immune and get immunity towards if it isnt't.
 
 	Antigens   [][]int8 // This is the antigens that person would spread to another person.
 	Infections [][]int8 // This is all the strains that infects a particular host.
@@ -31,12 +31,6 @@ type Parameters struct {
 	MutationSpeed  float64
 
 	Runs int
-}
-
-type EventTypes struct {
-	Spread        int
-	Infect        int
-	ChangeAntigen int
 }
 
 func main() {
@@ -213,15 +207,19 @@ func (m *Malaria) ImmunityGained() {
 
 	} else {
 		// If at end, make him healthy
-		if m.Lookout == len(m.Antibodies[infectedHost])-1 {
-
-		} else {
-			// Make immunity in the hosts antibody and set the lookout one up
-			m.Antibodies[infectedHost][m.Antigens[infectedHost][m.Lookout[infectedHost]]] = true
-			m.Lookout[infectedHost]++
+		// Make immunity in the hosts antibody and set the lookout one up
+		m.Antibodies[infectedHost][m.Antigens[infectedHost][m.Lookout[infectedHost]]] = true
+		m.Lookout[infectedHost]++
+		if m.Lookout[infectedHost] > 2 {
+			m.RemoveParasite(infectedHost)
 		}
 	}
 	return
+}
+
+// RemoveParasite :  Removes a parasite from a host after immunization
+func (m *Malaria) RemoveParasite(host int) {
+	m.Antigens[host] = append(m.Antigens[host][:0], m.Antigens[host][:m.NAntigens]...)
 }
 
 // CombineParasites : When a host becomes infected with another parasite (so it is inficted buy mulitple parasites), it has a combination
