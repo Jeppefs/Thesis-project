@@ -212,6 +212,7 @@ func (m *Malaria) ImmunityGained() {
 		m.Lookout[infectedHost]++
 		if m.Lookout[infectedHost] > 2 {
 			m.RemoveParasite(infectedHost)
+			m.Lookout[infectedHost] = 0
 		}
 	}
 	return
@@ -219,7 +220,10 @@ func (m *Malaria) ImmunityGained() {
 
 // RemoveParasite :  Removes a parasite from a host after immunization
 func (m *Malaria) RemoveParasite(host int) {
-	m.Antigens[host] = append(m.Antigens[host][:0], m.Antigens[host][:m.NAntigens]...)
+	m.Infections[host] = append(m.Infections[host][:0], m.Infections[host][:m.NAntigens]...)
+	if len(m.Infections[host]) == 0 { // If the last parasite of the host dies, then that host is not infectious anymore.
+		m.Antigens[host] = append(m.Antigens[host][:0], m.Antigens[host][:m.NAntigens]...)
+	}
 }
 
 // CombineParasites : When a host becomes infected with another parasite (so it is inficted buy mulitple parasites), it has a combination
