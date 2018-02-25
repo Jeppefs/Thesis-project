@@ -21,29 +21,50 @@ func TestEventChoosing(t *testing.T) {
 }
 
 func TestImmunity(t *testing.T) {
-	fmt.Println("\n Testing immunity start")
+	fmt.Println("\n Testing immunity")
 	m := CreateDummyMalariaStruct()
 
 	host := 1
 	infectedHost := 1
-	fmt.Println(m.Infections)
 	m.RemoveParasite(host, infectedHost)
-	fmt.Println(m.Infections)
+	if len(m.Infections[host]) != 0 {
+		fmt.Println("Error in RemoveParasite")
+	}
+	if len(m.Antigens[host]) != 0 {
+		fmt.Println("Error in RemoveParasite. Is:", len(m.Antigens[host]), "Should be:", 0)
+	}
+	if m.NInfectedHosts != 1 {
+		fmt.Println("Error in RemoveParasite")
+	}
+	if len(m.InfectedHosts) != 1 {
+		fmt.Println("Error in RemoveParasite")
+	}
+
+	host = 0
+	infectedHost = 0
+
+	m.ImmunityGained()
+	if m.Antibodies[host][m.Antigens[host][0]] != true {
+		fmt.Println("Error in ImmunityGained")
+	}
 
 }
 
 func TestSpread(t *testing.T) {
-	fmt.Println("\n Testing spread start")
+	fmt.Println("\n Testing spread")
 	m := CreateDummyMalariaStruct()
 	m.InfectHost(2, 0)
-	fmt.Println(m.Infections, "\n", m.Antigens)
+	fmt.Println("Infections:", m.Infections, "Antigens \n:", m.Antigens)
 	m.InfectHost(2, 1)
-	fmt.Println(m.Infections, "\n", m.Antigens)
+	fmt.Println("\n Infections:", m.Infections, "\n Antigens:", m.Antigens)
 
-	m.CombineParasites(2)
-	fmt.Println(m.Antigens)
+	if m.NInfectedHosts != 3 {
+		fmt.Println("Error in Spread, m.NInfectedHosts incorrect. Is:", m.NInfectedHosts)
+	}
+	if m.InfectedHosts[2] != 2 && len(m.InfectedHosts) == 3 {
+		fmt.Println("Error in Spread, m.InfectedHosts incorrect")
+	}
 
-	fmt.Println("Test was completely succesfull, congrats! :D")
 }
 
 func CreateDummyMalariaStruct() Malaria {

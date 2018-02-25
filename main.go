@@ -180,9 +180,11 @@ func (m *Malaria) InfectHost(spreadTo int, spreadFrom int) {
 	// Check if the person spreading to has any infections. If true make him sick. If false append the parasite.
 	if len(m.Infections[spreadTo]) == 0 {
 		for antigenSpot := 0; antigenSpot < m.NAntigens; antigenSpot++ {
-			m.Infections[spreadTo][antigenSpot] = m.Antigens[spreadFrom][antigenSpot]
-			m.Antigens[spreadTo][antigenSpot] = m.Antigens[spreadFrom][antigenSpot]
+			m.Infections[spreadTo] = append(m.Infections[spreadTo], m.Antigens[spreadFrom][antigenSpot])
+			m.Antigens[spreadTo] = append(m.Antigens[spreadTo], m.Antigens[spreadFrom][antigenSpot])
 		}
+		m.NInfectedHosts++
+		m.InfectedHosts = append(m.InfectedHosts, spreadTo)
 	} else {
 		for i := 0; i < m.NAntigens; i++ {
 			m.Infections[spreadTo] = append(m.Infections[spreadTo], m.Antigens[spreadFrom][i])
@@ -212,9 +214,9 @@ func (m *Malaria) ImmunityGained() {
 
 // RemoveParasite :  Removes a parasite from a host after immunization
 func (m *Malaria) RemoveParasite(host int, infectedHostIndex int) {
-	m.Infections[host] = append(m.Infections[host][:0], m.Infections[host][:m.NAntigens]...)
-	if len(m.Infections[host]) == 0 { // If the last parasite of the host dies, then that host is not infectious anymore.
-		m.Antigens[host] = append(m.Antigens[host][:0], m.Antigens[host][:m.NAntigens]...)
+	m.Infections[host] = append(m.Infections[host][:0], m.Infections[host][m.NAntigens:]...) // Delete the parasite eg. the three first antigens in the infected host.
+	if len(m.Infections[host]) == 0 {                                                        // If the last parasite of the host dies, then that host is not infectious anymore.
+		m.Antigens[host] = append(m.Antigens[host][:0], m.Antigens[host][m.NAntigens:]...)
 		m.NInfectedHosts--
 		m.InfectedHosts = append(m.InfectedHosts[:infectedHostIndex], m.InfectedHosts[infectedHostIndex+1:]...)
 	}
