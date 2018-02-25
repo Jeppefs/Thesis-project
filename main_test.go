@@ -6,11 +6,35 @@ import (
 	"testing"
 )
 
-func TestSpread(t *testing.T) {
+func init() {
 	rand.Seed(1)
-	m := CreateDummyMalariaStruct()
-	fmt.Println("Check if the struct looks correct: \n", m.Antigens, "\n", m.Infections, "\n", m.Antibodies, "\n")
+}
 
+func TestStructCreation(t *testing.T) {
+	m := CreateDummyMalariaStruct()
+	//fmt.Println("Check if the struct looks correct: \n", m.Antigens, "\n", m.Infections, "\n", m.Antibodies, "\n")
+	fmt.Println("Check if the struct looks correct:", m)
+}
+
+func TestEventChoosing(t *testing.T) {
+	//m := CreateDummyMalariaStruct()
+}
+
+func TestImmunity(t *testing.T) {
+	fmt.Println("\n Testing immunity start")
+	m := CreateDummyMalariaStruct()
+
+	host := 1
+	infectedHost := 1
+	fmt.Println(m.Infections)
+	m.RemoveParasite(host, infectedHost)
+	fmt.Println(m.Infections)
+
+}
+
+func TestSpread(t *testing.T) {
+	fmt.Println("\n Testing spread start")
+	m := CreateDummyMalariaStruct()
 	m.InfectHost(2, 0)
 	fmt.Println(m.Infections, "\n", m.Antigens)
 	m.InfectHost(2, 1)
@@ -29,33 +53,26 @@ func CreateDummyMalariaStruct() Malaria {
 	m.NHosts = 10 // Constant
 	m.NInfectedHosts = 2
 	m.NAntigens = 3
+	m.NStrains = 1
 
 	m.MaxAntigenValue = 5
 
 	// Make initial antigens
 
 	m.Antigens = make([][]int8, m.NHosts)
-	for host := 0; host < m.NHosts; host++ {
+	for host := 0; host < m.NInfectedHosts; host++ {
 		m.Antigens[host] = make([]int8, m.NAntigens)
 		for antigen := 0; antigen < m.NAntigens; antigen++ {
-			if host < m.NInfectedHosts {
-				m.Antigens[host][antigen] = int8(rand.Intn(m.MaxAntigenValue))
-			} else {
-				m.Antigens[host][antigen]--
-			}
+			m.Antigens[host][antigen] = int8(rand.Intn(m.MaxAntigenValue))
 		}
 	}
 
 	// Make initial infections
 	m.Infections = make([][]int8, m.NHosts)
-	for host := 0; host < m.NHosts; host++ {
+	for host := 0; host < m.NInfectedHosts; host++ {
 		m.Infections[host] = make([]int8, m.NAntigens)
 		for antigen := 0; antigen < m.NAntigens; antigen++ {
-			if host < m.NInfectedHosts {
-				m.Infections[host][antigen] = m.Antigens[host][antigen]
-			} else {
-				m.Infections[host][antigen]--
-			}
+			m.Infections[host][antigen] = m.Antigens[host][antigen]
 		}
 	}
 	// Make initial immunities
@@ -69,6 +86,8 @@ func CreateDummyMalariaStruct() Malaria {
 		m.InfectedHosts[host] = host
 	}
 
-	return m
+	m.Lookout = make([]int, m.NHosts)
 
+	//fmt.Println(m.Antigens, "\n", m.Infections, "\n", m.Antibodies, "\n")
+	return m
 }

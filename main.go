@@ -88,24 +88,16 @@ func ConstructMalariaStruct() Malaria {
 	for host := 0; host < m.NHosts; host++ {
 		m.Antigens[host] = make([]int8, m.NAntigens)
 		for antigen := 0; antigen < m.NAntigens; antigen++ {
-			if host < m.NInfectedHosts {
-				m.Antigens[host][antigen] = int8(rand.Intn(m.MaxAntigenValue))
-			} else {
-				m.Antigens[host][antigen]--
-			}
+			m.Antigens[host][antigen] = int8(rand.Intn(m.MaxAntigenValue))
 		}
 	}
 
 	// Make initial infections
 	m.Infections = make([][]int8, m.NHosts)
-	for host := 0; host < m.NHosts; host++ {
+	for host := 0; host < m.NInfectedHosts; host++ {
 		m.Infections[host] = make([]int8, m.NAntigens)
 		for antigen := 0; antigen < m.NAntigens; antigen++ {
-			if host < m.NInfectedHosts {
-				m.Infections[host][antigen] = m.Antigens[host][antigen]
-			} else {
-				m.Infections[host][antigen]--
-			}
+			m.Infections[host][antigen] = m.Antigens[host][antigen]
 		}
 	}
 	// Make initial immunities
@@ -186,7 +178,7 @@ func (m *Malaria) Spread() {
 // InfectHost :
 func (m *Malaria) InfectHost(spreadTo int, spreadFrom int) {
 	// Check if the person spreading to has any infections. If true make him sick. If false append the parasite.
-	if m.Infections[spreadTo][0] < 0 {
+	if len(m.Infections[spreadTo]) == 0 {
 		for antigenSpot := 0; antigenSpot < m.NAntigens; antigenSpot++ {
 			m.Infections[spreadTo][antigenSpot] = m.Antigens[spreadFrom][antigenSpot]
 			m.Antigens[spreadTo][antigenSpot] = m.Antigens[spreadFrom][antigenSpot]
@@ -202,28 +194,31 @@ func (m *Malaria) InfectHost(spreadTo int, spreadFrom int) {
 
 // ImmunityGained : An infected person get immunity from one strain. If that one already exist, the parasite dies.
 func (m *Malaria) ImmunityGained() {
-	infectedHost := m.InfectedHosts[rand.Intn(m.NInfectedHosts)]
-	if m.Antibodies[infectedHost][m.Lookout[infectedHost]] {
-
+	infectedHostIndex := rand.Intn(m.NInfectedHosts)
+	infectedHost := m.InfectedHosts[infectedHostIndex]
+	if m.Antibodies[infectedHost][m.Lookout[infectedHost]] { // If immune remove parasite.
+		m.RemoveParasite(infectedHost, infectedHostIndex)
 	} else {
 		// If at end, make him healthy
 		// Make immunity in the hosts antibody and set the lookout one up
 		m.Antibodies[infectedHost][m.Antigens[infectedHost][m.Lookout[infectedHost]]] = true
 		m.Lookout[infectedHost]++
 		if m.Lookout[infectedHost] > 2 {
-			m.RemoveParasite(infectedHost)
-			m.Lookout[infectedHost] = 0
+			m.RemoveParasite(infectedHost, infectedHostIndex)
 		}
 	}
 	return
 }
 
 // RemoveParasite :  Removes a parasite from a host after immunization
-func (m *Malaria) RemoveParasite(host int) {
+func (m *Malaria) RemoveParasite(host int, infectedHostIndex int) {
 	m.Infections[host] = append(m.Infections[host][:0], m.Infections[host][:m.NAntigens]...)
 	if len(m.Infections[host]) == 0 { // If the last parasite of the host dies, then that host is not infectious anymore.
 		m.Antigens[host] = append(m.Antigens[host][:0], m.Antigens[host][:m.NAntigens]...)
+		m.NInfectedHosts--
+		m.InfectedHosts = append(m.InfectedHosts[:infectedHostIndex], m.InfectedHosts[infectedHostIndex+1:]...)
 	}
+	m.Lookout[host] = 0
 }
 
 // CombineParasites : When a host becomes infected with another parasite (so it is inficted buy mulitple parasites), it has a combination
@@ -231,7 +226,6 @@ func (m *Malaria) CombineParasites(host int) {
 	nParasites := len(m.Antigens[host]) / m.NAntigens
 	for antigen := 0; antigen < m.NAntigens; antigen++ {
 		randomNumber := rand.Intn(nParasites)
-		fmt.Println(antigen+randomNumber*m.NAntigens, m.Infections[host])
 		m.Antigens[host][antigen] = m.Infections[host][antigen+randomNumber*m.NAntigens]
 	}
 	return
