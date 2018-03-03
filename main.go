@@ -59,6 +59,9 @@ func MakeParameterGrid() []Parameters {
 	for i := 0; i < gridsize; i++ {
 		parameterGrid[i].InfectionSpeed = 1.0
 		parameterGrid[i].ImmunitySpeed = 10000.0 + 1000.0*float64(i)
+		parameterGrid[i].MutationSpeed = 0.0
+		parameterGrid[i].DeathSpeed = parameterGrid[i].ImmunitySpeed / 10.0
+
 		parameterGrid[i].Runs = 5000000
 	}
 
@@ -155,6 +158,10 @@ func (m *Malaria) EventHappens(param Parameters) {
 		m.Spread()
 	case 1:
 		m.ImmunityGained()
+	case 2:
+		m.MutateParasite(m.GetRandomInfectedHost())
+	case 3:
+		m.Death(m.GetRandomInfectedHost())
 	}
 	return
 }
@@ -168,7 +175,7 @@ func ChooseEvent(m *Malaria, param Parameters) int {
 	choice := rand.Float64()
 	rProb := 0.0
 	var event int
-	for i := 0; i < 2; i++ {
+	for i := 0; i < 4; i++ {
 		rProb += rates[i] / ratesTotal
 		if choice < rProb {
 			event = i
@@ -184,6 +191,8 @@ func CalcRates(m *Malaria, param Parameters) []float64 {
 	r := make([]float64, 3)
 	r[0] = param.InfectionSpeed * float64(m.NInfectedHosts) * (float64(m.NHosts))
 	r[1] = param.ImmunitySpeed * float64(m.NInfectedHosts)
+	r[2] = param.MutationSpeed * float64(m.NInfectedHosts)
+	r[3] = param.DeathSpeed * float64(m.NInfectedHosts)
 	//r[2] = param.MutationSpeed * float64(m.NInfectedHosts)
 	return r
 }
