@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"math/rand"
+	"os"
+	"strconv"
 	"time"
 )
 
@@ -49,10 +51,16 @@ func InitiateRunningModel() {
 
 // MakeParameterGrid : Creates a parameter grid to search through. Also where settings a applied.
 func MakeParameterGrid() []Parameters {
-	parameterGrid := make([]Parameters, 1)
-	parameterGrid[0].InfectionSpeed = 1
-	parameterGrid[0].ImmunitySpeed = 20
-	parameterGrid[0].Runs = 1
+	gridsize := 10
+
+	parameterGrid := make([]Parameters, gridsize)
+
+	for i := 0; i < gridsize; i++ {
+		parameterGrid[i].InfectionSpeed = 1.0
+		parameterGrid[i].ImmunitySpeed = 10000.0 + 1000.0*float64(i)
+		parameterGrid[i].Runs = 5000000
+	}
+
 	return parameterGrid
 }
 
@@ -60,13 +68,33 @@ func MakeParameterGrid() []Parameters {
 func RunMalariaModel(param Parameters) {
 	modelTime := 0
 	startTime := time.Now()
+
+	filename := "text" + strconv.Itoa(int(param.ImmunitySpeed))
+	file, err := os.Create("data/" + filename + ".txt")
+	check(err)
+
 	m := ConstructMalariaStruct()
 	for run := 0; run < param.Runs; run++ {
 		m.EventHappens(param)
+		if run%10 == 0 {
+			fmt.Fprintf(file, "%v \n", m.NInfectedHosts)
+			if run%100000 == 0 {
+				fmt.Println(run)
+			}
+		}
+		if m.NInfectedHosts == 0 {
+			fmt.Println("Malaria is dead in", run, "runs")
+			fmt.Fprintf(file, "%v \n", m.NInfectedHosts)
+			break
+		}
 	}
 	endTime := time.Now()
+
+	file.Close()
+
 	fmt.Println("This set of Parameters, done.", "\n It had the following parameters:", param, "\n It took intime:", modelTime, "\n It took:", endTime.Sub(startTime))
 	fmt.Println(m.NHosts)
+
 	return
 }
 
@@ -75,8 +103,8 @@ func ConstructMalariaStruct() Malaria {
 	var m Malaria
 
 	// Sets initial values.
-	m.NHosts = 20 // Constant
-	m.NInfectedHosts = 10
+	m.NHosts = 10000 // Constant
+	m.NInfectedHosts = m.NHosts / 100
 	m.NAntigens = 3
 	m.NStrains = 1
 
@@ -121,14 +149,12 @@ func ConstructMalariaStruct() Malaria {
 // EventHappens : ...
 func (m *Malaria) EventHappens(param Parameters) {
 	event := ChooseEvent(m, param)
-	event = 0
 	switch event {
 	case 0:
 		m.Spread()
 	case 1:
 		m.ImmunityGained()
 	}
-	fmt.Println(event)
 	return
 }
 
@@ -164,8 +190,8 @@ func CalcRates(m *Malaria, param Parameters) []float64 {
 // Spread : Another person gets infected.
 func (m *Malaria) Spread() {
 
-	spreadTo := rand.Intn(m.NHosts)
-	spreadFrom := rand.Intn(m.NInfectedHosts)
+	spreadTo, spreadFrom := m.GetSpreadToAndSpreadFrom()
+
 	// If spread to is equal to spread from, do not spread.
 	if spreadTo == spreadFrom {
 		return
@@ -173,6 +199,13 @@ func (m *Malaria) Spread() {
 	m.InfectHost(spreadTo, spreadFrom)
 
 	return
+}
+
+// GetSpreadToAndSpreadFrom : Finds a host to spread to and the antigens which malaria is spread from.
+func (m *Malaria) GetSpreadToAndSpreadFrom() (int, int) {
+	spreadTo := rand.Intn(m.NHosts)
+	spreadFrom := m.InfectedHosts[rand.Intn(m.NInfectedHosts)]
+	return spreadTo, spreadFrom
 }
 
 // InfectHost :
@@ -221,14 +254,22 @@ func (m *Malaria) RemoveParasite(host int, infectedHostIndex int) {
 		m.InfectedHosts = append(m.InfectedHosts[:infectedHostIndex], m.InfectedHosts[infectedHostIndex+1:]...)
 	}
 	m.Lookout[host] = 0
+	return
+}
+
+func (m *Malaria) MutateParasite(host int) {
+	m.Antigen[]
+	return
 }
 
 // CombineParasites : When a host becomes infected with another parasite (so it is inficted buy mulitple parasites), it has a combination
 func (m *Malaria) CombineParasites(host int) {
-	nParasites := len(m.Antigens[host]) / m.NAntigens
+	nParasites := len(m.Antigens[host])
 	for antigen := 0; antigen < m.NAntigens; antigen++ {
-		randomNumber := rand.Intn(nParasites)
-		m.Antigens[host][antigen] = m.Infections[host][antigen+randomNumber*m.NAntigens]
+		antigenOrNewParasiteChoice := rand.float64()
+		if currentOrElse > 0.5 {
+			m.Antigens[host][antigen] = m.Infections[host][nParasites - m.NAntigens + rand.Intin(m.NAntigens)]
+		} 
 	}
 	return
 }
@@ -241,3 +282,26 @@ func SumSlice(X []float64) float64 {
 	}
 	return sum
 }
+
+func check(e error) {
+	if e != nil {
+		panic(e)
+	}
+}
+
+// Death : A person dies
+/*
+func (m *Malaria) Death() {
+	infectedOrHealthy := rand.Float64()
+	if infectedOrHealthy > 0.1 { // there is ~ ten times greater likelihood that an infected person dies than a completely random person dies.
+		host := m.InfectedHosts[rand.Intn(m.NInfectedHosts)]
+		m.Antigens[host] = append(m.Antigens[host][:0], m.Antigens[host][m.NAntigens+1:]...)
+
+		m.NInfectedHosts--
+	} else {
+		//host := rand.Intn(m.NHosts)
+
+	}
+
+}
+*/

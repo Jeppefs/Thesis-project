@@ -67,6 +67,13 @@ func TestSpread(t *testing.T) {
 
 }
 
+func TestDeath(t *testing.T) {
+	fmt.Println("\n Testing death")
+	m := CreateDummyMalariaStruct()
+	m.Death()
+	fmt.Println(m)
+}
+
 func CreateDummyMalariaStruct() Malaria {
 	var m Malaria
 
