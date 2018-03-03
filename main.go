@@ -1,3 +1,10 @@
+/*
+	TODO:
+	- Make a delete function
+	- Write test for death method
+	- Write test for muation method
+*/
+
 package main
 
 import (
@@ -36,6 +43,24 @@ type Parameters struct {
 	Runs int
 }
 
+// MakeParameterGrid : Creates a parameter grid to search through. Also where settings a applied.
+func MakeParameterGrid() []Parameters {
+	gridsize := 5
+
+	parameterGrid := make([]Parameters, gridsize)
+
+	for i := 0; i < gridsize; i++ {
+		parameterGrid[i].InfectionSpeed = 1.0
+		parameterGrid[i].ImmunitySpeed = 10000.0 + 1000.0*float64(i)
+		parameterGrid[i].MutationSpeed = 0.0
+		parameterGrid[i].DeathSpeed = 1
+
+		parameterGrid[i].Runs = 5000000
+	}
+
+	return parameterGrid
+}
+
 func main() {
 	fmt.Println("Starting")
 	InitiateRunningModel()
@@ -48,24 +73,6 @@ func InitiateRunningModel() {
 	for i := 0; i < len(parameterGrid); i++ {
 		RunMalariaModel(parameterGrid[i])
 	}
-}
-
-// MakeParameterGrid : Creates a parameter grid to search through. Also where settings a applied.
-func MakeParameterGrid() []Parameters {
-	gridsize := 10
-
-	parameterGrid := make([]Parameters, gridsize)
-
-	for i := 0; i < gridsize; i++ {
-		parameterGrid[i].InfectionSpeed = 1.0
-		parameterGrid[i].ImmunitySpeed = 10000.0 + 1000.0*float64(i)
-		parameterGrid[i].MutationSpeed = 0.0
-		parameterGrid[i].DeathSpeed = parameterGrid[i].ImmunitySpeed / 10.0
-
-		parameterGrid[i].Runs = 5000000
-	}
-
-	return parameterGrid
 }
 
 // RunMalariaModel : Starts the run of the malaria model
@@ -161,7 +168,7 @@ func (m *Malaria) EventHappens(param Parameters) {
 	case 2:
 		m.MutateParasite(m.GetRandomInfectedHost())
 	case 3:
-		m.Death(m.GetRandomInfectedHost())
+		m.Death()
 	}
 	return
 }
@@ -188,12 +195,11 @@ func ChooseEvent(m *Malaria, param Parameters) int {
 
 // CalcRates : Calculates all the rates.
 func CalcRates(m *Malaria, param Parameters) []float64 {
-	r := make([]float64, 3)
+	r := make([]float64, 4)
 	r[0] = param.InfectionSpeed * float64(m.NInfectedHosts) * (float64(m.NHosts))
 	r[1] = param.ImmunitySpeed * float64(m.NInfectedHosts)
 	r[2] = param.MutationSpeed * float64(m.NInfectedHosts)
 	r[3] = param.DeathSpeed * float64(m.NInfectedHosts)
-	//r[2] = param.MutationSpeed * float64(m.NInfectedHosts)
 	return r
 }
 
@@ -287,9 +293,17 @@ func (m *Malaria) MutateParasite(host int) {
 }
 
 // Death : Kills a host removing it's
-func (m *Malaria) Death(host int) {
-	m.Antigens[host] = append(m.Antigens[host][:0], m.Antigens[host][m.NAntigens+1:]...)
-	m.Infections[host] = append(m.Infections[host][:0], m.Infections[host][len(m.Infections[host])+1:]...)
+func (m *Malaria) Death() {
+	hostIndex := rand.Intn(m.NInfectedHosts)
+	host := m.InfectedHosts[hostIndex]
+
+	m.Antigens[host] = append(m.Antigens[host][:0], m.Antigens[host][m.NAntigens:]...)
+	m.Infections[host] = append(m.Infections[host][:0], m.Infections[host][len(m.Infections[host]):]...)
+	m.InfectedHosts = append(m.InfectedHosts[:hostIndex], m.InfectedHosts[hostIndex+1:]...)
+
+	for antibody := 0; antibody < m.MaxAntigenValue; antibody++ {
+		m.Antibodies[host][antibody] = false
+	}
 	m.NInfectedHosts--
 	return
 }
