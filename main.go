@@ -31,6 +31,7 @@ type Parameters struct {
 	ImmunitySpeed  float64
 	InfectionSpeed float64
 	MutationSpeed  float64
+	DeathSpeed     float64
 
 	Runs int
 }
@@ -257,21 +258,36 @@ func (m *Malaria) RemoveParasite(host int, infectedHostIndex int) {
 	return
 }
 
-func (m *Malaria) MutateParasite(host int) {
-	m.Antigen[]
-	return
-}
-
 // CombineParasites : When a host becomes infected with another parasite (so it is inficted buy mulitple parasites), it has a combination
 func (m *Malaria) CombineParasites(host int) {
 	nParasites := len(m.Antigens[host])
 	for antigen := 0; antigen < m.NAntigens; antigen++ {
-		antigenOrNewParasiteChoice := rand.float64()
-		if currentOrElse > 0.5 {
-			m.Antigens[host][antigen] = m.Infections[host][nParasites - m.NAntigens + rand.Intin(m.NAntigens)]
-		} 
+		antigenOrNewParasiteChoice := rand.Float64()
+		if antigenOrNewParasiteChoice > 0.5 {
+			m.Antigens[host][antigen] = m.Infections[host][nParasites-m.NAntigens+rand.Intn(m.NAntigens)]
+		}
 	}
 	return
+}
+
+// MutateParasite : Changes a single antigen in a host to a new random one.
+func (m *Malaria) MutateParasite(host int) {
+	randomAntigen := rand.Intn(m.NAntigens)
+	m.Antigens[host][randomAntigen] = int8(rand.Intn(m.MaxAntigenValue))
+	return
+}
+
+// Death : Kills a host removing it's
+func (m *Malaria) Death(host int) {
+	m.Antigens[host] = append(m.Antigens[host][:0], m.Antigens[host][m.NAntigens+1:]...)
+	m.Infections[host] = append(m.Infections[host][:0], m.Infections[host][len(m.Infections[host])+1:]...)
+	m.NInfectedHosts--
+	return
+}
+
+// GetRandomInfectedHost :
+func (m *Malaria) GetRandomInfectedHost() int {
+	return m.InfectedHosts[rand.Intn(m.NInfectedHosts)]
 }
 
 // SumSlice : Returns the sum a float64 slice.
