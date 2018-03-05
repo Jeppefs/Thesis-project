@@ -18,10 +18,10 @@ import (
 // Malaria : .
 type Malaria struct {
 	// Counts
-	NHosts         int
-	NInfectedHosts int
-	NAntigens      int
-	NStrains       int
+	NHosts         int // How many potential hosts there are in the system
+	NInfectedHosts int // The number of infected hosts
+	NAntigens      int // The number of antigens a single parasite consists of
+	NStrains       int // The number of different kind of parasites
 
 	MaxAntigenValue int // The maximum number an antigen can have
 

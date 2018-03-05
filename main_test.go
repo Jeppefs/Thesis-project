@@ -71,7 +71,27 @@ func TestDeath(t *testing.T) {
 	fmt.Println("\n Testing death")
 	m := CreateDummyMalariaStruct()
 	m.Death()
-	fmt.Println(m)
+	m.Death()
+	if len(m.Infections[0]) != 0 {
+		t.Fatalf("Error in Infections")
+	}
+	if len(m.Antigens[0]) != 0 {
+		t.Fatalf("Error in Antigens")
+	}
+	if m.NInfectedHosts != 0 {
+		t.Fatalf("Error in NINfectedHosts")
+	}
+	for _, boolVal := range m.Antibodies[0] {
+		if boolVal != false {
+			t.Fatalf("Error in Antibodies. Is: %t Should be: %t", boolVal, false)
+		}
+	}
+
+	fmt.Println(m.Infections)
+}
+
+func TestMutation(t *testing.T) {
+	fmt.Println("\n Testing Mutation")
 }
 
 func CreateDummyMalariaStruct() Malaria {
