@@ -92,6 +92,22 @@ func TestDeath(t *testing.T) {
 
 func TestMutation(t *testing.T) {
 	fmt.Println("\n Testing Mutation")
+	m := CreateDummyMalariaStruct()
+	fmt.Println("Check how it looks:", m.Antigens[0])
+	m.MutateParasite(0)
+	fmt.Println("Check if it has changed:", m.Antigens[0])
+
+	fmt.Println("Check how it looks:", m.Antigens[1])
+	m.MutateParasite(1)
+	fmt.Println("Check if it has changed:", m.Antigens[1])
+
+	fmt.Println("Check how it looks:", m.Antigens[1])
+	m.MutateParasite(1)
+	fmt.Println("Check if it has changed:", m.Antigens[1])
+
+	fmt.Println("Check how it looks:", m.Antigens[1])
+	m.MutateParasite(1)
+	fmt.Println("Check if it has changed:", m.Antigens[1])
 }
 
 func CreateDummyMalariaStruct() Malaria {
