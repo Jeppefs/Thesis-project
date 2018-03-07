@@ -2,7 +2,7 @@
 	TODO:
 	- Make a delete function
 	- Make data saving and plotting a way you are satisfied with.
-	- Make it so that ModelSettings.Test actually do something
+	- Make it so that ModelSettings.Test actually do something.
 */
 
 package main
@@ -78,7 +78,7 @@ func MakeParameterGrid() []Parameters {
 		parameterGrid[i].DeathSpeed = 0.0
 
 		parameterGrid[i].N = 10000
-		parameterGrid[i].NAntigens = 1
+		parameterGrid[i].NAntigens = 3
 		parameterGrid[i].MaxAntigenValue = 10
 	}
 
@@ -272,14 +272,14 @@ func (m *Malaria) InfectHost(spreadTo int, spreadFrom int) {
 func (m *Malaria) ImmunityGained() {
 	infectedHostIndex := rand.Intn(m.NInfectedHosts)
 	infectedHost := m.InfectedHosts[infectedHostIndex]
-	if m.Antibodies[infectedHost][m.Lookout[infectedHost]] { // If immune remove parasite.
+	if m.Antibodies[infectedHost][m.Antigens[infectedHost][m.Lookout[infectedHost]]] { // If immune remove parasite.
 		m.RemoveParasite(infectedHost, infectedHostIndex)
 	} else {
 		// If at end, make him healthy
 		// Make immunity in the hosts antibody and set the lookout one up
 		m.Antibodies[infectedHost][m.Antigens[infectedHost][m.Lookout[infectedHost]]] = true
 		m.Lookout[infectedHost]++
-		if m.Lookout[infectedHost] > 2 {
+		if m.Lookout[infectedHost] >= m.NAntigens {
 			m.RemoveParasite(infectedHost, infectedHostIndex)
 		}
 	}
