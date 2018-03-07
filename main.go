@@ -56,7 +56,7 @@ func MakeParameterGrid() []Parameters {
 		parameterGrid[i].MutationSpeed = 50.0
 		parameterGrid[i].DeathSpeed = 5250.0
 
-		parameterGrid[i].Runs = 20000000
+		parameterGrid[i].Runs = 10000000
 	}
 
 	return parameterGrid
@@ -104,7 +104,7 @@ func RunMalariaModel(param Parameters) {
 
 	file.Close()
 
-	fmt.Println("This set of Parameters, done.", "\n It had the following parameters:", param, "\n It took intime:", modelTime, "\n It took:", endTime.Sub(startTime))
+	fmt.Println("This set of Parameters, done.", "\n It had the following parameters:", param, "\n It took intime:", modelTime, "\n It took realtime:", endTime.Sub(startTime))
 	fmt.Println(m.NHosts)
 
 	return
@@ -279,7 +279,7 @@ func (m *Malaria) CombineParasites(host int) {
 	nParasites := len(m.Antigens[host])
 	for antigen := 0; antigen < m.NAntigens; antigen++ {
 		antigenOrNewParasiteChoice := rand.Float64()
-		if antigenOrNewParasiteChoice > 0.5 {
+		if antigenOrNewParasiteChoice > 0.5 { // Pick randomly new antigens in the infected host.
 			m.Antigens[host][antigen] = m.Infections[host][nParasites-m.NAntigens+rand.Intn(m.NAntigens)]
 		}
 	}
