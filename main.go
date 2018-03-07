@@ -1,8 +1,10 @@
 /*
 	TODO:
 	- Make a delete function
-	- Write test for death method
-	- Write test for muation method
+	- Make a seperate model, where it is not possible to be infected, if it is immune to the first antigen in the parasite.
+	- Check if the parasite combination actually makes a difference.
+	- Make data saving and plotting a way you are satisfied with.
+	-
 */
 
 package main
@@ -11,7 +13,6 @@ import (
 	"fmt"
 	"math/rand"
 	"os"
-	"strconv"
 	"time"
 )
 
@@ -45,17 +46,17 @@ type Parameters struct {
 
 // MakeParameterGrid : Creates a parameter grid to search through. Also where settings a applied.
 func MakeParameterGrid() []Parameters {
-	gridsize := 5
+	gridsize := 1
 
 	parameterGrid := make([]Parameters, gridsize)
 
 	for i := 0; i < gridsize; i++ {
 		parameterGrid[i].InfectionSpeed = 1.0
-		parameterGrid[i].ImmunitySpeed = 10000.0 + 1000.0*float64(i)
-		parameterGrid[i].MutationSpeed = 0.0
-		parameterGrid[i].DeathSpeed = 1
+		parameterGrid[i].ImmunitySpeed = 11000.0
+		parameterGrid[i].MutationSpeed = 50.0
+		parameterGrid[i].DeathSpeed = 5250.0
 
-		parameterGrid[i].Runs = 5000000
+		parameterGrid[i].Runs = 20000000
 	}
 
 	return parameterGrid
@@ -80,16 +81,16 @@ func RunMalariaModel(param Parameters) {
 	modelTime := 0
 	startTime := time.Now()
 
-	filename := "text" + strconv.Itoa(int(param.ImmunitySpeed))
+	filename := "test" // + strconv.Itoa(int(param.ImmunitySpeed))
 	file, err := os.Create("data/" + filename + ".txt")
 	check(err)
 
 	m := ConstructMalariaStruct()
 	for run := 0; run < param.Runs; run++ {
 		m.EventHappens(param)
-		if run%10 == 0 {
+		if run%100 == 0 {
 			fmt.Fprintf(file, "%v \n", m.NInfectedHosts)
-			if run%100000 == 0 {
+			if run%1000000 == 0 {
 				fmt.Println(run)
 			}
 		}
@@ -313,34 +314,7 @@ func (m *Malaria) GetRandomInfectedHost() int {
 	return m.InfectedHosts[rand.Intn(m.NInfectedHosts)]
 }
 
-// SumSlice : Returns the sum a float64 slice.
-func SumSlice(X []float64) float64 {
-	sum := 0.0
-	for _, x := range X {
-		sum += x
-	}
-	return sum
-}
-
-func check(e error) {
-	if e != nil {
-		panic(e)
-	}
-}
-
-// Death : A person dies
-/*
-func (m *Malaria) Death() {
-	infectedOrHealthy := rand.Float64()
-	if infectedOrHealthy > 0.1 { // there is ~ ten times greater likelihood that an infected person dies than a completely random person dies.
-		host := m.InfectedHosts[rand.Intn(m.NInfectedHosts)]
-		m.Antigens[host] = append(m.Antigens[host][:0], m.Antigens[host][m.NAntigens+1:]...)
-
-		m.NInfectedHosts--
-	} else {
-		//host := rand.Intn(m.NHosts)
-
-	}
+// OtherKindOfImmunity : ...
+func (m *Malaria) OtherKindOfImmunity() {
 
 }
-*/
