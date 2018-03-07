@@ -9,7 +9,8 @@ plt.figure()
 plt.plot(testData / pop)
 plt.xlabel("Run")
 plt.ylabel("Infected")
-plt.yticks(np.arange(0, 1.01, 0.1))
+#plt.yticks(np.arange(0, max(), 0.1))
+plt.grid()
 figName = "plot" + str(len(glob.glob("/plots/*"))) + ".png"
 plt.savefig("plots/"+figName)
 

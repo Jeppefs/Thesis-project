@@ -1,10 +1,8 @@
 /*
 	TODO:
 	- Make a delete function
-	- Make a seperate model, where it is not possible to be infected, if it is immune to the first antigen in the parasite.
-	- Check if the parasite combination actually makes a difference.
 	- Make data saving and plotting a way you are satisfied with.
-	-
+	- Make it so that ModelSettings.Test actually do something
 */
 
 package main
@@ -34,17 +32,40 @@ type Malaria struct {
 	Antibodies [][]bool // The immunities for the antigens in each host.
 }
 
-// Parameters : Sets the parameters for a particular run.
+// Parameters : Sets the parameters for a particular run. These are all set before the simulation.
 type Parameters struct {
+	// Parameters used when calculating rates and probabilities for next event.
 	ImmunitySpeed  float64
 	InfectionSpeed float64
 	MutationSpeed  float64
 	DeathSpeed     float64
 
-	Runs int
+	// Other setting that changes the behaviour of the system
+	N               int
+	NAntigens       int
+	MaxAntigenValue int
 }
 
-// MakeParameterGrid : Creates a parameter grid to search through. Also where settings a applied.
+// ModelSettings : A structure that contains information about model settings such as
+type ModelSettings struct {
+	BurnIn bool
+	Test   bool
+	Runs   int
+}
+
+// MakeModelSetting : Constructs the ModelSettings struct, which sets how the data should be saved, if a burnin should exist and so on.
+func MakeModelSetting() ModelSettings {
+
+	var setting ModelSettings
+
+	setting.BurnIn = true
+	setting.Test = true
+	setting.Runs = 10000000
+
+	return setting
+}
+
+// MakeParameterGrid : Creates a parameter grid to search through. Also where settings as applied.
 func MakeParameterGrid() []Parameters {
 	gridsize := 1
 
@@ -52,11 +73,13 @@ func MakeParameterGrid() []Parameters {
 
 	for i := 0; i < gridsize; i++ {
 		parameterGrid[i].InfectionSpeed = 1.0
-		parameterGrid[i].ImmunitySpeed = 11000.0
-		parameterGrid[i].MutationSpeed = 50.0
-		parameterGrid[i].DeathSpeed = 5250.0
+		parameterGrid[i].ImmunitySpeed = 1.0
+		parameterGrid[i].MutationSpeed = 0.0
+		parameterGrid[i].DeathSpeed = 0.0
 
-		parameterGrid[i].Runs = 10000000
+		parameterGrid[i].N = 10000
+		parameterGrid[i].NAntigens = 1
+		parameterGrid[i].MaxAntigenValue = 10
 	}
 
 	return parameterGrid
@@ -71,38 +94,40 @@ func main() {
 // InitiateRunningModel : Starts the whole simulation and sets the parameter-grid.
 func InitiateRunningModel() {
 	parameterGrid := MakeParameterGrid()
+	setting := MakeModelSetting()
 	for i := 0; i < len(parameterGrid); i++ {
-		RunMalariaModel(parameterGrid[i])
+		RunMalariaModel(parameterGrid[i], setting)
 	}
 }
 
 // RunMalariaModel : Starts the run of the malaria model
-func RunMalariaModel(param Parameters) {
+func RunMalariaModel(param Parameters, setting ModelSettings) {
 	modelTime := 0
 	startTime := time.Now()
 
-	filename := "test" // + strconv.Itoa(int(param.ImmunitySpeed))
-	file, err := os.Create("data/" + filename + ".txt")
-	check(err)
+	if setting.Test {
+		filename := "test" // + strconv.Itoa(int(param.ImmunitySpeed))
+		file, err := os.Create("data/" + filename + ".txt")
+		defer file.Close()
+		check(err)
+	}
 
-	m := ConstructMalariaStruct()
-	for run := 0; run < param.Runs; run++ {
+	m := ConstructMalariaStruct(param)
+	for run := 0; run < setting.Runs; run++ {
 		m.EventHappens(param)
 		if run%100 == 0 {
-			fmt.Fprintf(file, "%v \n", m.NInfectedHosts)
+			//fmt.Fprintf(file, "%v \n", m.NInfectedHosts)
 			if run%1000000 == 0 {
 				fmt.Println(run)
 			}
 		}
 		if m.NInfectedHosts == 0 {
 			fmt.Println("Malaria is dead in", run, "runs")
-			fmt.Fprintf(file, "%v \n", m.NInfectedHosts)
+			//fmt.Fprintf(file, "%v \n", m.NInfectedHosts)
 			break
 		}
 	}
 	endTime := time.Now()
-
-	file.Close()
 
 	fmt.Println("This set of Parameters, done.", "\n It had the following parameters:", param, "\n It took intime:", modelTime, "\n It took realtime:", endTime.Sub(startTime))
 	fmt.Println(m.NHosts)
@@ -111,16 +136,15 @@ func RunMalariaModel(param Parameters) {
 }
 
 // ConstructMalariaStruct : Initiates a malaria struct and starts initial conditions.
-func ConstructMalariaStruct() Malaria {
+func ConstructMalariaStruct(param Parameters) Malaria {
 	var m Malaria
 
 	// Sets initial values.
 	m.NHosts = 10000 // Constant
 	m.NInfectedHosts = m.NHosts / 100
-	m.NAntigens = 3
+	m.NAntigens = param.NAntigens
 	m.NStrains = 1
-
-	m.MaxAntigenValue = 10
+	m.MaxAntigenValue = param.MaxAntigenValue
 
 	// Make initial antigens
 
@@ -197,7 +221,7 @@ func ChooseEvent(m *Malaria, param Parameters) int {
 // CalcRates : Calculates all the rates.
 func CalcRates(m *Malaria, param Parameters) []float64 {
 	r := make([]float64, 4)
-	r[0] = param.InfectionSpeed * float64(m.NInfectedHosts) * (float64(m.NHosts))
+	r[0] = param.InfectionSpeed * float64(m.NInfectedHosts)
 	r[1] = param.ImmunitySpeed * float64(m.NInfectedHosts)
 	r[2] = param.MutationSpeed * float64(m.NInfectedHosts)
 	r[3] = param.DeathSpeed * float64(m.NInfectedHosts)
