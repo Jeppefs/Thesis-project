@@ -115,6 +115,10 @@ func StartModel(param Parameters, setting ModelSettings) {
 
 	for burnIn := 0; burnIn < setting.BurnIn; burnIn++ {
 		m.EventHappens(param)
+		if m.NInfectedHosts == 0 {
+			fmt.Println("Malaria is dead in", burnIn, "runs. This Happened in burnin")
+			break
+		}
 	}
 
 	if setting.Test {
