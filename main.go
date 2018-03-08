@@ -3,6 +3,7 @@
 	- Make a delete function
 	- Make data saving and plotting a way you are satisfied with.
 	- Make it so that ModelSettings.Test actually do something.
+	- Maybe try to have a reproduction rate and production rate.
 */
 
 package main
@@ -30,6 +31,12 @@ type Malaria struct {
 	Antigens   [][]int8 // This is the antigens that person would spread to another person.
 	Infections [][]int8 // This is all the strains that infects a particular host.
 	Antibodies [][]bool // The immunities for the antigens in each host.
+
+	stat MalariaStatistics
+}
+
+// MalariaStatistics : Contains
+type MalariaStatistics struct {
 }
 
 // Parameters : Sets the parameters for a particular run. These are all set before the simulation.
@@ -48,7 +55,7 @@ type Parameters struct {
 
 // ModelSettings : A structure that contains information about model settings such as
 type ModelSettings struct {
-	BurnIn bool
+	BurnIn int
 	Test   bool
 	Runs   int
 }
@@ -58,22 +65,22 @@ func MakeModelSetting() ModelSettings {
 
 	var setting ModelSettings
 
-	setting.BurnIn = true
 	setting.Test = true
-	setting.Runs = 10000000
+	setting.Runs = 5000000
+	setting.BurnIn = 5000000
 
 	return setting
 }
 
 // MakeParameterGrid : Creates a parameter grid to search through. Also where settings as applied.
 func MakeParameterGrid() []Parameters {
-	gridsize := 1
+	gridsize := 100
 
 	parameterGrid := make([]Parameters, gridsize)
 
 	for i := 0; i < gridsize; i++ {
 		parameterGrid[i].InfectionSpeed = 1.0
-		parameterGrid[i].ImmunitySpeed = 1.0
+		parameterGrid[i].ImmunitySpeed = 1.1
 		parameterGrid[i].MutationSpeed = 0.0
 		parameterGrid[i].DeathSpeed = 0.0
 
@@ -96,42 +103,74 @@ func InitiateRunningModel() {
 	parameterGrid := MakeParameterGrid()
 	setting := MakeModelSetting()
 	for i := 0; i < len(parameterGrid); i++ {
-		RunMalariaModel(parameterGrid[i], setting)
+		StartModel(parameterGrid[i], setting)
 	}
 }
 
-// RunMalariaModel : Starts the run of the malaria model
-func RunMalariaModel(param Parameters, setting ModelSettings) {
+// StartModel : Starts the run of the malaria model
+func StartModel(param Parameters, setting ModelSettings) {
 	modelTime := 0
 	startTime := time.Now()
+	m := ConstructMalariaStruct(param)
 
-	if setting.Test {
-		filename := "test" // + strconv.Itoa(int(param.ImmunitySpeed))
-		file, err := os.Create("data/" + filename + ".txt")
-		defer file.Close()
-		check(err)
+	for burnIn := 0; burnIn < setting.BurnIn; burnIn++ {
+		m.EventHappens(param)
 	}
 
-	m := ConstructMalariaStruct(param)
+	if setting.Test {
+		m.RunModelWithSaving(param, setting)
+	} else {
+		m.RunModelWithoutSaving(param, setting)
+	}
+
+	endTime := time.Now()
+
+	fmt.Println("This set of Parameters, done.", "\n It had the following parameters:", param, "\n It took intime:", modelTime, "\n It took realtime:", endTime.Sub(startTime))
+	fmt.Println(m.NHosts)
+
+	return
+}
+
+// RunModelWithSaving :
+func (m *Malaria) RunModelWithSaving(param Parameters, setting ModelSettings) {
+
+	filename := "test" // + strconv.Itoa(int(param.ImmunitySpeed))
+	file, err := os.Create("data/" + filename + ".txt")
+	defer file.Close()
+	check(err)
+
 	for run := 0; run < setting.Runs; run++ {
 		m.EventHappens(param)
 		if run%100 == 0 {
-			//fmt.Fprintf(file, "%v \n", m.NInfectedHosts)
+			fmt.Fprintf(file, "%v \n", m.NInfectedHosts)
 			if run%1000000 == 0 {
 				fmt.Println(run)
 			}
 		}
 		if m.NInfectedHosts == 0 {
 			fmt.Println("Malaria is dead in", run, "runs")
-			//fmt.Fprintf(file, "%v \n", m.NInfectedHosts)
+			fmt.Fprintf(file, "%v \n", m.NInfectedHosts)
 			break
 		}
 	}
-	endTime := time.Now()
 
-	fmt.Println("This set of Parameters, done.", "\n It had the following parameters:", param, "\n It took intime:", modelTime, "\n It took realtime:", endTime.Sub(startTime))
-	fmt.Println(m.NHosts)
+	return
+}
 
+// RunModelWithoutSaving :
+func (m *Malaria) RunModelWithoutSaving(param Parameters, setting ModelSettings) {
+	for run := 0; run < setting.Runs; run++ {
+		m.EventHappens(param)
+		if run%100 == 0 {
+			if run%1000000 == 0 {
+				fmt.Println(run)
+			}
+		}
+		if m.NInfectedHosts == 0 {
+			fmt.Println("Malaria is dead in", run, "runs")
+			break
+		}
+	}
 	return
 }
 
