@@ -110,7 +110,20 @@ func TestMutation(t *testing.T) {
 	fmt.Println("Check if it has changed:", m.Antigens[1])
 }
 
-func TestCalcMeanVarAndSave() {
+func TestCalcMeanAndVar(t *testing.T) {
+	fmt.Println("Start Mean and Var test")
+	data := []float64{1.0, 2.0, 3.0, 4.0, 5.0}
+	mean, variance := CalcMeanAndVar(data)
+	if mean != 3.0 {
+		t.Fatalf("Mean incorrect")
+	}
+	if variance != 2.0 {
+		t.Fatalf("variance incorrect. Is: %f. Should be: %f", variance, 2.0)
+	}
+
+}
+
+func TestSaving(t *testing.T) {
 	fmt.Println("\n Testing Saving")
 	loadFileName := "testing/SaveInfo"
 	saveFileName := "testing/avgTesting"
