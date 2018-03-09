@@ -383,5 +383,13 @@ func (m *Malaria) GetRandomInfectedHost() int {
 
 // OtherKindOfImmunity : ...
 func (m *Malaria) OtherKindOfImmunity() {
+	return
+}
 
+//
+
+// CalcMeanVarAndSave : Calculates the mean and variance of date file, and saves the data
+func CalcMeanVarAndSave(loadFileName string, saveFileName string) {
+
+	return
 }

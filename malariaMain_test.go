@@ -110,6 +110,14 @@ func TestMutation(t *testing.T) {
 	fmt.Println("Check if it has changed:", m.Antigens[1])
 }
 
+func TestCalcMeanVarAndSave() {
+	fmt.Println("\n Testing Saving")
+	loadFileName := "testing/SaveInfo"
+	saveFileName := "testing/avgTesting"
+
+	CalcMeanVarAndSave(loadFileName, saveFileName)
+}
+
 func CreateDummyMalariaStruct() Malaria {
 	var m Malaria
 
