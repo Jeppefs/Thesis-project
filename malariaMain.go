@@ -56,8 +56,10 @@ type Parameters struct {
 // ModelSettings : A structure that contains information about model settings such as
 type ModelSettings struct {
 	BurnIn int
-	Test   bool
 	Runs   int
+
+	Test                    bool
+	AppendToCurrentDataFile bool
 }
 
 // MakeModelSetting : Constructs the ModelSettings struct, which sets how the data should be saved, if a burnin should exist and so on.
@@ -143,7 +145,8 @@ func (m *Malaria) RunModelWithSaving(param Parameters, setting ModelSettings) {
 	defer file.Close()
 	check(err)
 
-	for run := 0; run < setting.Runs; run++ {
+	run := 0
+	for run = 0; run < setting.Runs; run++ {
 		m.EventHappens(param)
 		if run%100 == 0 {
 			fmt.Fprintf(file, "%v \n", m.NInfectedHosts)
@@ -157,6 +160,8 @@ func (m *Malaria) RunModelWithSaving(param Parameters, setting ModelSettings) {
 			break
 		}
 	}
+
+	SaveToEndFile("test.txt", "avg.txt", run, param)
 
 	return
 }
@@ -383,13 +388,5 @@ func (m *Malaria) GetRandomInfectedHost() int {
 
 // OtherKindOfImmunity : ...
 func (m *Malaria) OtherKindOfImmunity() {
-	return
-}
-
-//
-
-// CalcMeanVarAndSave : Calculates the mean and variance of date file, and saves the data
-func CalcMeanVarAndSave(loadFileName string, saveFileName string) {
-
 	return
 }

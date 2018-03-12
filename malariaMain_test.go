@@ -125,10 +125,13 @@ func TestCalcMeanAndVar(t *testing.T) {
 
 func TestSaving(t *testing.T) {
 	fmt.Println("\n Testing Saving")
-	loadFileName := "testing/SaveInfo"
-	saveFileName := "testing/avgTesting"
+	loadFileName := "testing/SaveInfo.txt"
+	saveFileName := "testing/avgTesting.txt"
 
-	CalcMeanVarAndSave(loadFileName, saveFileName)
+	var param Parameters
+
+	SaveToEndFile(loadFileName, saveFileName, 5, param)
+
 }
 
 func CreateDummyMalariaStruct() Malaria {
