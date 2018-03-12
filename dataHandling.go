@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
-	"reflect"
 	"strconv"
 )
 
@@ -13,7 +12,7 @@ func SaveToEndFile(loadFileName string, saveFileName string, run int, param Para
 	data, err := ioutil.ReadFile(loadFileName)
 	check(err)
 
-	fmt.Println(data, reflect.TypeOf(data))
+	//fmt.Println(data, reflect.TypeOf(data))
 
 	stringData := string(data)
 
@@ -41,7 +40,7 @@ func SaveToEndFile(loadFileName string, saveFileName string, run int, param Para
 
 	mean, variance := CalcMeanAndVar(d)
 
-	fmt.Println(mean)
+	//fmt.Println(mean)
 	fmt.Fprintf(file, "%v %f %f %f %f %f \n", run, mean, variance, param.InfectionSpeed, param.DeathSpeed, param.ImmunitySpeed)
 
 	return

@@ -42,8 +42,8 @@ type MalariaStatistics struct {
 // Parameters : Sets the parameters for a particular run. These are all set before the simulation.
 type Parameters struct {
 	// Parameters used when calculating rates and probabilities for next event.
-	ImmunitySpeed  float64
 	InfectionSpeed float64
+	ImmunitySpeed  float64
 	MutationSpeed  float64
 	DeathSpeed     float64
 
@@ -60,6 +60,8 @@ type ModelSettings struct {
 
 	Test                    bool
 	AppendToCurrentDataFile bool
+
+	CurrentDataFile string
 }
 
 // MakeModelSetting : Constructs the ModelSettings struct, which sets how the data should be saved, if a burnin should exist and so on.
@@ -67,9 +69,13 @@ func MakeModelSetting() ModelSettings {
 
 	var setting ModelSettings
 
-	setting.Test = true
 	setting.Runs = 5000000
 	setting.BurnIn = 5000000
+
+	setting.Test = true
+	setting.AppendToCurrentDataFile = true
+
+	setting.CurrentDataFile = "data/avgFile2.txt"
 
 	return setting
 }
@@ -81,10 +87,10 @@ func MakeParameterGrid() []Parameters {
 	parameterGrid := make([]Parameters, gridsize)
 
 	for i := 0; i < gridsize; i++ {
-		parameterGrid[i].InfectionSpeed = 1.0
-		parameterGrid[i].ImmunitySpeed = 1.1
+		parameterGrid[i].InfectionSpeed = 0.97 //+ float64(i)/1000.0
+		parameterGrid[i].ImmunitySpeed = 1.0
 		parameterGrid[i].MutationSpeed = 0.0
-		parameterGrid[i].DeathSpeed = 0.0
+		parameterGrid[i].DeathSpeed = 0.9 + float64(i)/500.0
 
 		parameterGrid[i].N = 10000
 		parameterGrid[i].NAntigens = 3
@@ -105,12 +111,15 @@ func InitiateRunningModel() {
 	parameterGrid := MakeParameterGrid()
 	setting := MakeModelSetting()
 	for i := 0; i < len(parameterGrid); i++ {
-		StartModel(parameterGrid[i], setting)
+		run := StartModel(parameterGrid[i], setting)
+		if setting.AppendToCurrentDataFile {
+			SaveToEndFile("data/test.txt", setting.CurrentDataFile, run, parameterGrid[i])
+		}
 	}
 }
 
 // StartModel : Starts the run of the malaria model
-func StartModel(param Parameters, setting ModelSettings) {
+func StartModel(param Parameters, setting ModelSettings) int {
 	modelTime := 0
 	startTime := time.Now()
 	m := ConstructMalariaStruct(param)
@@ -123,10 +132,13 @@ func StartModel(param Parameters, setting ModelSettings) {
 		}
 	}
 
-	if setting.Test {
-		m.RunModelWithSaving(param, setting)
-	} else {
-		m.RunModelWithoutSaving(param, setting)
+	var run int
+	if m.NInfectedHosts != 0 {
+		if setting.Test {
+			run = m.RunModelWithSaving(param, setting)
+		} else {
+			run = m.RunModelWithoutSaving(param, setting)
+		}
 	}
 
 	endTime := time.Now()
@@ -134,11 +146,11 @@ func StartModel(param Parameters, setting ModelSettings) {
 	fmt.Println("This set of Parameters, done.", "\n It had the following parameters:", param, "\n It took intime:", modelTime, "\n It took realtime:", endTime.Sub(startTime))
 	fmt.Println(m.NHosts)
 
-	return
+	return run
 }
 
 // RunModelWithSaving :
-func (m *Malaria) RunModelWithSaving(param Parameters, setting ModelSettings) {
+func (m *Malaria) RunModelWithSaving(param Parameters, setting ModelSettings) int {
 
 	filename := "test" // + strconv.Itoa(int(param.ImmunitySpeed))
 	file, err := os.Create("data/" + filename + ".txt")
@@ -161,14 +173,14 @@ func (m *Malaria) RunModelWithSaving(param Parameters, setting ModelSettings) {
 		}
 	}
 
-	SaveToEndFile("test.txt", "avg.txt", run, param)
-
-	return
+	return run
 }
 
 // RunModelWithoutSaving :
-func (m *Malaria) RunModelWithoutSaving(param Parameters, setting ModelSettings) {
-	for run := 0; run < setting.Runs; run++ {
+func (m *Malaria) RunModelWithoutSaving(param Parameters, setting ModelSettings) int {
+
+	run := 0
+	for run = 0; run < setting.Runs; run++ {
 		m.EventHappens(param)
 		if run%100 == 0 {
 			if run%1000000 == 0 {
@@ -180,7 +192,8 @@ func (m *Malaria) RunModelWithoutSaving(param Parameters, setting ModelSettings)
 			break
 		}
 	}
-	return
+
+	return run
 }
 
 // ConstructMalariaStruct : Initiates a malaria struct and starts initial conditions.
