@@ -130,6 +130,11 @@ func TestSaving(t *testing.T) {
 
 	var param Parameters
 
+	param.InfectionSpeed = 1.0
+	param.ImmunitySpeed = 1.0
+	param.MutationSpeed = 0.0
+	param.DeathSpeed = 2.0
+
 	SaveToEndFile(loadFileName, saveFileName, 5, param)
 
 }
