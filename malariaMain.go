@@ -13,6 +13,12 @@ import (
 	"time"
 )
 
+func main() {
+	fmt.Println("Starting")
+	InitiateRunningModel()
+	fmt.Println("The end. Congrats!")
+}
+
 // Malaria : .
 type Malaria struct {
 	// Counts
@@ -24,13 +30,18 @@ type Malaria struct {
 	MaxAntigenValue int // The maximum number an antigen can have
 
 	InfectedHosts []int // A list of hosts that are infected by one or more malaria strains
-	Lookout       []int // This is the current antigen index which they a looking to immunize against. When the immunization method is chosen, this is the point where it checks if is immune and get immunity towards if it isnt't.
 
-	Antigens   [][]int8 // This is the antigens that person would spread to another person.
-	Infections [][]int8 // This is all the strains that infects a particular host.
-	Antibodies [][]bool // The immunities for the antigens in each host.
+	Hosts []Host // An array which contains the host struct. Each value in the array is a single slice.
+}
 
-	stat MalariaStatistics
+// Host : Contains information about a host/person
+type Host struct {
+	Lookout    int
+	IsInfected bool
+
+	ExpressedStrain []int8 // The strain which another person will be infected with.
+	Infections      []int8 // The strains that are currently infecting a host.
+	Antibodies      []bool // An array of the antigens that a host is immune to.
 }
 
 // MalariaStatistics : Contains
@@ -96,12 +107,6 @@ func MakeParameterGrid() []Parameters {
 	}
 
 	return parameterGrid
-}
-
-func main() {
-	fmt.Println("Starting")
-	InitiateRunningModel()
-	fmt.Println("The end. Congrats!")
 }
 
 // InitiateRunningModel : Starts the whole simulation and sets the parameter-grid.
