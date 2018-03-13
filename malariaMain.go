@@ -75,7 +75,7 @@ func MakeModelSetting() ModelSettings {
 	setting.Test = true
 	setting.AppendToCurrentDataFile = true
 
-	setting.CurrentDataFile = "data/avgFile2.txt"
+	setting.CurrentDataFile = "data/avgFile4.txt"
 
 	return setting
 }
@@ -90,11 +90,11 @@ func MakeParameterGrid() []Parameters {
 		parameterGrid[i].InfectionSpeed = 0.97 //+ float64(i)/1000.0
 		parameterGrid[i].ImmunitySpeed = 1.0
 		parameterGrid[i].MutationSpeed = 0.0
-		parameterGrid[i].DeathSpeed = 0.9 + float64(i)/500.0
+		parameterGrid[i].DeathSpeed = float64(i) / 10000.0
 
 		parameterGrid[i].N = 10000
 		parameterGrid[i].NAntigens = 3
-		parameterGrid[i].MaxAntigenValue = 10
+		parameterGrid[i].MaxAntigenValue = 100
 	}
 
 	return parameterGrid

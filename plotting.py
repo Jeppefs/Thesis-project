@@ -15,14 +15,14 @@ def MakeTimeLinePlot(fileName):
 def MakeAveragePlot(fileName):
     plt.figure()
     avgData = np.loadtxt("data/" + fileName)
-    plt.plot(avgData[:,3], avgData[:,0], '.-')
+    plt.plot(avgData[:,4], avgData[:,0], '.')
     figName = fileName[0:-3] + ".png"
     plt.savefig("plots/"+figName)
 
 testData = np.loadtxt("data/test.txt")
 pop = 10000
 
-MakeAveragePlot("avgFile1.txt")
+MakeAveragePlot("avgFile4.txt")
 
 
 plt.show()
