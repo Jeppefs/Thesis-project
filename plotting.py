@@ -3,6 +3,8 @@ import matplotlib.pyplot as plt
 import glob as glob
 
 def MakeTimeLinePlot(fileName):
+    global pop
+    testData = np.loadtxt("data/" + fileName)
     plt.figure()
     plt.plot(testData / pop)
     plt.xlabel("Run")
@@ -16,13 +18,18 @@ def MakeAveragePlot(fileName):
     plt.figure()
     avgData = np.loadtxt("data/" + fileName)
     plt.plot(avgData[:,4], avgData[:,0], '.')
+    plt.xlabel(str())
+    plt.ylabel("Extinction time:")
     figName = fileName[0:-3] + ".png"
     plt.savefig("plots/"+figName)
 
-testData = np.loadtxt("data/test.txt")
+
 pop = 10000
 
-MakeAveragePlot("avgFile4.txt")
+#MakeTimeLinePlot("test.txt")
+
+#MakeAveragePlot("avgFile4.txt")
+
 
 
 plt.show()
