@@ -325,64 +325,76 @@ func (m *Malaria) GetSpreadToAndSpreadFrom() (int, int) {
 }
 
 // InfectHost :
-func (toHost *Host) InfectHost(fromHost *Host, NAntigens int) {
+func (h *Host) InfectHost(fromHost *Host, NAntigens int) {
 	// Check if the person spreading to has any infections. If false make him sick. If true append the parasite.
-	if toHost.IsInfected {
+	if h.IsInfected {
 		for antigen := 0; antigen < NAntigens; antigen++ {
-			toHost.Infections = append(toHost.Infections, fromHost.ExpressedStrain[antigen])
+			h.Infections = append(h.Infections, fromHost.ExpressedStrain[antigen])
 		}
-		toHost.CombineParasites(NAntigens)
+		h.CombineParasites(NAntigens)
 	} else {
 		for antigen := 0; antigen < NAntigens; antigen++ {
-			toHost.Infections = append(toHost.Infections, fromHost.ExpressedStrain[antigen])
-			toHost.ExpressedStrain[antigen] = fromHost.ExpressedStrain[antigen]
+			h.Infections = append(h.Infections, fromHost.ExpressedStrain[antigen])
+			h.ExpressedStrain[antigen] = fromHost.ExpressedStrain[antigen]
 		}
 	}
 	return
 }
 
 // CombineParasites : When a host becomes infected with another parasite (so it is inficted buy mulitple parasites), it has a combination
-func (toHost *Host) CombineParasites(NAntigens int) {
+func (h *Host) CombineParasites(NAntigens int) {
 	for antigen := 0; antigen < NAntigens; antigen++ {
 		antigenOrNewParasiteChoice := rand.Float32()
 		if antigenOrNewParasiteChoice > 0.5 { // Pick randomly new antigens in the infected host.
-			toHost.ExpressedStrain[antigen] = toHost.Infections[rand.Intn(len(toHost.Infections))]
+			h.ExpressedStrain[antigen] = h.Infections[rand.Intn(len(h.Infections))]
 		}
 	}
 	return
 }
 
-/*
 // ImmunityGained : An infected person get immunity from one strain. If that one already exist, the parasite dies.
 func (m *Malaria) ImmunityGained() {
 	infectedHostIndex := rand.Intn(m.NInfectedHosts)
 	infectedHost := m.InfectedHosts[infectedHostIndex]
-	if m.Hosts[infectedHost].Antibodies[m.Hosts[infectedHost].Infections[m.Hosts[infectedHost].Lookout]] { // If immune remove parasite.
-		m.RemoveParasite(infectedHost, infectedHostIndex)
+
+	m.Hosts[infectedHost].GiveHostAntibody(m.NAntigens)
+
+	if m.Hosts[infectedHost].IsInfected {
+		m.NInfectedHosts--
+		m.InfectedHosts = append(m.InfectedHosts[:infectedHostIndex], m.InfectedHosts[infectedHostIndex+1:]...)
+	}
+
+	return
+}
+
+// GiveHostAntibody : Gives the host an antibody for its current lookout in the antigens. Also send to RemoveParaiste method if removal should happen
+func (h *Host) GiveHostAntibody(NAntigens int) {
+	if h.Antibodies[h.Infections[h.Lookout]] {
+		h.RemoveParasite(NAntigens)
 	} else {
 		// If at end, make him healthy
 		// Make immunity in the hosts antibody and set the lookout one up
-		m.Hosts[infectedHost].Antibodies[m.Hosts[infectedHost].Infections[m.Hosts[infectedHost].Lookout]] = true
-		m.Hosts[infectedHost].Lookout++
-		if m.Lookout[infectedHost] >= m.NAntigens {
-			m.RemoveParasite(infectedHost, infectedHostIndex)
+		h.Antibodies[h.Infections[h.Lookout]] = true
+		h.Lookout++
+		if h.Lookout >= NAntigens {
+			h.RemoveParasite(NAntigens)
 		}
 	}
 	return
 }
 
 // RemoveParasite :  Removes a parasite from a host after immunization
-func (m *Malaria) RemoveParasite(host int, infectedHostIndex int) {
-	m.Infections[host] = append(m.Infections[host][:0], m.Infections[host][m.NAntigens:]...) // Delete the parasite eg. the three first antigens in the infected host.
-	if len(m.Infections[host]) == 0 {                                                        // If the last parasite of the host dies, then that host is not infectious anymore.
-		m.Antigens[host] = append(m.Antigens[host][:0], m.Antigens[host][m.NAntigens:]...)
-		m.NInfectedHosts--
-		m.InfectedHosts = append(m.InfectedHosts[:infectedHostIndex], m.InfectedHosts[infectedHostIndex+1:]...)
+func (h *Host) RemoveParasite(NAntigens int) {
+	h.Infections = append(h.Infections[:0], h.Infections[NAntigens:]...)
+	if len(h.Infections) == 0 { // If the last parasite of the host dies, then that host is not infected anymore.
+		h.ExpressedStrain = append(h.ExpressedStrain[:0], h.ExpressedStrain[NAntigens:]...)
+		h.IsInfected = false
 	}
-	m.Lookout[host] = 0
+	h.Lookout = 0
 	return
 }
 
+/*
 
 
 // MutateParasite : Changes a single antigen in a host to a new random one.
