@@ -91,7 +91,7 @@ func MakeModelSetting() ModelSettings {
 
 // MakeParameterGrid : Creates a parameter grid to search through. Also where settings as applied.
 func MakeParameterGrid() []Parameters {
-	gridsize := 10
+	gridsize := 1
 
 	parameterGrid := make([]Parameters, gridsize)
 
@@ -210,28 +210,13 @@ func ConstructMalariaStruct(param Parameters) Malaria {
 	m.NStrains = 1
 	m.MaxAntigenValue = param.MaxAntigenValue
 
-	// Make initial antigens
-
-	m.Antigens = make([][]int8, m.NHosts)
+	m.Hosts = make([]Host, m.NHosts)
 	for host := 0; host < m.NHosts; host++ {
-		m.Antigens[host] = make([]int8, m.NAntigens)
-		for antigen := 0; antigen < m.NAntigens; antigen++ {
-			m.Antigens[host][antigen] = int8(rand.Intn(m.MaxAntigenValue))
+		if host < m.NInfectedHosts {
+			m.Hosts[host] = MakeHost(true, m.NAntigens, m.MaxAntigenValue)
+		} else {
+			m.Hosts[host] = MakeHost(false, m.NAntigens, m.MaxAntigenValue)
 		}
-	}
-
-	// Make initial infections
-	m.Infections = make([][]int8, m.NHosts)
-	for host := 0; host < m.NInfectedHosts; host++ {
-		m.Infections[host] = make([]int8, m.NAntigens)
-		for antigen := 0; antigen < m.NAntigens; antigen++ {
-			m.Infections[host][antigen] = m.Antigens[host][antigen]
-		}
-	}
-	// Make initial immunities
-	m.Antibodies = make([][]bool, m.NHosts)
-	for host := 0; host < m.NHosts; host++ {
-		m.Antibodies[host] = make([]bool, m.MaxAntigenValue)
 	}
 
 	m.InfectedHosts = make([]int, m.NInfectedHosts)
@@ -239,11 +224,31 @@ func ConstructMalariaStruct(param Parameters) Malaria {
 		m.InfectedHosts[host] = host
 	}
 
-	m.Lookout = make([]int, m.NHosts)
-
 	//fmt.Println(m.Antigens, "\n", m.Infections, "\n", m.Antibodies, "\n")
 	return m
+}
 
+// MakeHost : Make a host in the hoststruct
+func MakeHost(infected bool, NAntigens int, MaxAntigenValue int) Host {
+	var h Host
+
+	h.Lookout = 0
+	h.ExpressedStrain = make([]int8, NAntigens)
+	h.Antibodies = make([]bool, MaxAntigenValue)
+
+	if infected {
+		h.IsInfected = true
+		h.Infections = make([]int8, NAntigens)
+		for antigen := 0; antigen < MaxAntigenValue; antigen++ {
+			h.ExpressedStrain[antigen] = int8(rand.Intn(MaxAntigenValue))
+			h.Infections[antigen] = h.ExpressedStrain[antigen]
+		}
+
+	} else {
+		h.IsInfected = false
+	}
+
+	return h
 }
 
 // EventHappens : ...
