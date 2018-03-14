@@ -84,7 +84,7 @@ func MakeModelSetting() ModelSettings {
 	setting.Test = true
 	setting.AppendToCurrentDataFile = true
 
-	setting.CurrentDataFile = "data/avgFile5.txt"
+	setting.CurrentDataFile = "data/avgFile6.txt"
 
 	return setting
 }
@@ -253,17 +253,18 @@ func MakeHost(infected bool, NAntigens int, MaxAntigenValue int) Host {
 // EventHappens : ...
 func (m *Malaria) EventHappens(param Parameters) {
 	event := ChooseEvent(m, param)
+	m.CheckIfAllInfectedHasInfection()
 	switch event {
 	case 0:
 		m.Spread()
-		/*
-			case 1:
-				m.ImmunityGained()
-			case 2:
-				m.MutateParasite(m.GetRandomInfectedHost())
-			case 3:
-				m.Death()
-		*/
+	case 1:
+		m.ImmunityGained()
+	case 2:
+		host, _ := m.GetRandomInfectedHost()
+		m.MutateParasite(host)
+	case 3:
+		m.Death()
+
 	}
 
 	return
@@ -308,6 +309,7 @@ func (m *Malaria) Spread() {
 	if spreadTo == spreadFrom {
 		return
 	}
+	// If the target is not currently infected put him on the infected list and add to the number of incfected
 	if m.Hosts[spreadTo].IsInfected == false {
 		m.NInfectedHosts++
 		m.InfectedHosts = append(m.InfectedHosts, spreadTo)
@@ -370,6 +372,7 @@ func (m *Malaria) ImmunityGained() {
 
 // GiveHostAntibody : Gives the host an antibody for its current lookout in the antigens. Also send to RemoveParaiste method if removal should happend
 func (h *Host) GiveHostAntibody(NAntigens int) {
+	fmt.Println(h.Infections, h.Lookout)
 	if h.Lookout > NAntigens-1 { //-1 because NAntigens is one larger than lookout because of 0 indexing
 		h.RemoveParasite(NAntigens)
 	} else if h.Antibodies[h.Infections[h.Lookout]] {
@@ -387,26 +390,15 @@ func (h *Host) GiveHostAntibody(NAntigens int) {
 func (h *Host) RemoveParasite(NAntigens int) {
 	h.Infections = append(h.Infections[:0], h.Infections[NAntigens:]...)
 	if len(h.Infections) == 0 { // If the last parasite of the host dies, then that host is not infected anymore.
-		h.ExpressedStrain = append(h.ExpressedStrain[:0], h.ExpressedStrain[NAntigens:]...)
 		h.IsInfected = false
 	}
 	h.Lookout = 0
 	return
 }
 
-/*
-// MutateParasite : Changes a single antigen in a host to a new random one.
-func (m *Malaria) MutateParasite(host int) {
-	randomAntigen := rand.Intn(m.NAntigens)
-	m.Antigens[host][randomAntigen] = int8(rand.Intn(m.MaxAntigenValue))
-	return
-}
-*/
-
 // Death : Kills a host removing it from the system and adding a new one.
 func (m *Malaria) Death() {
-	hostIndex := rand.Intn(m.NInfectedHosts)
-	host := m.InfectedHosts[hostIndex]
+	host, hostIndex := m.GetRandomInfectedHost()
 
 	m.Hosts[host].Die(m.NAntigens, m.MaxAntigenValue)
 
@@ -427,7 +419,25 @@ func (h *Host) Die(NAntigens int, MaxAntigenValue int) {
 
 }
 
+// MutateParasite : Changes a single antigen in a host to a new random one.
+func (m *Malaria) MutateParasite(host int) {
+	randomAntigen := rand.Intn(m.NAntigens)
+	m.Hosts[host].ExpressedStrain[randomAntigen] = int8(rand.Intn(m.MaxAntigenValue))
+	return
+}
+
 // GetRandomInfectedHost :
-func (m *Malaria) GetRandomInfectedHost() int {
-	return m.InfectedHosts[rand.Intn(m.NInfectedHosts)]
+func (m *Malaria) GetRandomInfectedHost() (int, int) {
+	hostIndex := rand.Intn(m.NInfectedHosts)
+	host := m.InfectedHosts[hostIndex]
+	return host, hostIndex
+}
+
+func (m *Malaria) CheckIfAllInfectedHasInfection() {
+	for _, host := range m.InfectedHosts {
+		if len(m.Hosts[host].Infections) == 0 {
+			fmt.Println("Warning")
+		}
+	}
+
 }

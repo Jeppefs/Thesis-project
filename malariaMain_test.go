@@ -60,30 +60,9 @@ func TestDeath(t *testing.T) {
 		}
 	}
 
-	fmt.Println(m.Hosts[0])
+	fmt.Println(m.Hosts[0], m.InfectedHosts)
 }
 
-/*
-func TestMutation(t *testing.T) {
-	fmt.Println("\n Testing Mutation")
-	m := CreateMalariaStructDummy()
-	fmt.Println("Check how it looks:", m.Antigens[0])
-	m.MutateParasite(0)
-	fmt.Println("Check if it has changed:", m.Antigens[0])
-
-	fmt.Println("Check how it looks:", m.Antigens[1])
-	m.MutateParasite(1)
-	fmt.Println("Check if it has changed:", m.Antigens[1])
-
-	fmt.Println("Check how it looks:", m.Antigens[1])
-	m.MutateParasite(1)
-	fmt.Println("Check if it has changed:", m.Antigens[1])
-
-	fmt.Println("Check how it looks:", m.Antigens[1])
-	m.MutateParasite(1)
-	fmt.Println("Check if it has changed:", m.Antigens[1])
-}
-*/
 func TestCalcMeanAndVar(t *testing.T) {
 	fmt.Println("Start Mean and Var test")
 	data := []float64{1.0, 2.0, 3.0, 4.0, 5.0}
