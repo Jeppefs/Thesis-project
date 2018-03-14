@@ -256,14 +256,15 @@ func (m *Malaria) EventHappens(param Parameters) {
 	case 0:
 		m.Spread()
 		/*
-	case 1:
-		m.ImmunityGained()
-	case 2:
-		m.MutateParasite(m.GetRandomInfectedHost())
-	case 3:
-		m.Death()
+			case 1:
+				m.ImmunityGained()
+			case 2:
+				m.MutateParasite(m.GetRandomInfectedHost())
+			case 3:
+				m.Death()
+		*/
 	}
-	*/
+
 	return
 }
 
@@ -306,7 +307,12 @@ func (m *Malaria) Spread() {
 	if spreadTo == spreadFrom {
 		return
 	}
-	m.InfectHost(spreadTo, spreadFrom)
+	if m.Hosts[spreadTo].IsInfected == false {
+		m.NInfectedHosts++
+		m.InfectedHosts = append(m.InfectedHosts, spreadTo)
+	}
+
+	m.Hosts[spreadTo].InfectHost(&m.Hosts[spreadFrom], m.NAntigens)
 
 	return
 }
@@ -319,32 +325,28 @@ func (m *Malaria) GetSpreadToAndSpreadFrom() (int, int) {
 }
 
 // InfectHost :
-func (m *Malaria) InfectHost(spreadTo int, spreadFrom int) {
+func (toHost *Host) InfectHost(fromHost *Host, NAntigens int) {
 	// Check if the person spreading to has any infections. If false make him sick. If true append the parasite.
-	if m.Hosts[spreadTo].IsInfected {
-		for i := 0; i < m.NAntigens; i++ {
-			m.Hosts[spreadTo].Infections = append(m.Hosts[spreadTo].Infections, m.Hosts[spreadFrom].ExpressedStrain[i])
+	if toHost.IsInfected {
+		for antigen := 0; antigen < NAntigens; antigen++ {
+			toHost.Infections = append(toHost.Infections, fromHost.ExpressedStrain[antigen])
 		}
-		m.CombineParasites(spreadTo)
+		toHost.CombineParasites(NAntigens)
 	} else {
-		for antigenSpot := 0; antigenSpot < m.NAntigens; antigenSpot++ {
-			m.Hosts[spreadTo].Infections = append(m.Hosts[spreadTo].Infections, m.Hosts[spreadFrom].ExpressedStrain[antigenSpot])
-			m.Hosts[spreadTo].ExpressedStrain[antigenSpot] = m.Hosts[spreadFrom].ExpressedStrain[antigenSpot]
+		for antigen := 0; antigen < NAntigens; antigen++ {
+			toHost.Infections = append(toHost.Infections, fromHost.ExpressedStrain[antigen])
+			toHost.ExpressedStrain[antigen] = fromHost.ExpressedStrain[antigen]
 		}
-		m.NInfectedHosts++
-		m.Hosts[spreadTo].IsInfected = true
-		m.InfectedHosts = append(m.InfectedHosts, spreadTo)
 	}
 	return
 }
 
 // CombineParasites : When a host becomes infected with another parasite (so it is inficted buy mulitple parasites), it has a combination
-func (m *Malaria) CombineParasites(host int) {
-	nParasites := len(m.Antigens[host])
-	for antigen := 0; antigen < m.NAntigens; antigen++ {
-		antigenOrNewParasiteChoice := rand.Float64()
+func (toHost *Host) CombineParasites(NAntigens int) {
+	for antigen := 0; antigen < NAntigens; antigen++ {
+		antigenOrNewParasiteChoice := rand.Float32()
 		if antigenOrNewParasiteChoice > 0.5 { // Pick randomly new antigens in the infected host.
-			m.Antigens[host][antigen] = m.Infections[host][nParasites-m.NAntigens+rand.Intn(m.NAntigens)]
+			toHost.ExpressedStrain[antigen] = toHost.Infections[rand.Intn(len(toHost.Infections))]
 		}
 	}
 	return
