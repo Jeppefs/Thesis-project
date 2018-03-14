@@ -17,11 +17,22 @@ func TestStructCreation(t *testing.T) {
 	return
 }
 
-/*
 func TestEventChoosing(t *testing.T) {
 	//m := CreateMalariaStructDummy()
 }
 
+func TestInfectHost(t *testing.T) {
+	fmt.Println("\n Testing spread")
+	m := CreateMalariaStructDummy(ConstructParameterDummy(5, 3, 5), 2)
+	m.Hosts[2].InfectHost(&m.Hosts[0], m.NAntigens)
+	fmt.Println("Infections:", m.Hosts[2].Infections, "\n ExpressedStrain:", m.Hosts[2].ExpressedStrain)
+	m.Hosts[1].InfectHost(&m.Hosts[0], m.NAntigens)
+	fmt.Println("\n Infections:", m.Hosts[1].Infections, "\n ExpressedStrain:", m.Hosts[1].ExpressedStrain)
+	m.Hosts[1].InfectHost(&m.Hosts[0], m.NAntigens)
+	fmt.Println("\n Infections:", m.Hosts[1].Infections, "\n ExpressedStrain:", m.Hosts[1].ExpressedStrain)
+}
+
+/*
 func TestImmunity(t *testing.T) {
 	fmt.Println("\n Testing immunity")
 	m := CreateMalariaStructDummy()
@@ -48,23 +59,6 @@ func TestImmunity(t *testing.T) {
 	m.ImmunityGained()
 	if m.Antibodies[host][m.Antigens[host][0]] != true {
 		fmt.Println("Error in ImmunityGained")
-	}
-
-}
-
-func TestSpread(t *testing.T) {
-	fmt.Println("\n Testing spread")
-	m := CreateMalariaStructDummy()
-	m.InfectHost(2, 0)
-	fmt.Println("Infections:", m.Infections, "Antigens \n:", m.Antigens)
-	m.InfectHost(2, 1)
-	fmt.Println("\n Infections:", m.Infections, "\n Antigens:", m.Antigens)
-
-	if m.NInfectedHosts != 3 {
-		fmt.Println("Error in Spread, m.NInfectedHosts incorrect. Is:", m.NInfectedHosts)
-	}
-	if m.InfectedHosts[2] != 2 && len(m.InfectedHosts) == 3 {
-		fmt.Println("Error in Spread, m.InfectedHosts incorrect")
 	}
 
 }
