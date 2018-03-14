@@ -25,7 +25,6 @@ type Malaria struct {
 	NHosts         int // How many potential hosts there are in the system
 	NInfectedHosts int // The number of infected hosts
 	NAntigens      int // The number of antigens a single parasite consists of
-	NStrains       int // The number of different kind of parasites
 
 	MaxAntigenValue int // The maximum number an antigen can have
 
@@ -57,7 +56,7 @@ type Parameters struct {
 	DeathSpeed     float64
 
 	// Other setting that changes the behaviour of the system
-	N               int
+	NHosts          int
 	NAntigens       int
 	MaxAntigenValue int
 }
@@ -101,7 +100,7 @@ func MakeParameterGrid() []Parameters {
 		parameterGrid[i].MutationSpeed = 0.0
 		parameterGrid[i].DeathSpeed = 0.0050
 
-		parameterGrid[i].N = 10000
+		parameterGrid[i].NHosts = 10000
 		parameterGrid[i].NAntigens = 3
 		parameterGrid[i].MaxAntigenValue = 10
 	}
@@ -204,10 +203,9 @@ func ConstructMalariaStruct(param Parameters) Malaria {
 	var m Malaria
 
 	// Sets initial values.
-	m.NHosts = 10000 // Constant
+	m.NHosts = param.NHosts // Constant
 	m.NInfectedHosts = m.NHosts / 100
 	m.NAntigens = param.NAntigens
-	m.NStrains = 1
 	m.MaxAntigenValue = param.MaxAntigenValue
 
 	m.Hosts = make([]Host, m.NHosts)
@@ -342,13 +340,13 @@ func (m *Malaria) InfectHost(spreadTo int, spreadFrom int) {
 func (m *Malaria) ImmunityGained() {
 	infectedHostIndex := rand.Intn(m.NInfectedHosts)
 	infectedHost := m.InfectedHosts[infectedHostIndex]
-	if m.Antibodies[infectedHost][m.Antigens[infectedHost][m.Lookout[infectedHost]]] { // If immune remove parasite.
+	if m.Hosts[infectedHost].Antibodies[m.Hosts[infectedHost].Infections[m.Hosts[infectedHost].Lookout]] { // If immune remove parasite.
 		m.RemoveParasite(infectedHost, infectedHostIndex)
 	} else {
 		// If at end, make him healthy
 		// Make immunity in the hosts antibody and set the lookout one up
-		m.Antibodies[infectedHost][m.Antigens[infectedHost][m.Lookout[infectedHost]]] = true
-		m.Lookout[infectedHost]++
+		m.Hosts[infectedHost].Antibodies[m.Hosts[infectedHost].Infections[m.Hosts[infectedHost].Lookout]] = true
+		m.Hosts[infectedHost].Lookout++
 		if m.Lookout[infectedHost] >= m.NAntigens {
 			m.RemoveParasite(infectedHost, infectedHostIndex)
 		}
@@ -387,7 +385,7 @@ func (m *Malaria) MutateParasite(host int) {
 	return
 }
 
-// Death : Kills a host removing it's
+// Death : Kills a host removing it from the system and adding a new one.
 func (m *Malaria) Death() {
 	hostIndex := rand.Intn(m.NInfectedHosts)
 	host := m.InfectedHosts[hostIndex]

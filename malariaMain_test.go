@@ -11,7 +11,7 @@ func init() {
 }
 
 func TestStructCreation(t *testing.T) {
-	m := CreateDummyMalariaStruct()
+	m := ConstructMalariaStructDummy(ConstructParameterDummy)
 	//fmt.Println("Check if the struct looks correct: \n", m.Antigens, "\n", m.Infections, "\n", m.Antibodies, "\n")
 	fmt.Println("Check if the struct looks correct:", m)
 }
@@ -139,47 +139,45 @@ func TestSaving(t *testing.T) {
 
 }
 
-func CreateDummyMalariaStruct() Malaria {
+// ConstructParameterDummy :
+func ConstructParameterDummy(NHosts int, NAntigens int, MaxAntigenValue int) Parameters {
+	var param Parameters
+
+	// Parameters used when calculating rates and probabilities for next event.
+	param.InfectionSpeed = 1.0
+	param.ImmunitySpeed = 1.0
+	param.MutationSpeed = 1.0
+	param.DeathSpeed = 1.0
+
+	// Other setting that changes the behaviour of the system
+	param.NHosts = NHosts
+	param.NAntigens = NAntigens
+	param.MaxAntigenValue = MaxAntigenValue
+}
+
+// ConstructMalariaStruct : Initiates a malaria struct and starts initial conditions.
+func ConstructMalariaStructDummy(param Parameters) Malaria {
 	var m Malaria
 
 	// Sets initial values.
-	m.NHosts = 10 // Constant
-	m.NInfectedHosts = 2
-	m.NAntigens = 3
-	m.NStrains = 1
+	m.NHosts = param.NHosts // Constant
+	m.NInfectedHosts = m.NHosts / 100
+	m.NAntigens = param.NAntigens
+	m.MaxAntigenValue = param.MaxAntigenValue
 
-	m.MaxAntigenValue = 5
-
-	// Make initial antigens
-
-	m.Antigens = make([][]int8, m.NHosts)
-	for host := 0; host < m.NInfectedHosts; host++ {
-		m.Antigens[host] = make([]int8, m.NAntigens)
-		for antigen := 0; antigen < m.NAntigens; antigen++ {
-			m.Antigens[host][antigen] = int8(rand.Intn(m.MaxAntigenValue))
-		}
-	}
-
-	// Make initial infections
-	m.Infections = make([][]int8, m.NHosts)
-	for host := 0; host < m.NInfectedHosts; host++ {
-		m.Infections[host] = make([]int8, m.NAntigens)
-		for antigen := 0; antigen < m.NAntigens; antigen++ {
-			m.Infections[host][antigen] = m.Antigens[host][antigen]
-		}
-	}
-	// Make initial immunities
-	m.Antibodies = make([][]bool, m.NHosts)
+	m.Hosts = make([]Host, m.NHosts)
 	for host := 0; host < m.NHosts; host++ {
-		m.Antibodies[host] = make([]bool, m.MaxAntigenValue)
+		if host < m.NInfectedHosts {
+			m.Hosts[host] = MakeHost(true, m.NAntigens, m.MaxAntigenValue)
+		} else {
+			m.Hosts[host] = MakeHost(false, m.NAntigens, m.MaxAntigenValue)
+		}
 	}
 
 	m.InfectedHosts = make([]int, m.NInfectedHosts)
 	for host := 0; host < m.NInfectedHosts; host++ {
 		m.InfectedHosts[host] = host
 	}
-
-	m.Lookout = make([]int, m.NHosts)
 
 	//fmt.Println(m.Antigens, "\n", m.Infections, "\n", m.Antibodies, "\n")
 	return m
