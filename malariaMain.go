@@ -80,8 +80,8 @@ func MakeModelSetting() ModelSettings {
 
 	var setting ModelSettings
 
-	setting.Runs = 5000000 // Usually 5000000
-	setting.BurnIn = 0     // Usually 5000000
+	setting.Runs = 5000000   // Usually 5000000
+	setting.BurnIn = 5000000 // Usually 5000000
 
 	setting.Test = true
 	setting.AppendToCurrentDataFile = true
