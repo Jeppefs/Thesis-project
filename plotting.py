@@ -26,7 +26,7 @@ def MakeAveragePlot(fileName):
 
 pop = 10000
 
-#MakeTimeLinePlot("test.txt")
+MakeTimeLinePlot("test.txt")
 
 #MakeAveragePlot("avgFile4.txt")
 

@@ -11,6 +11,8 @@ import (
 	"fmt"
 	"math/rand"
 	"os"
+	"sort"
+	"strconv"
 	"time"
 )
 
@@ -78,8 +80,8 @@ func MakeModelSetting() ModelSettings {
 
 	var setting ModelSettings
 
-	setting.Runs = 5000000
-	setting.BurnIn = 5000000
+	setting.Runs = 5000000 // Usually 5000000
+	setting.BurnIn = 0     // Usually 5000000
 
 	setting.Test = true
 	setting.AppendToCurrentDataFile = true
@@ -253,7 +255,6 @@ func MakeHost(infected bool, NAntigens int, MaxAntigenValue int) Host {
 // EventHappens : ...
 func (m *Malaria) EventHappens(param Parameters) {
 	event := ChooseEvent(m, param)
-	m.CheckIfAllInfectedHasInfection()
 	switch event {
 	case 0:
 		m.Spread()
@@ -313,6 +314,7 @@ func (m *Malaria) Spread() {
 	if m.Hosts[spreadTo].IsInfected == false {
 		m.NInfectedHosts++
 		m.InfectedHosts = append(m.InfectedHosts, spreadTo)
+		m.Hosts[spreadTo].IsInfected = true
 	}
 
 	m.Hosts[spreadTo].InfectHost(&m.Hosts[spreadFrom], m.NAntigens)
@@ -372,7 +374,6 @@ func (m *Malaria) ImmunityGained() {
 
 // GiveHostAntibody : Gives the host an antibody for its current lookout in the antigens. Also send to RemoveParaiste method if removal should happend
 func (h *Host) GiveHostAntibody(NAntigens int) {
-	fmt.Println(h.Infections, h.Lookout)
 	if h.Lookout > NAntigens-1 { //-1 because NAntigens is one larger than lookout because of 0 indexing
 		h.RemoveParasite(NAntigens)
 	} else if h.Antibodies[h.Infections[h.Lookout]] {
@@ -402,8 +403,12 @@ func (m *Malaria) Death() {
 
 	m.Hosts[host].Die(m.NAntigens, m.MaxAntigenValue)
 
+	//m.CheckIfAllInfectedHasInfection(1)
+	//fmt.Println(hostIndex, m.InfectedHosts[hostIndex])
 	m.InfectedHosts = append(m.InfectedHosts[:hostIndex], m.InfectedHosts[hostIndex+1:]...)
 	m.NInfectedHosts--
+	//fmt.Println(hostIndex, m.InfectedHosts[hostIndex])
+	//m.CheckIfAllInfectedHasInfection(2)
 	return
 }
 
@@ -433,10 +438,23 @@ func (m *Malaria) GetRandomInfectedHost() (int, int) {
 	return host, hostIndex
 }
 
-func (m *Malaria) CheckIfAllInfectedHasInfection() {
+func (m *Malaria) CheckIfAllInfectedHasInfection(q int) {
 	for _, host := range m.InfectedHosts {
 		if len(m.Hosts[host].Infections) == 0 {
-			fmt.Println("Warning")
+			fmt.Println("Warning", m.Hosts[host].Infections, host, m.Hosts[host].IsInfected, len(m.InfectedHosts), m.NInfectedHosts)
+			if q == 2 {
+				panic(strconv.Itoa(q))
+			}
+		}
+	}
+}
+
+func CheckIfAllIsUnique(q []int) {
+	sort.Ints(q)
+	for i := 0; i <= len(q)-2; i++ {
+		if q[i] == q[i+1] {
+			fmt.Println(q[i])
+			panic("e")
 		}
 	}
 
