@@ -255,6 +255,7 @@ func (m *Malaria) EventHappens(param Parameters) {
 	switch event {
 	case 0:
 		m.Spread()
+		/*
 	case 1:
 		m.ImmunityGained()
 	case 2:
@@ -262,6 +263,7 @@ func (m *Malaria) EventHappens(param Parameters) {
 	case 3:
 		m.Death()
 	}
+	*/
 	return
 }
 
@@ -336,6 +338,19 @@ func (m *Malaria) InfectHost(spreadTo int, spreadFrom int) {
 	return
 }
 
+// CombineParasites : When a host becomes infected with another parasite (so it is inficted buy mulitple parasites), it has a combination
+func (m *Malaria) CombineParasites(host int) {
+	nParasites := len(m.Antigens[host])
+	for antigen := 0; antigen < m.NAntigens; antigen++ {
+		antigenOrNewParasiteChoice := rand.Float64()
+		if antigenOrNewParasiteChoice > 0.5 { // Pick randomly new antigens in the infected host.
+			m.Antigens[host][antigen] = m.Infections[host][nParasites-m.NAntigens+rand.Intn(m.NAntigens)]
+		}
+	}
+	return
+}
+
+/*
 // ImmunityGained : An infected person get immunity from one strain. If that one already exist, the parasite dies.
 func (m *Malaria) ImmunityGained() {
 	infectedHostIndex := rand.Intn(m.NInfectedHosts)
@@ -366,17 +381,7 @@ func (m *Malaria) RemoveParasite(host int, infectedHostIndex int) {
 	return
 }
 
-// CombineParasites : When a host becomes infected with another parasite (so it is inficted buy mulitple parasites), it has a combination
-func (m *Malaria) CombineParasites(host int) {
-	nParasites := len(m.Antigens[host])
-	for antigen := 0; antigen < m.NAntigens; antigen++ {
-		antigenOrNewParasiteChoice := rand.Float64()
-		if antigenOrNewParasiteChoice > 0.5 { // Pick randomly new antigens in the infected host.
-			m.Antigens[host][antigen] = m.Infections[host][nParasites-m.NAntigens+rand.Intn(m.NAntigens)]
-		}
-	}
-	return
-}
+
 
 // MutateParasite : Changes a single antigen in a host to a new random one.
 func (m *Malaria) MutateParasite(host int) {
@@ -401,12 +406,9 @@ func (m *Malaria) Death() {
 	return
 }
 
+*/
+
 // GetRandomInfectedHost :
 func (m *Malaria) GetRandomInfectedHost() int {
 	return m.InfectedHosts[rand.Intn(m.NInfectedHosts)]
-}
-
-// OtherKindOfImmunity : ...
-func (m *Malaria) OtherKindOfImmunity() {
-	return
 }
