@@ -359,7 +359,7 @@ func (m *Malaria) ImmunityGained() {
 
 	m.Hosts[infectedHost].GiveHostAntibody(m.NAntigens)
 
-	if m.Hosts[infectedHost].IsInfected {
+	if m.Hosts[infectedHost].IsInfected == false {
 		m.NInfectedHosts--
 		m.InfectedHosts = append(m.InfectedHosts[:infectedHostIndex], m.InfectedHosts[infectedHostIndex+1:]...)
 	}
@@ -367,18 +367,17 @@ func (m *Malaria) ImmunityGained() {
 	return
 }
 
-// GiveHostAntibody : Gives the host an antibody for its current lookout in the antigens. Also send to RemoveParaiste method if removal should happen
+// GiveHostAntibody : Gives the host an antibody for its current lookout in the antigens. Also send to RemoveParaiste method if removal should happend
 func (h *Host) GiveHostAntibody(NAntigens int) {
-	if h.Antibodies[h.Infections[h.Lookout]] {
+	if h.Lookout > NAntigens-1 { //-1 because NAntigens is one larger than lookout because of 0 indexing
+		h.RemoveParasite(NAntigens)
+	} else if h.Antibodies[h.Infections[h.Lookout]] {
 		h.RemoveParasite(NAntigens)
 	} else {
 		// If at end, make him healthy
 		// Make immunity in the hosts antibody and set the lookout one up
 		h.Antibodies[h.Infections[h.Lookout]] = true
 		h.Lookout++
-		if h.Lookout >= NAntigens {
-			h.RemoveParasite(NAntigens)
-		}
 	}
 	return
 }

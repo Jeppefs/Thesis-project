@@ -32,37 +32,18 @@ func TestInfectHost(t *testing.T) {
 	fmt.Println("\n Infections:", m.Hosts[1].Infections, "\n ExpressedStrain:", m.Hosts[1].ExpressedStrain)
 }
 
-/*
 func TestImmunity(t *testing.T) {
 	fmt.Println("\n Testing immunity")
-	m := CreateMalariaStructDummy()
-
-	host := 1
-	infectedHost := 1
-	m.RemoveParasite(host, infectedHost)
-	if len(m.Infections[host]) != 0 {
-		fmt.Println("Error in RemoveParasite")
-	}
-	if len(m.Antigens[host]) != 0 {
-		fmt.Println("Error in RemoveParasite. Is:", len(m.Antigens[host]), "Should be:", 0)
-	}
-	if m.NInfectedHosts != 1 {
-		fmt.Println("Error in RemoveParasite")
-	}
-	if len(m.InfectedHosts) != 1 {
-		fmt.Println("Error in RemoveParasite")
-	}
-
-	host = 0
-	infectedHost = 0
+	m := CreateMalariaStructDummy(ConstructParameterDummy(5, 1, 1), 1)
 
 	m.ImmunityGained()
-	if m.Antibodies[host][m.Antigens[host][0]] != true {
-		fmt.Println("Error in ImmunityGained")
-	}
+	fmt.Println(m.Hosts[0], m.InfectedHosts)
+	m.ImmunityGained()
+	fmt.Println(m.Hosts[0], m.InfectedHosts)
 
 }
 
+/*
 func TestDeath(t *testing.T) {
 	fmt.Println("\n Testing death")
 	m := CreateMalariaStructDummy()
