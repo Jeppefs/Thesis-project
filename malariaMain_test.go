@@ -43,30 +43,27 @@ func TestImmunity(t *testing.T) {
 
 }
 
-/*
 func TestDeath(t *testing.T) {
 	fmt.Println("\n Testing death")
-	m := CreateMalariaStructDummy()
+	m := CreateMalariaStructDummy(ConstructParameterDummy(5, 3, 1), 1)
 	m.Death()
-	m.Death()
-	if len(m.Infections[0]) != 0 {
-		t.Fatalf("Error in Infections")
-	}
-	if len(m.Antigens[0]) != 0 {
-		t.Fatalf("Error in Antigens")
+
+	if len(m.Hosts[0].Infections) != 0 {
+		t.Fatalf("Error in Infections. Is: %d Should be: %d", len(m.Hosts[0].Infections), 0)
 	}
 	if m.NInfectedHosts != 0 {
 		t.Fatalf("Error in NINfectedHosts")
 	}
-	for _, boolVal := range m.Antibodies[0] {
-		if boolVal != false {
-			t.Fatalf("Error in Antibodies. Is: %t Should be: %t", boolVal, false)
+	for _, host := range m.Hosts {
+		if host.IsInfected != false {
+			t.Fatalf("Error in Antibodies. Is: %t Should be: %t", host.IsInfected, false)
 		}
 	}
 
-	fmt.Println(m.Infections)
+	fmt.Println(m.Hosts[0])
 }
 
+/*
 func TestMutation(t *testing.T) {
 	fmt.Println("\n Testing Mutation")
 	m := CreateMalariaStructDummy()
@@ -86,7 +83,7 @@ func TestMutation(t *testing.T) {
 	m.MutateParasite(1)
 	fmt.Println("Check if it has changed:", m.Antigens[1])
 }
-
+*/
 func TestCalcMeanAndVar(t *testing.T) {
 	fmt.Println("Start Mean and Var test")
 	data := []float64{1.0, 2.0, 3.0, 4.0, 5.0}
@@ -100,6 +97,7 @@ func TestCalcMeanAndVar(t *testing.T) {
 
 }
 
+/*
 func TestSaving(t *testing.T) {
 	fmt.Println("\n Testing Saving")
 	loadFileName := "testing/SaveInfo.txt"

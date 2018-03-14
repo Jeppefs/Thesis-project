@@ -1,5 +1,6 @@
 /*
 	TODO:
+	- Make better tests for Immunity and Spread.
 	- Print total runtime
 	- Maybe try to have a reproduction rate  rate.
 */
@@ -394,32 +395,37 @@ func (h *Host) RemoveParasite(NAntigens int) {
 }
 
 /*
-
-
 // MutateParasite : Changes a single antigen in a host to a new random one.
 func (m *Malaria) MutateParasite(host int) {
 	randomAntigen := rand.Intn(m.NAntigens)
 	m.Antigens[host][randomAntigen] = int8(rand.Intn(m.MaxAntigenValue))
 	return
 }
+*/
 
 // Death : Kills a host removing it from the system and adding a new one.
 func (m *Malaria) Death() {
 	hostIndex := rand.Intn(m.NInfectedHosts)
 	host := m.InfectedHosts[hostIndex]
 
-	m.Antigens[host] = append(m.Antigens[host][:0], m.Antigens[host][m.NAntigens:]...)
-	m.Infections[host] = append(m.Infections[host][:0], m.Infections[host][len(m.Infections[host]):]...)
-	m.InfectedHosts = append(m.InfectedHosts[:hostIndex], m.InfectedHosts[hostIndex+1:]...)
+	m.Hosts[host].Die(m.NAntigens, m.MaxAntigenValue)
 
-	for antibody := 0; antibody < m.MaxAntigenValue; antibody++ {
-		m.Antibodies[host][antibody] = false
-	}
+	m.InfectedHosts = append(m.InfectedHosts[:hostIndex], m.InfectedHosts[hostIndex+1:]...)
 	m.NInfectedHosts--
 	return
 }
 
-*/
+// Die : A host dies
+func (h *Host) Die(NAntigens int, MaxAntigenValue int) {
+	h.Infections = append(h.Infections[:0], h.Infections[len(h.Infections):]...)
+	h.Lookout = 0
+	h.IsInfected = false
+
+	for antibody := 0; antibody < MaxAntigenValue; antibody++ {
+		h.Antibodies[antibody] = false
+	}
+
+}
 
 // GetRandomInfectedHost :
 func (m *Malaria) GetRandomInfectedHost() int {
