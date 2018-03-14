@@ -237,7 +237,7 @@ func MakeHost(infected bool, NAntigens int, MaxAntigenValue int) Host {
 	if infected {
 		h.IsInfected = true
 		h.Infections = make([]int8, NAntigens)
-		for antigen := 0; antigen < MaxAntigenValue; antigen++ {
+		for antigen := 0; antigen < NAntigens; antigen++ {
 			h.ExpressedStrain[antigen] = int8(rand.Intn(MaxAntigenValue))
 			h.Infections[antigen] = h.ExpressedStrain[antigen]
 		}

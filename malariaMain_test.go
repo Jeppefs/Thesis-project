@@ -11,18 +11,20 @@ func init() {
 }
 
 func TestStructCreation(t *testing.T) {
-	m := ConstructMalariaStructDummy(ConstructParameterDummy)
+	m := CreateMalariaStructDummy(ConstructParameterDummy(5, 3, 5), 2)
 	//fmt.Println("Check if the struct looks correct: \n", m.Antigens, "\n", m.Infections, "\n", m.Antibodies, "\n")
-	fmt.Println("Check if the struct looks correct:", m)
+	fmt.Println("Check if the struct looks correct: \n", m.Hosts[0], "\n", m.Hosts[1], "\n", m.Hosts[2])
+	return
 }
 
+/*
 func TestEventChoosing(t *testing.T) {
-	//m := CreateDummyMalariaStruct()
+	//m := CreateMalariaStructDummy()
 }
 
 func TestImmunity(t *testing.T) {
 	fmt.Println("\n Testing immunity")
-	m := CreateDummyMalariaStruct()
+	m := CreateMalariaStructDummy()
 
 	host := 1
 	infectedHost := 1
@@ -52,7 +54,7 @@ func TestImmunity(t *testing.T) {
 
 func TestSpread(t *testing.T) {
 	fmt.Println("\n Testing spread")
-	m := CreateDummyMalariaStruct()
+	m := CreateMalariaStructDummy()
 	m.InfectHost(2, 0)
 	fmt.Println("Infections:", m.Infections, "Antigens \n:", m.Antigens)
 	m.InfectHost(2, 1)
@@ -69,7 +71,7 @@ func TestSpread(t *testing.T) {
 
 func TestDeath(t *testing.T) {
 	fmt.Println("\n Testing death")
-	m := CreateDummyMalariaStruct()
+	m := CreateMalariaStructDummy()
 	m.Death()
 	m.Death()
 	if len(m.Infections[0]) != 0 {
@@ -92,7 +94,7 @@ func TestDeath(t *testing.T) {
 
 func TestMutation(t *testing.T) {
 	fmt.Println("\n Testing Mutation")
-	m := CreateDummyMalariaStruct()
+	m := CreateMalariaStructDummy()
 	fmt.Println("Check how it looks:", m.Antigens[0])
 	m.MutateParasite(0)
 	fmt.Println("Check if it has changed:", m.Antigens[0])
@@ -138,7 +140,7 @@ func TestSaving(t *testing.T) {
 	SaveToEndFile(loadFileName, saveFileName, 5, param)
 
 }
-
+*/
 // ConstructParameterDummy :
 func ConstructParameterDummy(NHosts int, NAntigens int, MaxAntigenValue int) Parameters {
 	var param Parameters
@@ -153,15 +155,17 @@ func ConstructParameterDummy(NHosts int, NAntigens int, MaxAntigenValue int) Par
 	param.NHosts = NHosts
 	param.NAntigens = NAntigens
 	param.MaxAntigenValue = MaxAntigenValue
+
+	return param
 }
 
 // ConstructMalariaStruct : Initiates a malaria struct and starts initial conditions.
-func ConstructMalariaStructDummy(param Parameters) Malaria {
+func CreateMalariaStructDummy(param Parameters, NInfectedHosts int) Malaria {
 	var m Malaria
 
 	// Sets initial values.
 	m.NHosts = param.NHosts // Constant
-	m.NInfectedHosts = m.NHosts / 100
+	m.NInfectedHosts = NInfectedHosts
 	m.NAntigens = param.NAntigens
 	m.MaxAntigenValue = param.MaxAntigenValue
 
