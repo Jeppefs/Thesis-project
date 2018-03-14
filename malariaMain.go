@@ -320,19 +320,20 @@ func (m *Malaria) GetSpreadToAndSpreadFrom() (int, int) {
 
 // InfectHost :
 func (m *Malaria) InfectHost(spreadTo int, spreadFrom int) {
-	// Check if the person spreading to has any infections. If true make him sick. If false append the parasite.
-	if len(m.Infections[spreadTo]) == 0 {
-		for antigenSpot := 0; antigenSpot < m.NAntigens; antigenSpot++ {
-			m.Infections[spreadTo] = append(m.Infections[spreadTo], m.Antigens[spreadFrom][antigenSpot])
-			m.Antigens[spreadTo] = append(m.Antigens[spreadTo], m.Antigens[spreadFrom][antigenSpot])
-		}
-		m.NInfectedHosts++
-		m.InfectedHosts = append(m.InfectedHosts, spreadTo)
-	} else {
+	// Check if the person spreading to has any infections. If false make him sick. If true append the parasite.
+	if m.Hosts[spreadTo].IsInfected {
 		for i := 0; i < m.NAntigens; i++ {
-			m.Infections[spreadTo] = append(m.Infections[spreadTo], m.Antigens[spreadFrom][i])
+			m.Hosts[spreadTo].Infections = append(m.Hosts[spreadTo].Infections, m.Hosts[spreadFrom].ExpressedStrain[i])
 		}
 		m.CombineParasites(spreadTo)
+	} else {
+		for antigenSpot := 0; antigenSpot < m.NAntigens; antigenSpot++ {
+			m.Hosts[spreadTo].Infections = append(m.Hosts[spreadTo].Infections, m.Hosts[spreadFrom].ExpressedStrain[antigenSpot])
+			m.Hosts[spreadTo].ExpressedStrain[antigenSpot] = m.Hosts[spreadFrom].ExpressedStrain[antigenSpot]
+		}
+		m.NInfectedHosts++
+		m.Hosts[spreadTo].IsInfected = true
+		m.InfectedHosts = append(m.InfectedHosts, spreadTo)
 	}
 	return
 }
