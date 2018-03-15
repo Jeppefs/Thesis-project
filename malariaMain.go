@@ -11,8 +11,6 @@ import (
 	"fmt"
 	"math/rand"
 	"os"
-	"sort"
-	"strconv"
 	"time"
 )
 
@@ -371,26 +369,4 @@ func (m *Malaria) GetRandomInfectedHost() (int, int) {
 	hostIndex := rand.Intn(m.NInfectedHosts)
 	host := m.InfectedHosts[hostIndex]
 	return host, hostIndex
-}
-
-func (m *Malaria) CheckIfAllInfectedHasInfection(q int) {
-	for _, host := range m.InfectedHosts {
-		if len(m.Hosts[host].Infections) == 0 {
-			fmt.Println("Warning", m.Hosts[host].Infections, host, m.Hosts[host].IsInfected, len(m.InfectedHosts), m.NInfectedHosts)
-			if q == 2 {
-				panic(strconv.Itoa(q))
-			}
-		}
-	}
-}
-
-func CheckIfAllIsUnique(q []int) {
-	sort.Ints(q)
-	for i := 0; i <= len(q)-2; i++ {
-		if q[i] == q[i+1] {
-			fmt.Println(q[i])
-			panic("e")
-		}
-	}
-
 }

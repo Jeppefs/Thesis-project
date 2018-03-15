@@ -1,5 +1,11 @@
 package main
 
+import (
+	"fmt"
+	"sort"
+	"strconv"
+)
+
 // SumSlice : Returns the sum a float64 slice.
 func SumSlice(X []float64) float64 {
 	sum := 0.0
@@ -30,4 +36,26 @@ func CalcMeanAndVar(data []float64) (float64, float64) {
 	}
 	variance = variance / N
 	return mean, variance
+}
+
+func (m *Malaria) CheckIfAllInfectedHasInfection(q int) {
+	for _, host := range m.InfectedHosts {
+		if len(m.Hosts[host].Infections) == 0 {
+			fmt.Println("Warning", m.Hosts[host].Infections, host, m.Hosts[host].IsInfected, len(m.InfectedHosts), m.NInfectedHosts)
+			if q == 2 {
+				panic(strconv.Itoa(q))
+			}
+		}
+	}
+}
+
+func CheckIfAllIsUnique(q []int) {
+	sort.Ints(q)
+	for i := 0; i <= len(q)-2; i++ {
+		if q[i] == q[i+1] {
+			fmt.Println(q[i])
+			panic("e")
+		}
+	}
+
 }
