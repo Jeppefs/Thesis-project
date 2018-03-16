@@ -17,7 +17,8 @@ def MakeTimeLinePlot(fileName):
 def MakeAveragePlot(fileName):
     plt.figure()
     avgData = np.loadtxt("data/" + fileName)
-    plt.plot(avgData[:,3], avgData[:,0], '.')
+    #plt.plot(avgData[:,3], avgData[:,0], '.')
+    plt.plot(avgData[:,0], '.')
     plt.xlabel(str())
     plt.ylabel("Extinction time:")
     figName = fileName[0:-3] + ".png"

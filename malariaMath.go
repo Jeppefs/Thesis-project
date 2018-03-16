@@ -59,3 +59,14 @@ func CheckIfAllIsUnique(q []int) {
 	}
 
 }
+
+// CountBolleanArray : Takes a boolean array and return the number of true values
+func CountBolleanArray(b []bool) int {
+	sum := 0
+	for _, val := range b {
+		if val {
+			sum++
+		}
+	}
+	return sum
+}

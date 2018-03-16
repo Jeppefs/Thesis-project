@@ -32,11 +32,11 @@ func MakeModelSetting() ModelSettings {
 
 	var setting ModelSettings
 
-	setting.Runs = 5000000   // Usually 5000000
-	setting.BurnIn = 5000000 // Usually 5000000
+	setting.Runs = 50000000 // Usually 5000000
+	setting.BurnIn = 0      // Usually 5000000
 
 	setting.Test = true
-	setting.AppendToCurrentDataFile = true
+	setting.AppendToCurrentDataFile = false
 
 	setting.MultipleInfections = true
 
@@ -47,19 +47,19 @@ func MakeModelSetting() ModelSettings {
 
 // MakeParameterGrid : Creates a parameter grid to search through. Also where settings as applied.
 func MakeParameterGrid() []Parameters {
-	gridsize := 100
+	gridsize := 50
 
 	parameterGrid := make([]Parameters, gridsize)
 
 	for i := 0; i < gridsize; i++ {
-		parameterGrid[i].InfectionSpeed = 0.95 + float64(i)/1000.0
+		parameterGrid[i].InfectionSpeed = 0.98 //+ float64(i)/1000.0
 		parameterGrid[i].ImmunitySpeed = 1.0
 		parameterGrid[i].MutationSpeed = 0.0
-		parameterGrid[i].DeathSpeed = 0.01
+		parameterGrid[i].DeathSpeed = 0.00
 
 		parameterGrid[i].NHosts = 10000
 		parameterGrid[i].NAntigens = 1
-		parameterGrid[i].MaxAntigenValue = 1
+		parameterGrid[i].MaxAntigenValue = 1 + i
 	}
 
 	return parameterGrid

@@ -28,11 +28,12 @@ func main() {
 // Malaria : .
 type Malaria struct {
 	// Counts
-	NHosts         int // How many potential hosts there are in the system
-	NInfectedHosts int // The number of infected hosts
-	NAntigens      int // The number of antigens a single parasite consists of
-
+	NHosts          int // How many potential hosts there are in the system
+	NInfectedHosts  int // The number of infected hosts
+	NAntigens       int // The number of antigens a single parasite consists of
 	MaxAntigenValue int // The maximum number an antigen can have
+
+	NDifferentAntigens int // The current amount of different antigens in the system.
 
 	InfectedHosts []int // A list of hosts that are infected by one or more malaria strains
 
@@ -43,7 +44,7 @@ type Malaria struct {
 type Host struct {
 	IsAlive    bool
 	IsInfected bool
-	Lookout    int
+	Lookout    int // The antigen spot which the host currently looks at.
 
 	ExpressedStrain []int8 // The strain which another person will be infected with.
 	Infections      []int8 // The strains that are currently infecting a host.
@@ -104,8 +105,10 @@ func (m *Malaria) RunModelWithSaving(param Parameters, setting ModelSettings) in
 	for run = 0; run < setting.Runs; run++ {
 		m.EventHappens(param)
 		if run%100 == 0 {
+			//m.CountNumberOfUniqueAntigens()
 			fmt.Fprintf(file, "%v \n", m.NInfectedHosts)
 			if run%1000000 == 0 {
+				//fmt.Println(m.NDifferentAntigens)
 				fmt.Println(run)
 			}
 		}
@@ -237,4 +240,16 @@ func CalcRates(m *Malaria, param Parameters) []float64 {
 	r[2] = param.MutationSpeed * float64(m.NInfectedHosts)
 	r[3] = param.DeathSpeed * float64(m.NInfectedHosts)
 	return r
+}
+
+// CountNumberOfUniqueAntigens : Counts the number of unique antigens an all hosts. s
+func (m *Malaria) CountNumberOfUniqueAntigens() {
+	AntigenExistence := make([]bool, m.MaxAntigenValue)
+	for _, host := range m.Hosts {
+		for _, antigen := range host.ExpressedStrain {
+			AntigenExistence[antigen] = true
+		}
+	}
+	m.NDifferentAntigens = CountBolleanArray(AntigenExistence)
+	return
 }
