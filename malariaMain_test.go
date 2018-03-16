@@ -76,7 +76,6 @@ func TestCalcMeanAndVar(t *testing.T) {
 
 }
 
-/*
 func TestSaving(t *testing.T) {
 	fmt.Println("\n Testing Saving")
 	loadFileName := "testing/SaveInfo.txt"
@@ -92,7 +91,7 @@ func TestSaving(t *testing.T) {
 	SaveToEndFile(loadFileName, saveFileName, 5, param)
 
 }
-*/
+
 // ConstructParameterDummy :
 func ConstructParameterDummy(NHosts int, NAntigens int, MaxAntigenValue int) Parameters {
 	var param Parameters

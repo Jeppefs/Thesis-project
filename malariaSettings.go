@@ -22,6 +22,8 @@ type ModelSettings struct {
 	Test                    bool
 	AppendToCurrentDataFile bool
 
+	MultipleInfections bool
+
 	CurrentDataFile string
 }
 
@@ -36,26 +38,28 @@ func MakeModelSetting() ModelSettings {
 	setting.Test = true
 	setting.AppendToCurrentDataFile = true
 
-	setting.CurrentDataFile = "data/avgFile6.txt"
+	setting.MultipleInfections = true
+
+	setting.CurrentDataFile = "data/avgFile7.txt"
 
 	return setting
 }
 
 // MakeParameterGrid : Creates a parameter grid to search through. Also where settings as applied.
 func MakeParameterGrid() []Parameters {
-	gridsize := 1
+	gridsize := 100
 
 	parameterGrid := make([]Parameters, gridsize)
 
 	for i := 0; i < gridsize; i++ {
-		parameterGrid[i].InfectionSpeed = 0.97 //+ float64(i)/1000.0
+		parameterGrid[i].InfectionSpeed = 0.95 + float64(i)/1000.0
 		parameterGrid[i].ImmunitySpeed = 1.0
 		parameterGrid[i].MutationSpeed = 0.0
-		parameterGrid[i].DeathSpeed = 0.0050
+		parameterGrid[i].DeathSpeed = 0.01
 
 		parameterGrid[i].NHosts = 10000
-		parameterGrid[i].NAntigens = 3
-		parameterGrid[i].MaxAntigenValue = 10
+		parameterGrid[i].NAntigens = 1
+		parameterGrid[i].MaxAntigenValue = 1
 	}
 
 	return parameterGrid

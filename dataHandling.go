@@ -8,29 +8,26 @@ import (
 )
 
 // SaveToEndFile :  Saves data in the test file
+// WARNING! : THERE MUSTS BE AN LINESKIP AT END OF FILE TO REGARD THE LAST NUMBER
 func SaveToEndFile(loadFileName string, saveFileName string, run int, param Parameters) {
 	data, err := ioutil.ReadFile(loadFileName)
 	check(err)
-
-	//fmt.Println(data, reflect.TypeOf(data))
-
 	stringData := string(data)
 
-	/*
-		file, err := os.Create(saveFileName)
-		check(err)
-		defer file.Close()
-	*/
-
 	var s string
+	var sSum string
 	var d []float64
 	var q int
 
 	for _, k := range stringData {
 		s = string(k)
 		if (s != "\n") && (s != " ") && (s != "\t") && (k != 13) {
-			q, _ = strconv.Atoi(s)
+			sSum += s
+		}
+		if s == "\n" {
+			q, _ = strconv.Atoi(sSum)
 			d = append(d, float64(q))
+			sSum = ""
 		}
 	}
 
@@ -40,7 +37,7 @@ func SaveToEndFile(loadFileName string, saveFileName string, run int, param Para
 
 	mean, variance := CalcMeanAndVar(d)
 
-	fmt.Println(mean)
+	fmt.Println(d)
 	fmt.Fprintf(file, "%v %f %f %f %f %f \n", run, mean, variance, param.InfectionSpeed, param.DeathSpeed, param.ImmunitySpeed)
 
 	return

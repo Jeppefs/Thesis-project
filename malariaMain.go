@@ -1,8 +1,11 @@
 /*
 	TODO:
 	- Make better tests for Immunity and Spread.
-	- Print total runtime
 	- Maybe try to have a reproduction rate  rate.
+	- Try where you can't get re-infected.
+		- Talk with Kim about this.
+	- Calculate Extinction time.
+	- NoCombineParasites
 */
 
 package main
@@ -16,8 +19,10 @@ import (
 
 func main() {
 	fmt.Println("Starting")
+	startTime := time.Now()
 	InitiateRunningModel()
-	fmt.Println("The end. Congrats!")
+	endTime := time.Now()
+	fmt.Println("The end. Congrats! The whole run took:", endTime.Sub(startTime), "d")
 }
 
 // Malaria : .
@@ -31,13 +36,14 @@ type Malaria struct {
 
 	InfectedHosts []int // A list of hosts that are infected by one or more malaria strains
 
-	Hosts []Host // An array which contains the host struct. Each value in the array is a single slice.
+	Hosts []Host // An array which contains the host struct. Each index in the array is a single host.
 }
 
 // Host : Contains information about a host/person
 type Host struct {
-	Lookout    int
+	IsAlive    bool
 	IsInfected bool
+	Lookout    int
 
 	ExpressedStrain []int8 // The strain which another person will be infected with.
 	Infections      []int8 // The strains that are currently infecting a host.
@@ -82,7 +88,6 @@ func StartModel(param Parameters, setting ModelSettings) int {
 	endTime := time.Now()
 
 	fmt.Println("This set of Parameters, done.", "\n It had the following parameters:", param, "\n It took intime:", modelTime, "\n It took realtime:", endTime.Sub(startTime))
-	fmt.Println(m.NHosts)
 
 	return run
 }

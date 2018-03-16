@@ -17,7 +17,7 @@ def MakeTimeLinePlot(fileName):
 def MakeAveragePlot(fileName):
     plt.figure()
     avgData = np.loadtxt("data/" + fileName)
-    plt.plot(avgData[:,4], avgData[:,0], '.')
+    plt.plot(avgData[:,3], avgData[:,0], '.')
     plt.xlabel(str())
     plt.ylabel("Extinction time:")
     figName = fileName[0:-3] + ".png"
@@ -26,11 +26,9 @@ def MakeAveragePlot(fileName):
 
 pop = 10000
 
-MakeTimeLinePlot("test.txt")
+#MakeTimeLinePlot("test.txt")
 
-#MakeAveragePlot("avgFile4.txt")
-
-
+MakeAveragePlot("avgFile7.txt")
 
 plt.show()
 
