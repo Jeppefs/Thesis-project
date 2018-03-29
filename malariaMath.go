@@ -72,3 +72,22 @@ func CountBolleanArray(b []bool) int {
 	}
 	return sum
 }
+
+// HasStrain : Checks if the host has the expressed strin of the input host.
+func (h *Host) HasStrain(h2 *Host, NAntigens int) bool {
+	NInfections := len(h.Infections) / NAntigens
+
+	for strainNumber := 0; strainNumber < NInfections; strainNumber++ {
+		correctCount := 0
+		for antigen := 0; antigen < NAntigens; antigen++ {
+			if h.Infections[strainNumber*NAntigens+antigen] == h2.ExpressedStrain[antigen] {
+				correctCount++
+			}
+			if correctCount == NAntigens {
+				return true
+			}
+		}
+	}
+
+	return false
+}

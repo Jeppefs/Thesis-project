@@ -11,6 +11,14 @@ func (m *Malaria) Spread() {
 	if spreadTo == spreadFrom {
 		return
 	}
+
+	// If the host already is infected by the same strain, then don't infect.
+	if m.Hosts[spreadTo].IsInfected {
+		if m.Hosts[spreadTo].HasStrain(&m.Hosts[spreadFrom], m.NAntigens) == false {
+			return
+		}
+	}
+
 	// If the target is not currently infected put him on the infected list and add to the number of incfected
 	if m.Hosts[spreadTo].IsInfected == false {
 		m.NInfectedHosts++

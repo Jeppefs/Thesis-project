@@ -30,6 +30,8 @@ func TestInfectHost(t *testing.T) {
 	fmt.Println("\n Infections:", m.Hosts[1].Infections, "\n ExpressedStrain:", m.Hosts[1].ExpressedStrain)
 	m.Hosts[1].InfectHost(&m.Hosts[0], m.NAntigens)
 	fmt.Println("\n Infections:", m.Hosts[1].Infections, "\n ExpressedStrain:", m.Hosts[1].ExpressedStrain)
+
+	// Test that it does not infect one already with the same strain. 
 }
 
 func TestImmunity(t *testing.T) {
