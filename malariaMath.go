@@ -38,6 +38,7 @@ func CalcMeanAndVar(data []float64) (float64, float64) {
 	return mean, variance
 }
 
+// CheckIfAllInfectedHasInfection : Check if every host that has true in the infected value is actually infected. For testing
 func (m *Malaria) CheckIfAllInfectedHasInfection(q int) {
 	for _, host := range m.InfectedHosts {
 		if len(m.Hosts[host].Infections) == 0 {
@@ -49,6 +50,7 @@ func (m *Malaria) CheckIfAllInfectedHasInfection(q int) {
 	}
 }
 
+// CheckIfAllIsUnique : For a given int slice, this checks if all value in the array is actually unique. Panics if it isn't
 func CheckIfAllIsUnique(q []int) {
 	sort.Ints(q)
 	for i := 0; i <= len(q)-2; i++ {
