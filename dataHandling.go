@@ -37,7 +37,7 @@ func SaveToEndFile(loadFileName string, saveFileName string, run int, param Para
 
 	mean, variance := CalcMeanAndVar(d)
 
-	fmt.Fprintf(file, "%v %f %f %f %f %f \n", run, mean, variance, param.InfectionSpeed, param.DeathSpeed, param.ImmunitySpeed)
+	fmt.Fprintf(file, "%v %f %f %f %f %f %f %d %d \n", run, mean, variance, param.InfectionSpeed, param.DeathSpeed, param.MutationSpeed, param.ImmunitySpeed, param.NAntigens, param.MaxAntigenValue)
 
 	return
 }
