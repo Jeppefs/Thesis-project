@@ -10,6 +10,14 @@ func init() {
 	rand.Seed(1)
 }
 
+func TestTheCompleteAlgorithm(T *testing.T) {
+	/*
+		This tester tests almost everything, by checking at each iteration that nothing has gone wrong.
+		It uses some parameters where I know they should show dynamism and get through all possible methods.
+	*/
+	return
+}
+
 func TestStructCreation(t *testing.T) {
 	m := CreateMalariaStructDummy(ConstructParameterDummy(5, 3, 5), 2)
 	//fmt.Println("Check if the struct looks correct: \n", m.Antigens, "\n", m.Infections, "\n", m.Antibodies, "\n")
@@ -34,7 +42,7 @@ func TestInfectHost(t *testing.T) {
 	// Test that it does not infect one already with the same strain.
 	var h1 Host
 	var h2 Host
-	h1.Infections = []int8{1, 2}
+	h1.Infections = []int8{1, 2, 4, 2, 2, 1, 2, 3}
 	h2.ExpressedStrain = []int8{1, 2}
 
 	if h1.HasStrain(&h2, 2) == false {

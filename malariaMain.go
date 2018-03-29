@@ -1,11 +1,10 @@
 /*
 	TODO:
 	- Make better tests for Immunity and Spread.
-	- Maybe try to have a reproduction rate  rate.
-	- Try where you can't get re-infected.
-		- Talk with Kim about this.
-	- Calculate Extinction time.
+	- Maybe try to have a reproduction method.
 	- NoCombineParasites
+		- Talk to Kim about this
+		- What does it really do?
 */
 
 package main
