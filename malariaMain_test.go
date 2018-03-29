@@ -31,7 +31,16 @@ func TestInfectHost(t *testing.T) {
 	m.Hosts[1].InfectHost(&m.Hosts[0], m.NAntigens)
 	fmt.Println("\n Infections:", m.Hosts[1].Infections, "\n ExpressedStrain:", m.Hosts[1].ExpressedStrain)
 
-	// Test that it does not infect one already with the same strain. 
+	// Test that it does not infect one already with the same strain.
+	var h1 Host
+	var h2 Host
+	h1.Infections = []int8{1, 2}
+	h2.ExpressedStrain = []int8{1, 2}
+
+	if h1.HasStrain(&h2, 2) == false {
+		t.Fatalf("Error. Is Reinfected with same strain.")
+	}
+
 }
 
 func TestImmunity(t *testing.T) {
