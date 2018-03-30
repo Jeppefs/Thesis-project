@@ -11,7 +11,9 @@ def CreateHeader(file, aDict):
         file.write(key + ",") 
     return
 
-def InsertValues(file, aDict):
+def InsertValues(file, aDict, length = 1, width = 1):
+    for i in length 
+        for j in width
     return
 
 
@@ -37,5 +39,5 @@ settings = {"SingleFiles": "false", "Time": 0, "Runs": 25000000, "BurnIn": 0}
 fileParam, fileSet = CreateFiles(Name)
 CreateHeader(fileParam, parameters)
 CreateHeader(fileSet, settings) 
-InsertValues(fileParam, parameters)
+InsertValues(fileParam, parameters, length, width)
 InsertValues(fileSet, settings)
