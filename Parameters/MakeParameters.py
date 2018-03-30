@@ -1,8 +1,6 @@
-class MakeParameters():
+import numpy as np
 
-    def __init__(self):
-        self.hi = 1
-        pass
+Name = "simplest_infectionRate"
 
-    def CreateParameterArray(self, parameterName):
-        pass
+parameters = 
+
