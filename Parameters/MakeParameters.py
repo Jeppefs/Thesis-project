@@ -11,20 +11,35 @@ def CreateHeader(file, aDict):
         file.write(key + ",") 
     return
 
-def InsertValues(file, aDict, length = 1, width = 1):
-    for i in length 
-        for j in width
-    return
+def InsertValues(file, aDict):
+    for key, value in aDict.items():
+        for i in range(len(value)):
+            
+def CrateNPArrayFromDict(aDict):
+    xLines = len(aDict)
+    yLines = 0
+    for key, value in aDict.items():
+        yline = yLine * len(value)
+    
+    array = np.zeros(xLines,yLines)
 
+    for key in aDict:
+        x = 0
+        for y in yLines:
+            array[x, y] = 
+            x += 1 
+
+    return array
+    
+
+
+    [key, len]
 
 Name = "simplest_infectionRate"
 
-length = 100
-width = 1
-
 parameters = {} 
 parameters["NHosts"] = np.array([10000])
-parameters["InfectionSpeed"] = np.array([0.99 + float(i)/float(length) for i in range(length)])
+parameters["InfectionSpeed"] = np.array([0.99 + float(i)/float(length) for i in range(100)])
 parameters["ImmunitySpeed"] = np.array([1.0])
 parameters["MutationSpeed"] = np.array([0.0])
 parameters["DeathSpeed"] = np.array([0.0])
