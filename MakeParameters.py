@@ -2,14 +2,19 @@ import numpy as np
 from collections import OrderedDict
 
 def CreateFiles(fileName):
-    fileParam = open("parameters/"+ fileName + "_param" + ".csv", "w+")
-    fileSet = open("parameters/"+ fileName + "_set" + ".csv", "w+")
+    fileParam = open("parameters/" + fileName + "_param" + ".csv", "w+")
+    fileSet = open("parameters/" + fileName + "_set" + ".csv", "w+")
     return fileParam, fileSet
 
 # Saves the keys onto a header for the given file. 
 def CreateHeader(file, aDict):
+    i = 0
     for key in aDict:
-        file.write(key + ",") 
+        if i < len(aDict) - 1:
+            file.write(key + ",") 
+        else:
+            file.write(key)
+        i += 1
     file.write("\n")
     return
 
@@ -18,7 +23,10 @@ def InsertValues(file, aDict):
     print(npArray)
     for i in range(len(npArray)):
         for j in range(len(aDict)):
-            file.write(str(npArray[i][j]) + ",")
+            if j < len(aDict) - 1:
+                file.write(str(npArray[i][j]) + ",")
+            else:
+                file.write(str(npArray[i][j]))
         file.write("\n")
     #np.savetxt(file, npArray, delimiter=",")
     return
@@ -73,20 +81,24 @@ def MakeEmptyListFromDict(aDict):
 folder = "parameters/"
 Name = "simplest_infectionRate"
 
-length = 2
+length = 100
 width = 1
 
 parameters = OrderedDict()
 parameters["NHosts"] = np.array([10000])
 parameters["InfectionSpeed"] = np.array([0.99 + float(i)/float(length) for i in range(length)])
-#parameters["ImmunitySpeed"] = np.array([1.0])
-#parameters["MutationSpeed"] = np.array([0.0])
-#parameters["DeathSpeed"] = np.array([0.0])
+parameters["ImmunitySpeed"] = np.array([1.0])
+parameters["MutationSpeed"] = np.array([0.0])
+parameters["DeathSpeed"] = np.array([0.0])
 
 parameters['NAntigens'] = np.array([1])
 parameters['MaxAntigenValue'] = np.array([1])
- 
-settings = {"SingleFiles": ["false"], "Time": [0], "Runs": [25000000], "BurnIn": [0]}
+
+settings = OrderedDict()
+settings["SingleFiles"] = ["false"]
+settings["Time"] = [0]
+settings["Runs"] = [25000000]
+settings["BurnIn"] = [0]
 
 ##
 

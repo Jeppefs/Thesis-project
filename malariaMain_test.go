@@ -108,6 +108,12 @@ func TestSaving(t *testing.T) {
 	param.DeathSpeed = 2.0
 
 	SaveToEndFile(loadFileName, saveFileName, 5, param)
+}
+
+func TestLoading(t *testing.T) {
+	fmt.Println("\n Testing loading data")
+	ParameterFileName := "parameters/simplest_infectionRate_param.csv"
+	SettingsFileName := "parameters/simplest_infectionRate_set.csv"
 
 }
 
