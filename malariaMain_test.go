@@ -1,8 +1,14 @@
 package main
 
 import (
+	"encoding/csv"
 	"fmt"
+	"io"
+	"io/ioutil"
+	"log"
 	"math/rand"
+	"reflect"
+	"strings"
 	"testing"
 )
 
@@ -95,28 +101,6 @@ func TestCalcMeanAndVar(t *testing.T) {
 
 }
 
-func TestSaving(t *testing.T) {
-	fmt.Println("\n Testing Saving")
-	loadFileName := "testing/SaveInfo.txt"
-	saveFileName := "testing/avgTesting.txt"
-
-	var param Parameters
-
-	param.InfectionSpeed = 1.0
-	param.ImmunitySpeed = 1.0
-	param.MutationSpeed = 0.0
-	param.DeathSpeed = 2.0
-
-	SaveToEndFile(loadFileName, saveFileName, 5, param)
-}
-
-func TestLoading(t *testing.T) {
-	fmt.Println("\n Testing loading data")
-	ParameterFileName := "parameters/simplest_infectionRate_param.csv"
-	SettingsFileName := "parameters/simplest_infectionRate_set.csv"
-
-}
-
 // ConstructParameterDummy :
 func ConstructParameterDummy(NHosts int, NAntigens int, MaxAntigenValue int) Parameters {
 	var param Parameters
@@ -162,3 +146,51 @@ func CreateMalariaStructDummy(param Parameters, NInfectedHosts int) Malaria {
 	//fmt.Println(m.Antigens, "\n", m.Infections, "\n", m.Antibodies, "\n")
 	return m
 }
+
+func TestSaving(t *testing.T) {
+	fmt.Println("\n Testing Saving")
+	loadFileName := "testing/SaveInfo.txt"
+	saveFileName := "testing/avgTesting.txt"
+
+	var param Parameters
+
+	param.InfectionSpeed = 1.0
+	param.ImmunitySpeed = 1.0
+	param.MutationSpeed = 0.0
+	param.DeathSpeed = 2.0
+
+	SaveToEndFile(loadFileName, saveFileName, 5, param)
+}
+
+func TestLoading(t *testing.T) {
+	fmt.Println("\n Testing loading data")
+	parameterFileName := "parameters/simplest_infectionRate_param.csv"
+	//settingsFileName := "parameters/simplest_infectionRate_set.csv"
+
+	parameterFile, err := ioutil.ReadFile(parameterFileName)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	r := csv.NewReader(strings.NewReader(string(parameterFile)))
+
+	for {
+		record, err := r.Read()
+		if err == io.EOF {
+			break
+		}
+
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		fmt.Println(reflect.TypeOf(record[0]))
+	}
+
+}
+
+/*
+func readCsvLine(line int) {
+	return
+}
+*/

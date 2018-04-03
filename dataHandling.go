@@ -1,10 +1,15 @@
 package main
 
 import (
+	"encoding/csv"
 	"fmt"
+	"io"
 	"io/ioutil"
+	"log"
 	"os"
+	"reflect"
 	"strconv"
+	"strings"
 )
 
 // SaveToEndFile :  Saves data in the test file
@@ -40,4 +45,39 @@ func SaveToEndFile(loadFileName string, saveFileName string, run int, param Para
 	fmt.Fprintf(file, "%v %f %f %f %f %f %f %d %d \n", run, mean, variance, param.InfectionSpeed, param.DeathSpeed, param.MutationSpeed, param.ImmunitySpeed, param.NAntigens, param.MaxAntigenValue)
 
 	return
+}
+
+// LoadParametersAndSettings :
+func LoadParametersAndSettings(fileName string) (Reader, Reader) {
+	parameterFileName := "parameters/" + fileName + ".csv"
+	settingFileName := "parameters/" + fileName + ".csv"
+
+	parameterFile, err := ioutil.ReadFile(parameterFileName)
+	if err != nil {
+		log.Fatal(err)
+	}
+	settingFile, err := ioutil.ReadFile(parameterFileName)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	r := csv.NewReader(strings.NewReader(string(parameterFile)))
+
+	for {
+		record, err := r.Read()
+		if err == io.EOF {
+			break
+		}
+
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		fmt.Println(reflect.TypeOf(record[0]))
+	}
+	return nil, r
+}
+
+func insertParameters() {
+
 }
