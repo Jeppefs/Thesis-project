@@ -14,8 +14,10 @@ type Parameters struct {
 	MaxAntigenValue int
 }
 
-// ModelSettings : A structure that contains information about model settings such as
+// ModelSettings : A structure that contains information ab	out model settings such as
 type ModelSettings struct {
+	SingleFiles bool
+
 	BurnIn int
 	Runs   int
 

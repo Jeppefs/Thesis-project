@@ -47,37 +47,66 @@ func SaveToEndFile(loadFileName string, saveFileName string, run int, param Para
 	return
 }
 
-// LoadParametersAndSettings :
-func LoadParametersAndSettings(fileName string) (Reader, Reader) {
-	parameterFileName := "parameters/" + fileName + ".csv"
-	settingFileName := "parameters/" + fileName + ".csv"
+// LoadCSVFile :
+func LoadCSVFile(fileName string) *csv.Reader {
 
-	parameterFile, err := ioutil.ReadFile(parameterFileName)
+	file, err := ioutil.ReadFile(fileName)
+
 	if err != nil {
 		log.Fatal(err)
 	}
-	settingFile, err := ioutil.ReadFile(parameterFileName)
-	if err != nil {
-		log.Fatal(err)
-	}
+	r := csv.NewReader(strings.NewReader(string(file)))
 
-	r := csv.NewReader(strings.NewReader(string(parameterFile)))
+	return r
+}
+
+// InsertSettings : Inserts the settings in a setting struct. It does so dynamically to the name in the header. If the name in the header does not correspond to the name in the struct, it will return an error message
+func (setting ModelSettings) InsertSettings(fileName string) ModelSettings {
+
+	r := LoadCSVFile(fileName)
+
+	i := 0
+	var header []string
 
 	for {
-		record, err := r.Read()
+		records, err := r.Read()
 		if err == io.EOF {
 			break
 		}
-
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		fmt.Println(reflect.TypeOf(record[0]))
-	}
-	return nil, r
-}
+		if i == 0 {
+			for j := 0; j < len(records); j++ {
+				header = append(header, records[j])
+			}
+		} else {
+			for j := 0; j < len(records); j++ {
+				v := reflect.ValueOf(&setting)
+				f := v.Elem().FieldByName(header[j])
+				if f.IsValid() && f.CanSet() {
+					if f.Kind() == reflect.String {
+						f.SetString(records[j])
+					} else if f.Kind() == reflect.Int {
+						q, _ := strconv.Atoi(records[j])
+						f.SetInt(int64(q))
+					} else if f.Kind() == reflect.Float64 {
+						q, _ := strconv.ParseFloat(records[j], 64)
+						f.SetFloat(q)
+					} else if f.Kind() == reflect.Bool {
+						q, _ := strconv.ParseBool(records[j])
+						f.SetBool(q)
+					} else {
+						log.Fatalln("Was not any of the four types")
+					}
+				}
+			}
+		}
 
-func insertParameters() {
+		i++
+	}
+
+	return setting
 
 }

@@ -189,8 +189,9 @@ func TestLoading(t *testing.T) {
 
 }
 
-/*
-func readCsvLine(line int) {
-	return
+func TestStructLooping(t *testing.T) {
+	var setting ModelSettings
+	fmt.Println(setting)
+	setting = setting.InsertSettings("parameters/simplest_infectionRate_set.csv")
+	fmt.Println(setting)
 }
-*/
