@@ -81,12 +81,12 @@ def MakeEmptyListFromDict(aDict):
 folder = "parameters/"
 Name = "simplest_infectionRate"
 
-length = 100
+length = 10
 width = 1
 
 parameters = OrderedDict()
 parameters["NHosts"] = np.array([10000])
-parameters["InfectionSpeed"] = np.array([0.99 + float(i)/float(length) for i in range(length)])
+parameters["InfectionSpeed"] = np.array([0.99 + float(i)/(float(length)*10) for i in range(length)])
 parameters["ImmunitySpeed"] = np.array([1.0])
 parameters["MutationSpeed"] = np.array([0.0])
 parameters["DeathSpeed"] = np.array([0.0])
@@ -96,9 +96,12 @@ parameters['MaxAntigenValue'] = np.array([1])
 
 settings = OrderedDict()
 settings["SingleFiles"] = ["false"]
-settings["Time"] = [0]
 settings["Runs"] = [25000000]
 settings["BurnIn"] = [0]
+settings["Test"] = ["true"]
+settings["AppendToCurrentDataFile"] = ["true"]
+settings["MultipleInfections"] = ["true"]
+settings["CurrentDataFiles"] = ["data/" + Name + "data.csv"]
 
 ##
 

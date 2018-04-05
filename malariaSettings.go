@@ -1,5 +1,13 @@
 package main
 
+import (
+	"fmt"
+	"io"
+	"log"
+	"reflect"
+	"strconv"
+)
+
 // Parameters : Sets the parameters for a particular run. These are all set before the simulation.
 type Parameters struct {
 	// Parameters used when calculating rates and probabilities for next event.
@@ -29,6 +37,88 @@ type ModelSettings struct {
 	CurrentDataFile string
 }
 
+// InsertParameters : Insert parameters into the parameters struct given a string slice.
+func InsertParameters(header []string, records []string) Parameters {
+	var param Parameters
+
+	for j := 0; j < len(records); j++ {
+		fmt.Println(j)
+		v := reflect.ValueOf(&param)
+		f := v.Elem().FieldByName(header[j])
+		if f.IsValid() && f.CanSet() {
+			if f.Kind() == reflect.String {
+				f.SetString(records[j])
+			} else if f.Kind() == reflect.Int {
+				q, _ := strconv.Atoi(records[j])
+				f.SetInt(int64(q))
+			} else if f.Kind() == reflect.Float64 {
+				q, _ := strconv.ParseFloat(records[j], 64)
+				f.SetFloat(q)
+			} else if f.Kind() == reflect.Bool {
+				q, _ := strconv.ParseBool(records[j])
+				f.SetBool(q)
+			} else {
+				log.Fatalln("Was not any of the four types")
+			}
+		}
+	}
+
+	return param
+}
+
+// InsertSettings : Inserts the settings in a setting struct. It does so dynamically to the name in the header. If the name in the header does not correspond to the name in the struct, it will return an error message
+func InsertSettings(fileName string) ModelSettings {
+
+	var setting ModelSettings
+	r := LoadCSVFile(fileName)
+
+	i := 0
+	var header []string
+
+	for {
+		records, err := r.Read()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		if i == 0 {
+			for j := 0; j < len(records); j++ {
+				header = append(header, records[j])
+			}
+		} else {
+			for j := 0; j < len(records); j++ {
+				v := reflect.ValueOf(&setting)
+				f := v.Elem().FieldByName(header[j])
+				if f.IsValid() && f.CanSet() {
+					if f.Kind() == reflect.String {
+						f.SetString(records[j])
+					} else if f.Kind() == reflect.Int {
+						q, _ := strconv.Atoi(records[j])
+						f.SetInt(int64(q))
+					} else if f.Kind() == reflect.Float64 {
+						q, _ := strconv.ParseFloat(records[j], 64)
+						f.SetFloat(q)
+					} else if f.Kind() == reflect.Bool {
+						q, _ := strconv.ParseBool(records[j])
+						f.SetBool(q)
+					} else {
+						log.Fatalln("Was not any of the four types")
+					}
+				}
+			}
+		}
+
+		i++
+	}
+
+	return setting
+
+}
+
+/*
 // MakeModelSetting : Constructs the ModelSettings struct, which sets how the data should be saved, if a burnin should exist and so on.
 func MakeModelSetting() ModelSettings {
 
@@ -66,3 +156,4 @@ func MakeParameterGrid() []Parameters {
 
 	return parameterGrid
 }
+*/

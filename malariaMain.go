@@ -11,6 +11,8 @@ package main
 
 import (
 	"fmt"
+	"io"
+	"log"
 	"math/rand"
 	"os"
 	"time"
@@ -53,15 +55,48 @@ type Host struct {
 // InitiateRunningModel : Starts the whole simulation and sets the parameter-grid.
 func InitiateRunningModel() {
 
-	name := "simplest_infectionRate"
-	setting := MakeModelSetting()
+	fileName := "simplest_infectionRate"
+	settings := InsertSettings("parameters/" + fileName + "_set.csv")
 
-	run := StartModel(fileName)
+	GetParametersAndStartTheThing(fileName, settings)
 
-	if setting.AppendToCurrentDataFile {
-		SaveToEndFile("data/test.csv", setting.CurrentDataFile, run)
+	return
+}
+
+func GetParametersAndStartTheThing(fileName string, settings ModelSettings) {
+	r := LoadCSVFile("parameters/" + fileName + "_param.csv")
+
+	var run int
+	var header []string
+
+	i := 0
+
+	for {
+
+		records, err := r.Read()
+
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			log.Fatal(err)
+		}
+		if i == 0 {
+			for j := 0; j < len(records); j++ {
+				header = append(header, records[j])
+			}
+		} else {
+			fmt.Println(records)
+			param := InsertParameters(header, records)
+			fmt.Println(records)
+			run = StartModel(param, settings)
+			// Insert running the whole fucking thing here. It is a bit contrivied putting it here, I know (as it is harder to test), but I can't find a better way to do it than putting it in the middle of the for loop.
+			if settings.AppendToCurrentDataFile {
+				SaveToEndFile("data/temp.txt", settings.CurrentDataFile, run, param)
+			}
+		}
+		i++
 	}
-
 }
 
 // StartModel : Starts the run of the malaria model
@@ -97,7 +132,7 @@ func StartModel(param Parameters, setting ModelSettings) int {
 // RunModelWithSaving :
 func (m *Malaria) RunModelWithSaving(param Parameters, setting ModelSettings) int {
 
-	filename := "test" // + strconv.Itoa(int(param.ImmunitySpeed))
+	filename := "temp"
 	file, err := os.Create("data/" + filename + ".txt")
 	defer file.Close()
 	check(err)
@@ -123,7 +158,7 @@ func (m *Malaria) RunModelWithSaving(param Parameters, setting ModelSettings) in
 	return run
 }
 
-// RunModelWithoutSaving :
+// RunModelWithoutSaving : Does not save every
 func (m *Malaria) RunModelWithoutSaving(param Parameters, setting ModelSettings) int {
 
 	run := 0
