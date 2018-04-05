@@ -63,6 +63,7 @@ func InitiateRunningModel() {
 	return
 }
 
+// GetParametersAndStartTheThing : Gets the parameters given in the file, and start the model using the parameters gotten.
 func GetParametersAndStartTheThing(fileName string, settings ModelSettings) {
 	r := LoadCSVFile("parameters/" + fileName + "_param.csv")
 
@@ -86,9 +87,7 @@ func GetParametersAndStartTheThing(fileName string, settings ModelSettings) {
 				header = append(header, records[j])
 			}
 		} else {
-			fmt.Println(records)
 			param := InsertParameters(header, records)
-			fmt.Println(records)
 			run = StartModel(param, settings)
 			// Insert running the whole fucking thing here. It is a bit contrivied putting it here, I know (as it is harder to test), but I can't find a better way to do it than putting it in the middle of the for loop.
 			if settings.AppendToCurrentDataFile {
@@ -100,12 +99,12 @@ func GetParametersAndStartTheThing(fileName string, settings ModelSettings) {
 }
 
 // StartModel : Starts the run of the malaria model
-func StartModel(param Parameters, setting ModelSettings) int {
+func StartModel(param Parameters, settings ModelSettings) int {
 	modelTime := 0
 	startTime := time.Now()
 	m := ConstructMalariaStruct(param)
 
-	for burnIn := 0; burnIn < setting.BurnIn; burnIn++ {
+	for burnIn := 0; burnIn < settings.BurnIn; burnIn++ {
 		m.EventHappens(param)
 		if m.NInfectedHosts == 0 {
 			fmt.Println("Malaria is dead in", burnIn, "runs. This Happened in burnin")
@@ -115,11 +114,7 @@ func StartModel(param Parameters, setting ModelSettings) int {
 
 	var run int
 	if m.NInfectedHosts != 0 {
-		if setting.Test {
-			run = m.RunModelWithSaving(param, setting)
-		} else {
-			run = m.RunModelWithoutSaving(param, setting)
-		}
+		run = m.RunModel(param, settings)
 	}
 
 	endTime := time.Now()
@@ -132,8 +127,8 @@ func StartModel(param Parameters, setting ModelSettings) int {
 // RunModel :
 func (m *Malaria) RunModel(param Parameters, setting ModelSettings) int {
 
-	filename := "temp"
-	file, err := os.Create("data/" + filename + ".txt")
+	fileName := "temp"
+	file, err := os.Create("data/" + fileName + ".txt")
 	defer file.Close()
 	check(err)
 

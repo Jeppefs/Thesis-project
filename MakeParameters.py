@@ -101,7 +101,7 @@ settings["BurnIn"] = [0]
 settings["Test"] = ["true"]
 settings["AppendToCurrentDataFile"] = ["true"]
 settings["MultipleInfections"] = ["true"]
-settings["CurrentDataFiles"] = ["data/" + Name + "data.csv"]
+settings["CurrentDataFile"] = ["data/" + Name + "_data.csv"]
 
 ##
 

@@ -35,12 +35,13 @@ func SaveToEndFile(loadFileName string, saveFileName string, run int, param Para
 	}
 
 	file, err := os.OpenFile(saveFileName, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	fmt.Println("hallo", saveFileName)
 	check(err)
 	defer file.Close()
 
 	mean, variance := CalcMeanAndVar(d)
 
-	fmt.Fprintf(file, "%v %f %f %f %f %f %f %d %d \n", run, mean, variance, param.InfectionSpeed, param.DeathSpeed, param.MutationSpeed, param.ImmunitySpeed, param.NAntigens, param.MaxAntigenValue)
+	fmt.Fprintf(file, "%v, %f, %f \n", run, mean, variance)
 
 	return
 }

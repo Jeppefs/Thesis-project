@@ -42,7 +42,6 @@ func InsertParameters(header []string, records []string) Parameters {
 	var param Parameters
 
 	for j := 0; j < len(records); j++ {
-		fmt.Println(j)
 		v := reflect.ValueOf(&param)
 		f := v.Elem().FieldByName(header[j])
 		if f.IsValid() && f.CanSet() {
@@ -60,6 +59,8 @@ func InsertParameters(header []string, records []string) Parameters {
 			} else {
 				log.Fatalln("Was not any of the four types")
 			}
+		} else {
+			fmt.Println("This key is not valid", header[j])
 		}
 	}
 
@@ -107,13 +108,14 @@ func InsertSettings(fileName string) ModelSettings {
 					} else {
 						log.Fatalln("Was not any of the four types")
 					}
+				} else {
+					log.Fatalln("This key is not valid while inserting settings: ", header[j])
 				}
 			}
 		}
 
 		i++
 	}
-
 	return setting
 
 }
