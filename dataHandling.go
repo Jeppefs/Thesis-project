@@ -11,8 +11,8 @@ import (
 )
 
 // SaveToEndFile :  Saves data in the test file
-// WARNING! : THERE MUSTS BE AN LINESKIP AT END OF FILE TO REGARD THE LAST NUMBER
-func SaveToEndFile(loadFileName string, saveFileName string, run int, param Parameters) {
+// WARNING! : THERE MUST BE A LINESKIP AT END OF FILE TO REGARD THE LAST NUMBER
+func SaveToEndFile(loadFileName string, saveFileName string, run int) {
 	data, err := ioutil.ReadFile(loadFileName)
 	check(err)
 	stringData := string(data)
@@ -35,14 +35,22 @@ func SaveToEndFile(loadFileName string, saveFileName string, run int, param Para
 	}
 
 	file, err := os.OpenFile(saveFileName, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-	fmt.Println("hallo", saveFileName)
 	check(err)
 	defer file.Close()
 
 	mean, variance := CalcMeanAndVar(d)
 
-	fmt.Fprintf(file, "%v, %f, %f \n", run, mean, variance)
+	fmt.Fprintf(file, "%v, %f, %f \n", run, mean, variance) // Important, must be the same order as the header.
 
+	return
+}
+
+// CreateAvgDataFile : Creates the data file to save run mean and variance. Also inserts the header.
+func CreateAvgDataFile(fileName string) {
+	file, err := os.Create(fileName)
+	check(err)
+	fmt.Fprintf(file, "%s, %s, %s \n", "run", "mean", "variance")
+	file.Close()
 	return
 }
 

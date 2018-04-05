@@ -12,7 +12,6 @@ package main
 import (
 	"fmt"
 	"io"
-	"log"
 	"math/rand"
 	"os"
 	"time"
@@ -57,6 +56,7 @@ func InitiateRunningModel() {
 
 	fileName := "simplest_infectionRate"
 	settings := InsertSettings("parameters/" + fileName + "_set.csv")
+	CreateAvgDataFile("data/" + fileName + "_data.csv")
 
 	GetParametersAndStartTheThing(fileName, settings)
 
@@ -76,12 +76,12 @@ func GetParametersAndStartTheThing(fileName string, settings ModelSettings) {
 
 		records, err := r.Read()
 
+		// Error Checking
 		if err == io.EOF {
 			break
 		}
-		if err != nil {
-			log.Fatal(err)
-		}
+		check(err)
+
 		if i == 0 {
 			for j := 0; j < len(records); j++ {
 				header = append(header, records[j])
@@ -89,9 +89,8 @@ func GetParametersAndStartTheThing(fileName string, settings ModelSettings) {
 		} else {
 			param := InsertParameters(header, records)
 			run = StartModel(param, settings)
-			// Insert running the whole fucking thing here. It is a bit contrivied putting it here, I know (as it is harder to test), but I can't find a better way to do it than putting it in the middle of the for loop.
 			if settings.AppendToCurrentDataFile {
-				SaveToEndFile("data/temp.txt", settings.CurrentDataFile, run, param)
+				SaveToEndFile("data/temp.txt", settings.CurrentDataFile, run)
 			}
 		}
 		i++
@@ -129,8 +128,8 @@ func (m *Malaria) RunModel(param Parameters, setting ModelSettings) int {
 
 	fileName := "temp"
 	file, err := os.Create("data/" + fileName + ".txt")
-	defer file.Close()
 	check(err)
+	defer file.Close()
 
 	run := 0
 	for run = 0; run < setting.Runs; run++ {
