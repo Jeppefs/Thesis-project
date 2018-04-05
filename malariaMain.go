@@ -52,14 +52,16 @@ type Host struct {
 
 // InitiateRunningModel : Starts the whole simulation and sets the parameter-grid.
 func InitiateRunningModel() {
-	parameterGrid := MakeParameterGrid()
+
+	name := "simplest_infectionRate"
 	setting := MakeModelSetting()
-	for i := 0; i < len(parameterGrid); i++ {
-		run := StartModel(parameterGrid[i], setting)
-		if setting.AppendToCurrentDataFile {
-			SaveToEndFile("data/test.txt", setting.CurrentDataFile, run, parameterGrid[i])
-		}
+
+	run := StartModel(fileName)
+
+	if setting.AppendToCurrentDataFile {
+		SaveToEndFile("data/test.csv", setting.CurrentDataFile, run)
 	}
+
 }
 
 // StartModel : Starts the run of the malaria model

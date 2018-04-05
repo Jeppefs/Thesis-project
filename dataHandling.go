@@ -60,6 +60,61 @@ func LoadCSVFile(fileName string) *csv.Reader {
 	return r
 }
 
+func GetParametersAndStartTheThing(fileName string, settings ModelSettings) {
+	r := LoadCSVFile(fileName)
+
+	var header []string
+
+	i := 0
+
+	for {
+		records, err := r.Read()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			log.Fatal(err)
+		}
+		if i == 0 {
+			for j := 0; j < len(records); j++ {
+				header = append(header, records[j])
+			}
+		} else {
+			param := InsertParameters(header, records)
+			RunModelWithSaving(param, settings)
+			// Insert running the whole fucking thing here. It is a bit contrivied putting it here, I know (as it is harder to test), but I can't find a better way to do it than putting it in the middle of the for loop.
+		}
+	}
+}
+
+// InsertParameters : Insert parameters into the parameters struct given a string slice.
+func InsertParameters(header []string, records []string) Parameters {
+	var param Parameters
+	for {
+		for j := 0; j < len(records); j++ {
+			v := reflect.ValueOf(&param)
+			f := v.Elem().FieldByName(header[j])
+			if f.IsValid() && f.CanSet() {
+				if f.Kind() == reflect.String {
+					f.SetString(records[j])
+				} else if f.Kind() == reflect.Int {
+					q, _ := strconv.Atoi(records[j])
+					f.SetInt(int64(q))
+				} else if f.Kind() == reflect.Float64 {
+					q, _ := strconv.ParseFloat(records[j], 64)
+					f.SetFloat(q)
+				} else if f.Kind() == reflect.Bool {
+					q, _ := strconv.ParseBool(records[j])
+					f.SetBool(q)
+				} else {
+					log.Fatalln("Was not any of the four types")
+				}
+			}
+		}
+	}
+	return param
+}
+
 // InsertSettings : Inserts the settings in a setting struct. It does so dynamically to the name in the header. If the name in the header does not correspond to the name in the struct, it will return an error message
 func (setting ModelSettings) InsertSettings(fileName string) ModelSettings {
 
