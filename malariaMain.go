@@ -129,8 +129,8 @@ func StartModel(param Parameters, setting ModelSettings) int {
 	return run
 }
 
-// RunModelWithSaving :
-func (m *Malaria) RunModelWithSaving(param Parameters, setting ModelSettings) int {
+// RunModel :
+func (m *Malaria) RunModel(param Parameters, setting ModelSettings) int {
 
 	filename := "temp"
 	file, err := os.Create("data/" + filename + ".txt")
@@ -151,26 +151,6 @@ func (m *Malaria) RunModelWithSaving(param Parameters, setting ModelSettings) in
 		if m.NInfectedHosts == 0 {
 			fmt.Println("Malaria is dead in", run, "runs")
 			fmt.Fprintf(file, "%v \n", m.NInfectedHosts)
-			break
-		}
-	}
-
-	return run
-}
-
-// RunModelWithoutSaving : Does not save every
-func (m *Malaria) RunModelWithoutSaving(param Parameters, setting ModelSettings) int {
-
-	run := 0
-	for run = 0; run < setting.Runs; run++ {
-		m.EventHappens(param)
-		if run%100 == 0 {
-			if run%1000000 == 0 {
-				fmt.Println(run)
-			}
-		}
-		if m.NInfectedHosts == 0 {
-			fmt.Println("Malaria is dead in", run, "runs")
 			break
 		}
 	}
