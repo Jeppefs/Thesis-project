@@ -1,44 +1,43 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import glob as glob
+import pandas as pandas
 
-# Makes a plot of the development of the number of infected over time. 
-def MakeTimeLinePlot(fileName):
-    global pop
-    testData = np.loadtxt("data/" + fileName)
-    plt.plot(testData / pop)
-    plt.xlabel("Run")
-    plt.ylabel("Infected")
-    #plt.yticks(np.arange(0, max(), 0.1))
-    plt.grid()
-    figName = "plot" + str(len(glob.glob("/plots/*"))) + ".png"
-    plt.savefig("plots/"+figName)
-    return
+class MalariaStatistics():
 
-# Creates a plot with extinction time with whatever parameter given. 
-def MakeExtinctionTimePlot(fileName):
-    plt.figure()
-    avgData = np.loadtxt("data/" + fileName)
-    plt.plot(avgData[:,8], avgData[:,0], '-o')
-    #plt.plot(avgData[:,4], '.')
-    plt.xlabel(str())
-    plt.ylabel("Extinction time:")
-    figName = fileName[0:-3] + ".png"
-    plt.savefig("plots/"+figName)
-    return
+    def __init__(self, fileName):
+        self.fileName = fileName 
+        self.data = pandas.read_csv("data/" + fileName + "_data.csv")
+        #self.singleData = 
+        self.parameters = pandas.read_csv("parameters/" + fileName + "_param.csv")
+        self.settings = pandas.read_csv("parameters/" + fileName + "_set.csv")
 
-# Creates a plot of the mean and variance. 
-def MakeAveragePlot():
-    return
+        self.plotSettings = {}
 
-pop = 10000
+    # Makes a plot of the development of the number of infected over time. 
+    def PlotTimeLinePlot(self):
+        return
 
-#MakeTimeLinePlot("test.txt")
+    # Creates a plot with extinction time with whatever parameter given. 
+    def PlotExtinctionTime(self, vary):
+        plt.figure()
+        plt.plot(self.parameters[vary], self.data["run"])
+        plt.xlabel(vary)
+        plt.ylabel("run")
+        figName = "plots/" + fileName + ".png"
+        plt.savefig(figName)
+        return
 
-plt.figure()
-MakeAveragePlot("avgFile3.txt")
+    # Creates a plot of the mean and variance. 
+    def PlotMeanAndVariance(self):
+        return
+
+fileName = "simplest_infectionRate"
+#print(np.loadtxt("data/" + fileName + "_data.csv", delimiter=',', skiprows=1))
+q = MalariaStatistics("simplest_infectionRate")
+q.PlotExtinctionTime("InfectionSpeed")
 
 plt.show()
+
 
 
 
