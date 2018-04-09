@@ -17,10 +17,8 @@ func (m *Malaria) Spread() {
 		if m.Hosts[spreadTo].HasStrain(&m.Hosts[spreadFrom], m.NAntigens) == false {
 			return
 		}
-	}
-
-	// If the target is not currently infected put him on the infected list and add to the number of incfected
-	if m.Hosts[spreadTo].IsInfected == false {
+	} else {
+		// If the target is not currently infected put him on the infected list and add to the number of incfected
 		m.NInfectedHosts++
 		m.InfectedHosts = append(m.InfectedHosts, spreadTo)
 		m.Hosts[spreadTo].IsInfected = true
