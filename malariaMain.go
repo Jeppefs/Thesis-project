@@ -54,7 +54,7 @@ type Host struct {
 // InitiateRunningModel : Starts the whole simulation and sets the parameter-grid.
 func InitiateRunningModel() {
 
-	fileName := "simplest_infectionRate"
+	fileName := "MaxAntigenLen3"
 	settings := InsertSettings("parameters/" + fileName + "_set.csv")
 	CreateAvgDataFile("data/" + fileName + "_data.csv")
 

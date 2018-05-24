@@ -1,6 +1,8 @@
 package main
 
-import "math/rand"
+import (
+	"math/rand"
+)
 
 // Spread : Another person gets infected.
 func (m *Malaria) Spread() {
@@ -16,15 +18,16 @@ func (m *Malaria) Spread() {
 	if m.Hosts[spreadTo].IsInfected {
 		if m.Hosts[spreadTo].HasStrain(&m.Hosts[spreadFrom], m.NAntigens) == false {
 			return
+		} else {
+			m.Hosts[spreadTo].InfectHost(&m.Hosts[spreadFrom], m.NAntigens)
 		}
 	} else {
-		// If the target is not currently infected put him on the infected list and add to the number of incfected
+		// If the target is not currently infected put him on the infected list, add to the number of incfected and append the disease to him.
 		m.NInfectedHosts++
 		m.InfectedHosts = append(m.InfectedHosts, spreadTo)
 		m.Hosts[spreadTo].IsInfected = true
+		m.Hosts[spreadTo].InfectHost(&m.Hosts[spreadFrom], m.NAntigens)
 	}
-
-	m.Hosts[spreadTo].InfectHost(&m.Hosts[spreadFrom], m.NAntigens)
 
 	return
 }
@@ -111,10 +114,8 @@ func (m *Malaria) Death() {
 	m.Hosts[host].Die(m.NAntigens, m.MaxAntigenValue)
 
 	//m.CheckIfAllInfectedHasInfection(1)
-	//fmt.Println(hostIndex, m.InfectedHosts[hostIndex])
 	m.InfectedHosts = append(m.InfectedHosts[:hostIndex], m.InfectedHosts[hostIndex+1:]...)
 	m.NInfectedHosts--
-	//fmt.Println(hostIndex, m.InfectedHosts[hostIndex])
 	//m.CheckIfAllInfectedHasInfection(2)
 	return
 }
