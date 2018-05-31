@@ -26,7 +26,6 @@ func TestTheCompleteAlgorithm(T *testing.T) {
 
 func TestStructCreation(t *testing.T) {
 	m := CreateMalariaStructDummy(ConstructParameterDummy(5, 3, 5), 2)
-	//fmt.Println("Check if the struct looks correct: \n", m.Antigens, "\n", m.Infections, "\n", m.Antibodies, "\n")
 	fmt.Println("Check if the struct looks correct: \n", m.Hosts[0], "\n", m.Hosts[1], "\n", m.Hosts[2])
 	return
 }
@@ -148,6 +147,7 @@ func CreateMalariaStructDummy(param Parameters, NInfectedHosts int) Malaria {
 }
 
 func TestSaving(t *testing.T) {
+	// TODO: Make this test work under the new scheme.
 	fmt.Println("\n Testing Saving")
 	loadFileName := "testing/SaveInfo.txt"
 	saveFileName := "testing/avgTesting.txt"
@@ -159,7 +159,7 @@ func TestSaving(t *testing.T) {
 	param.MutationSpeed = 0.0
 	param.DeathSpeed = 2.0
 
-	SaveToEndFile(loadFileName, saveFileName, 5, param)
+	SaveToEndFile(loadFileName, saveFileName, 5)
 }
 
 func TestLoading(t *testing.T) {
@@ -187,11 +187,4 @@ func TestLoading(t *testing.T) {
 		fmt.Println(reflect.TypeOf(record[0]))
 	}
 
-}
-
-func TestStructLooping(t *testing.T) {
-	var setting ModelSettings
-	fmt.Println(setting)
-	setting = setting.InsertSettings("parameters/simplest_infectionRate_set.csv")
-	fmt.Println(setting)
 }

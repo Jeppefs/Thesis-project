@@ -69,10 +69,10 @@ def MakeListOfKeys(aDict):
 
 def MakeEmptyListFromDict(aDict):
     length = 1
-    for key, value in aDict.items():
+    for _, value in aDict.items():
         length = length * len(value)
     EmptyList = []
-    for i in range(length):
+    for _ in range(length):
         EmptyList.append([None] * len(aDict))
     print(EmptyList)
     return EmptyList

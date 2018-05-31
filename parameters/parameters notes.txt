@@ -1,2 +1,19 @@
-// This file describes why and what each parameter file is 
+// This file describes each parameter and possible settings for the model. 
+
+NHosts: Number of agents 
+InfectionSpeed: The rate of which malaria spreads.
+ImmunitySpeed: The rate of gaining immunity to a single antigen.  Always set to 1.0 
+MutationSpeed: The rate of strains to switch a random antigen to a new random one. 
+DeathSpeed: The rate of agents death. 
+NAntigens: The number of antigens each strain contain
+MaxAntigenValue: 
+
+SingleFiles:
+Runs:
+BurnIn:
+Test:
+Repeat: How many runs there should be over the same parameters. This is to calculate average and variance. 
+AppendToCurrentDataFile: This file determines if a new data file should be created, or if 
+MultipleInfections:
+CurrentDataFile:
 

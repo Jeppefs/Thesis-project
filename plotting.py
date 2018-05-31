@@ -7,7 +7,6 @@ class MalariaStatistics():
     def __init__(self, fileName):
         self.fileName = fileName 
         self.data = pandas.read_csv("data/" + fileName + "_data.csv")
-        #self.singleData = 
         self.parameters = pandas.read_csv("parameters/" + fileName + "_param.csv")
         self.settings = pandas.read_csv("parameters/" + fileName + "_set.csv")
 
@@ -32,9 +31,13 @@ class MalariaStatistics():
         return
 
 fileName = "simplest_infectionRate"
-#print(np.loadtxt("data/" + fileName + "_data.csv", delimiter=',', skiprows=1))
-q = MalariaStatistics("simplest_infectionRate")
+q = MalariaStatistics(fileName)
 q.PlotExtinctionTime("InfectionSpeed")
+
+fileName = "MaxAntigenLen3"
+q = MalariaStatistics(fileName)
+q.PlotExtinctionTime("MaxAntigenValue")
+
 
 plt.show()
 

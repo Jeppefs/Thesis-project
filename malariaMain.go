@@ -103,13 +103,7 @@ func StartModel(param Parameters, settings ModelSettings) int {
 	startTime := time.Now()
 	m := ConstructMalariaStruct(param)
 
-	for burnIn := 0; burnIn < settings.BurnIn; burnIn++ {
-		m.EventHappens(param)
-		if m.NInfectedHosts == 0 {
-			fmt.Println("Malaria is dead in", burnIn, "runs. This Happened in burnin")
-			break
-		}
-	}
+	m.RunBurnIn(param, settings.BurnIn)
 
 	var run int
 	if m.NInfectedHosts != 0 {
@@ -121,6 +115,18 @@ func StartModel(param Parameters, settings ModelSettings) int {
 	fmt.Println("This set of Parameters, done.", "\n It had the following parameters:", param, "\n It took intime:", modelTime, "\n It took realtime:", endTime.Sub(startTime))
 
 	return run
+}
+
+// RunBurnIn : Runs the model N times given by the burnin settings. None of the data will be saved.
+func (m *Malaria) RunBurnIn(param Parameters, burnIn int) {
+	for run := 0; run < burnIn; run++ {
+		m.EventHappens(param)
+		if m.NInfectedHosts == 0 {
+			fmt.Println("Malaria is dead in", burnIn, "runs. This Happened in burnin")
+			return
+		}
+	}
+	return
 }
 
 // RunModel :
