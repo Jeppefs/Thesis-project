@@ -15,5 +15,6 @@ Test: If true then no data will be saved.
 # Repeat: How many runs there should be over the same parameters. This is to calculate average and variance. 
 AppendToCurrentDataFile: This file determines if a new data file should be created, or if the data should simply be appended to the data files. 
 MultipleInfections: Decides if it is possible to have multiple infections at once.
-CurrentDataFile: ??? 
+CurrentDataFile: The name of the data file 
+ 
 

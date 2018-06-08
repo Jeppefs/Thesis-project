@@ -77,35 +77,39 @@ def MakeEmptyListFromDict(aDict):
     print(EmptyList)
     return EmptyList
 
+def MakeParametersAndSettings():
 
-folder = "parameters/"
-Name = "MaxAntigenLen3"
+    folder = "parameters/"
+    name = "test"
 
-length = 48
-width = 1
+    length = 1
+    width = 1
+    parameters = OrderedDict()
+    
+    parameters["NHosts"] = np.array([10000])
+    parameters["InfectionSpeed"] = np.array([1.0])
+    parameters["ImmunitySpeed"] = np.array([1.0])
+    parameters["MutationSpeed"] = np.array([0.0])
+    parameters["DeathSpeed"] = np.array([0.00])
 
-parameters = OrderedDict()
-parameters["NHosts"] = np.array([10000])
-parameters["InfectionSpeed"] = np.array([1.0])
-parameters["ImmunitySpeed"] = np.array([1.0])
-parameters["MutationSpeed"] = np.array([0.0])
-parameters["DeathSpeed"] = np.array([0.01])
+    parameters['NAntigens'] = np.array([3])
+    parameters['MaxAntigenValue'] = np.array([3+i for i in range(length)])
 
-parameters['NAntigens'] = np.array([3])
-parameters['MaxAntigenValue'] = np.array([3+i for i in range(length)])
+    settings = OrderedDict()
+    settings["SingleFiles"] = ["false"]
+    settings["Runs"] = [25000000]
+    settings["BurnIn"] = [0]
+    settings["Test"] = ["true"]
+    settings["AppendToCurrentDataFile"] = ["true"]
+    settings["MultipleInfections"] = ["true"]
+    settings["CurrentDataFile"] = ["data/" + name + "_data.csv"]
+    return folder, name, parameters, settings
 
-settings = OrderedDict()
-settings["SingleFiles"] = ["false"]
-settings["Runs"] = [25000000]
-settings["BurnIn"] = [0]
-settings["Test"] = ["true"]
-settings["AppendToCurrentDataFile"] = ["true"]
-settings["MultipleInfections"] = ["true"]
-settings["CurrentDataFile"] = ["data/" + Name + "_data.csv"]
+folder, name, parameters, settings = MakeParametersAndSettings()
 
 ##
 
-fileParam, fileSet = CreateFiles(Name)
+fileParam, fileSet = CreateFiles(name)
 CreateHeader(fileParam, parameters)
 CreateHeader(fileSet, settings) 
 InsertValues(fileParam, parameters)

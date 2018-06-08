@@ -18,9 +18,8 @@ func (m *Malaria) Spread() {
 	if m.Hosts[spreadTo].IsInfected {
 		if m.Hosts[spreadTo].HasStrain(&m.Hosts[spreadFrom], m.NAntigens) == false {
 			return
-		} else {
-			m.Hosts[spreadTo].InfectHost(&m.Hosts[spreadFrom], m.NAntigens)
 		}
+		m.Hosts[spreadTo].InfectHost(&m.Hosts[spreadFrom], m.NAntigens)
 	} else {
 		// If the target is not currently infected put him on the infected list, add to the number of incfected and append the disease to him.
 		m.NInfectedHosts++
@@ -113,10 +112,9 @@ func (m *Malaria) Death() {
 
 	m.Hosts[host].Die(m.NAntigens, m.MaxAntigenValue)
 
-	//m.CheckIfAllInfectedHasInfection(1)
 	m.InfectedHosts = append(m.InfectedHosts[:hostIndex], m.InfectedHosts[hostIndex+1:]...)
 	m.NInfectedHosts--
-	//m.CheckIfAllInfectedHasInfection(2)
+
 	return
 }
 
