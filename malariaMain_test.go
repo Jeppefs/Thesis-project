@@ -12,21 +12,65 @@ import (
 	"testing"
 )
 
+var s1 ModelSettings
+var s2 ModelSettings
+var s3 ModelSettings
+
+var p1 Parameters
+var p2 Parameters
+var p3 Parameters
+
 func init() {
 	rand.Seed(1)
+
+	// Insert the parameters from the
+	r := LoadCSVFile("testing/" + "Test_param.csv")
+	var header []string
+	i := 0
+
+	for {
+
+		records, err := r.Read()
+
+		// Error Checking
+		if err == io.EOF {
+			break
+		}
+		check(err)
+
+		switch i {
+		case 0:
+			for j := 0; j < len(records); j++ {
+				header = append(header, records[j])
+			}
+		case 1:
+			p1 = InsertParameters(header, records)
+		case 2:
+			p2 = InsertParameters(header, records)
+		case 3:
+			p3 = InsertParameters(header, records)
+		}
+		i++
+	}
+
 }
 
-func TestTheCompleteAlgorithm(T *testing.T) {
-	/*
-		This tester tests almost everything, by checking at each iteration that nothing has gone wrong.
-		It uses some parameters where I know they should show dynamism and get through all possible methods.
-	*/
-	return
+//
+func CreateMalariaStrcutsInSlice() [3]Malaria {
+	malariaStructs := [3]Malaria{ConstructMalariaStruct(p1), ConstructMalariaStruct(p2), ConstructMalariaStruct(p3)}
+
+	return malariaStructs
 }
 
 func TestStructCreation(t *testing.T) {
-	m := CreateMalariaStructDummy(ConstructParameterDummy(5, 3, 5), 2)
-	fmt.Println("Check if the struct looks correct: \n", m.Hosts[0], "\n", m.Hosts[1], "\n", m.Hosts[2])
+	malariaStructs := CreateMalariaStrcutsInSlice()
+	for _, m := range malariaStructs {
+		fmt.Printf("%+v\n", m, "\n")
+		for _, h := range m.Hosts {
+			fmt.Println(h)
+		}
+		fmt.Println("\n")
+	}
 	return
 }
 

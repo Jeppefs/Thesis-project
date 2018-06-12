@@ -88,10 +88,12 @@ func GetParametersAndStartTheThing(fileName string, settings ModelSettings) {
 			}
 		} else {
 			param := InsertParameters(header, records)
-			run = StartModel(param, settings)
-			if settings.AppendToCurrentDataFile {
-				SaveToEndFile("data/temp.txt", settings.CurrentDataFile, run)
-			}
+			go func() {
+				run = StartModel(param, settings)
+				if settings.AppendToCurrentDataFile {
+					SaveToEndFile("data/temp.txt", settings.CurrentDataFile, run)
+				}
+			}()
 		}
 		i++
 	}
@@ -190,6 +192,7 @@ func ConstructMalariaStruct(param Parameters) Malaria {
 func MakeHost(infected bool, NAntigens int, MaxAntigenValue int) Host {
 	var h Host
 
+	h.IsAlive = true
 	h.Lookout = 0
 	h.ExpressedStrain = make([]int8, NAntigens)
 	h.Antibodies = make([]bool, MaxAntigenValue)

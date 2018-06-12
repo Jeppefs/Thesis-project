@@ -94,6 +94,7 @@ def MakeParametersAndSettings():
 
     parameters['NAntigens'] = np.array([3])
     parameters['MaxAntigenValue'] = np.array([3+i for i in range(length)])
+    parameters['InitialInfected'] = np.array([np.ceil(parameters['NHosts'] / 100)])
 
     settings = OrderedDict()
     settings["SingleFiles"] = ["false"]

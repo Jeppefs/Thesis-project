@@ -16,9 +16,9 @@ func SumSlice(X []float64) float64 {
 	return sum
 }
 
-func check(e error) {
-	if e != nil {
-		log.Fatal(e)
+func check(err error) {
+	if err != nil {
+		log.Fatal(err)
 	}
 }
 
