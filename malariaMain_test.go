@@ -6,6 +6,7 @@ import (
 	"io"
 	"io/ioutil"
 	"log"
+	"math"
 	"math/rand"
 	"reflect"
 	"strings"
@@ -96,7 +97,26 @@ func TestStructCreation(t *testing.T) {
 }
 
 func TestEventChoosing(t *testing.T) {
-	//m := CreateMalariaStructDummy()
+	malariaStructs := CreateMalariaStrcutsInSlice()
+
+	r := CalcRates(&malariaStructs[0], p1)
+
+	NEventTypes := 4
+	eventCount := [4]int{0, 0, 0, 0}
+	NEvents := int(math.Pow(10, 4))
+
+	for i := 0; i < NEvents; i++ {
+		event := ChooseEvent(&malariaStructs[0], p1)
+		eventCount[event]++
+	}
+
+	for i := 0; i < NEventTypes; i++ {
+		r[i] = r[i] * float64(NEvents)
+	}
+
+	fmt.Println(eventCount, r)
+
+	return
 }
 
 func TestInfectHost(t *testing.T) {
