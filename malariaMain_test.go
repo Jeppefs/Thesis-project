@@ -85,6 +85,12 @@ func TestStructCreation(t *testing.T) {
 	CheckIfEqual(t, "NInfectedHosts", malariaStructs[1].NInfectedHosts, 3)
 	CheckIfEqual(t, "NInfectedHosts", malariaStructs[2].NInfectedHosts, 3)
 
+	CheckIfEqual(t, "IsInfected", malariaStructs[0].Hosts[0].IsInfected, true)
+	CheckIfEqual(t, "IsInfected", malariaStructs[0].Hosts[5].IsInfected, false)
+
+	CheckIfEqual(t, "Antigens", malariaStructs[0].Hosts[0].Infections, []int8{0})
+	CheckIfEqual(t, "AntigenLen", len(malariaStructs[1].Hosts[0].Infections), 2)
+
 	fmt.Println("\n")
 	return
 }
