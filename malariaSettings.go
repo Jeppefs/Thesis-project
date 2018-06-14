@@ -20,6 +20,7 @@ type Parameters struct {
 	NHosts          int
 	NAntigens       int
 	MaxAntigenValue int
+	InitialInfected int
 }
 
 // ModelSettings : A structure that contains information ab	out model settings such as

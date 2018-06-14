@@ -1,10 +1,6 @@
 /*
 	TODO:
 	- Make better tests for Immunity and Spread.
-	- Maybe try to have a reproduction method.
-	- NoCombineParasites
-		- Talk to Kim about this
-		- What does it really do?
 */
 
 package main
@@ -25,7 +21,7 @@ func main() {
 	fmt.Println("The end. Congrats! The whole run took:", endTime.Sub(startTime), "d")
 }
 
-// Malaria : .
+// Malaria :
 type Malaria struct {
 	// Counts
 	NHosts          int // How many potential hosts there are in the system
@@ -166,7 +162,7 @@ func ConstructMalariaStruct(param Parameters) Malaria {
 
 	// Sets initial values.
 	m.NHosts = param.NHosts // Constant
-	m.NInfectedHosts = m.NHosts / 100
+	m.NInfectedHosts = param.InitialInfected
 	m.NAntigens = param.NAntigens
 	m.MaxAntigenValue = param.MaxAntigenValue
 

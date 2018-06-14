@@ -10,6 +10,8 @@ import (
 	"reflect"
 	"strings"
 	"testing"
+
+	"github.com/google/go-cmp/cmp"
 )
 
 var s1 ModelSettings
@@ -62,15 +64,28 @@ func CreateMalariaStrcutsInSlice() [3]Malaria {
 	return malariaStructs
 }
 
+// Checks if two values are the same, and stops the test if they are not.
+func CheckIfEqual(t *testing.T, s string, a interface{}, b interface{}) {
+	if cmp.Equal(a, b) {
+		return
+	} else {
+		t.Fatalf("Error in %s. The two values are not equal. \n Is: %v. \n Should be: %v", s, a, b)
+	}
+	return
+}
+
 func TestStructCreation(t *testing.T) {
 	malariaStructs := CreateMalariaStrcutsInSlice()
-	for _, m := range malariaStructs {
-		fmt.Printf("%+v\n", m, "\n")
-		for _, h := range m.Hosts {
-			fmt.Println(h)
-		}
-		fmt.Println("\n")
-	}
+
+	CheckIfEqual(t, "NHosts", malariaStructs[0].NHosts, 10)
+	CheckIfEqual(t, "NHosts", malariaStructs[1].NHosts, 10)
+	CheckIfEqual(t, "NHosts", malariaStructs[2].NHosts, 3)
+
+	CheckIfEqual(t, "NInfectedHosts", malariaStructs[0].NInfectedHosts, 3)
+	CheckIfEqual(t, "NInfectedHosts", malariaStructs[1].NInfectedHosts, 3)
+	CheckIfEqual(t, "NInfectedHosts", malariaStructs[2].NInfectedHosts, 3)
+
+	fmt.Println("\n")
 	return
 }
 
