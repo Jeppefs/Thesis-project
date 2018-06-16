@@ -119,6 +119,32 @@ func TestEventChoosing(t *testing.T) {
 	return
 }
 
+func TestSpread(t *testing.T) {
+	//malariaStructs := CreateMalariaStrcutsInSlice()
+
+	return
+}
+
+func TestInfectHost(t *testing.T) {
+	malariaStructs := CreateMalariaStrcutsInSlice()
+
+	malariaStructs[0].Hosts[4].InfectHost(&malariaStructs[0].Hosts[0], p1.NAntigens)
+	CheckIfEqual(t, "Newly infected has same infections", malariaStructs[0].Hosts[4].Infections, malariaStructs[0].Hosts[0].Infections)
+	CheckIfEqual(t, "Newly infected has correct expressed strain", malariaStructs[0].Hosts[4].ExpressedStrain, malariaStructs[0].Hosts[0].ExpressedStrain)
+
+	malariaStructs[0].Hosts[1].InfectHost(&malariaStructs[0].Hosts[0], p1.NAntigens)
+	CheckIfEqual(t, "Newly infected has same infections", malariaStructs[0].Hosts[1].Infections, []int8{0, 0})
+	CheckIfEqual(t, "Newly infected has correct expressed strain", malariaStructs[0].Hosts[1].ExpressedStrain, []int8{0})
+
+	return
+
+}
+
+func TestCombinerParasite(t *testing.T) {
+	return
+}
+
+/*
 func TestInfectHost(t *testing.T) {
 	fmt.Println("\n Testing spread")
 	m := CreateMalariaStructDummy(ConstructParameterDummy(5, 3, 5), 2)
@@ -140,6 +166,7 @@ func TestInfectHost(t *testing.T) {
 	}
 
 }
+*/
 
 func TestImmunity(t *testing.T) {
 	fmt.Println("\n Testing immunity")
