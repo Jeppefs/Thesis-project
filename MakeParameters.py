@@ -93,17 +93,19 @@ def MakeParametersAndSettings():
     parameters["DeathSpeed"] = np.array([0.00])
 
     parameters['NAntigens'] = np.array([3])
-    parameters['MaxAntigenValue'] = np.array([3+i for i in range(length)])
-    parameters['InitialInfected'] = np.array([np.ceil(parameters['NHosts'] / 100)])
+    parameters['MaxAntigenValue'] = np.array([1])
+    parameters['InitialInfected'] = np.array([1])
+
+    parameters['IsMultipleInfectionsPossible'] = np.array(["true"])
 
     settings = OrderedDict()
-    settings["SingleFiles"] = ["false"]
-    settings["Runs"] = [25000000]
+    settings["Runs"] = [25000000] 
     settings["BurnIn"] = [0]
-    settings["Test"] = ["true"]
-    settings["AppendToCurrentDataFile"] = ["true"]
-    settings["MultipleInfections"] = ["true"]
-    settings["CurrentDataFile"] = ["data/" + name + "_data.csv"]
+    settings["Repeat"] = [10]
+    settings["ShouldSaveToDataFiles"] = ["true"]
+    settings["ShouldSaveDataWhileRunning"] = ["false"] //
+    settings["ShouldCreateNewDataFile"] = ["true"]
+    settings["DataFileName"] = ["data/" + name + "_data.csv"]
     return folder, name, parameters, settings
 
 folder, name, parameters, settings = MakeParametersAndSettings()
