@@ -11,31 +11,32 @@ import (
 // Parameters : Sets the parameters for a particular run. These are all set before the simulation.
 type Parameters struct {
 	// Parameters used when calculating rates and probabilities for next event.
-	InfectionSpeed float64
-	ImmunitySpeed  float64
-	MutationSpeed  float64
-	DeathSpeed     float64
+	InfectionSpeed float64 // The rate of which malaria spreads.
+	ImmunitySpeed  float64 // The rate of gaining immunity to a single antigen.  Always set to 1.0
+	MutationSpeed  float64 //  The rate of strains to switch a random antigen to a new random one.
+	DeathSpeed     float64 // The rate of hosts death.
 
 	// Other setting that changes the behaviour of the system
-	NHosts          int
-	NAntigens       int
-	MaxAntigenValue int
-	InitialInfected int
+	NHosts          int // Number of hosts
+	NAntigens       int // The number of antigens each strain contains
+	MaxAntigenValue int // The maximum value a single antigen can take. In other words it decides the number of different antigens.
+	InitialInfected int // How many infected there is at start of simulation.
+
+	// Boolean settings
+	IsMultipleInfectionsPossible bool // NOT IMPLENTED!!!!
 }
 
 // ModelSettings : A structure that contains information ab	out model settings such as
 type ModelSettings struct {
-	SingleFiles bool
+	Runs   int // Number of runs
+	BurnIn int // Number of runs that is not counted
+	Repeat int // How many times the simulation should be repeated for each parameter.
 
-	BurnIn int
-	Runs   int
+	ShouldSaveData             bool // Should the program run with saving data?
+	ShouldSaveDataWhileRunning bool // Should the program run with saving date after some number of steps
+	ShouldCreateNewDataFile    bool // Should the program create a new data file og append to the data file that already exists.
 
-	Test                    bool
-	AppendToCurrentDataFile bool
-
-	MultipleInfections bool
-
-	CurrentDataFile string
+	DataFileNames string // The name of the files that belong to this run.
 }
 
 // InsertParameters : Insert parameters into the parameters struct given a string slice.

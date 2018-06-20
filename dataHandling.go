@@ -34,7 +34,7 @@ func SaveToEndFile(loadFileName string, saveFileName string, run int) {
 		}
 	}
 
-	file, err := os.OpenFile(saveFileName, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	file, err := os.OpenFile(saveFileName+"_data.csv", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	check(err)
 	defer file.Close()
 

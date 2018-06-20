@@ -99,11 +99,11 @@ def MakeParametersAndSettings():
     parameters['IsMultipleInfectionsPossible'] = np.array(["true"])
 
     settings = OrderedDict()
-    settings["Runs"] = [25000000] 
+    settings["Runs"] = [250000] 
     settings["BurnIn"] = [0]
     settings["Repeat"] = [10]
     settings["ShouldSaveToDataFiles"] = ["true"]
-    settings["ShouldSaveDataWhileRunning"] = ["false"] //
+    settings["ShouldSaveDataWhileRunning"] = ["false"] 
     settings["ShouldCreateNewDataFile"] = ["true"]
     settings["DataFileName"] = ["data/" + name + "_data.csv"]
     return folder, name, parameters, settings
