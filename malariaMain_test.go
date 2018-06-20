@@ -69,9 +69,8 @@ func CreateMalariaStrcutsInSlice() [3]Malaria {
 func CheckIfEqual(t *testing.T, s string, a interface{}, b interface{}) {
 	if cmp.Equal(a, b) {
 		return
-	} else {
-		t.Fatalf("Error in %s. The two values are not equal. \n Is: %v. \n Should be: %v", s, a, b)
 	}
+	t.Fatalf("Error in %s. The two values are not equal. \n Is: %v. \n Should be: %v", s, a, b)
 	return
 }
 

@@ -99,9 +99,9 @@ def MakeParametersAndSettings():
     parameters['IsMultipleInfectionsPossible'] = np.array(["true"])
 
     settings = OrderedDict()
-    settings["Runs"] = [250000] 
+    settings["Runs"] = [2500000] 
     settings["BurnIn"] = [0]
-    settings["Repeat"] = [10]
+    settings["Repeat"] = [1]
     settings["ShouldSaveData"] = ["true"]
     settings["ShouldSaveDataWhileRunning"] = ["false"] 
     settings["ShouldCreateNewDataFile"] = ["false"]

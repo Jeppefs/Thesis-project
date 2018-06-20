@@ -71,7 +71,7 @@ func GetParametersAndStartTheThing(fileName string, settings ModelSettings) {
 	for {
 
 		records, err := r.Read()
-
+		fmt.Println(records)
 		// Error Checking
 		if err == io.EOF {
 			break
@@ -84,7 +84,7 @@ func GetParametersAndStartTheThing(fileName string, settings ModelSettings) {
 			}
 		} else {
 			param := InsertParameters(header, records)
-			go func() {
+			func() {
 				run = StartModel(param, settings)
 				if settings.ShouldCreateNewDataFile == false {
 					SaveToEndFile("data/temp.txt", settings.DataFileName, run)
@@ -93,6 +93,7 @@ func GetParametersAndStartTheThing(fileName string, settings ModelSettings) {
 		}
 		i++
 	}
+	return
 }
 
 // StartModel : Starts the run of the malaria model
@@ -102,7 +103,6 @@ func StartModel(param Parameters, settings ModelSettings) int {
 	m := ConstructMalariaStruct(param)
 
 	m.RunBurnIn(param, settings.BurnIn)
-
 	var run int
 	if m.NInfectedHosts != 0 {
 		run = m.RunModel(param, settings)
@@ -136,7 +136,9 @@ func (m *Malaria) RunModel(param Parameters, setting ModelSettings) int {
 	defer file.Close()
 
 	run := 0
+
 	for run = 0; run < setting.Runs; run++ {
+
 		m.EventHappens(param)
 		if run%100 == 0 {
 			//m.CountNumberOfUniqueAntigens()
@@ -152,7 +154,6 @@ func (m *Malaria) RunModel(param Parameters, setting ModelSettings) int {
 			break
 		}
 	}
-
 	return run
 }
 
