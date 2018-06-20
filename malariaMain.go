@@ -10,6 +10,7 @@ import (
 	"io"
 	"math/rand"
 	"os"
+	"strconv"
 	"time"
 )
 
@@ -71,8 +72,6 @@ func GetParametersAndStartTheThing(fileName string, settings ModelSettings) {
 	for {
 
 		records, err := r.Read()
-		fmt.Println(records)
-		// Error Checking
 		if err == io.EOF {
 			break
 		}
@@ -87,6 +86,10 @@ func GetParametersAndStartTheThing(fileName string, settings ModelSettings) {
 			run = StartModel(param, settings)
 			if settings.ShouldCreateNewDataFile == false {
 				SaveToEndFile("data/temp.txt", settings.DataFileName, run)
+				fmt.Println("here")
+				//os.Rename("data/temp.txt", "data/"+fileName+string(i)+".txt")
+				os.Rename("data/temp.txt", "data/"+fileName+strconv.Itoa(i)+".csv")
+				fmt.Println("here2")
 			}
 		}
 		i++
@@ -139,7 +142,6 @@ func (m *Malaria) RunModel(param Parameters, setting ModelSettings) int {
 
 		m.EventHappens(param)
 		if run%100 == 0 {
-			//m.CountNumberOfUniqueAntigens()
 			fmt.Fprintf(file, "%v \n", m.NInfectedHosts)
 			if run%1000000 == 0 {
 				//fmt.Println(m.NDifferentAntigens)
