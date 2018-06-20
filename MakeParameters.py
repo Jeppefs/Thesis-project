@@ -104,8 +104,8 @@ def MakeParametersAndSettings():
     settings["Repeat"] = [10]
     settings["ShouldSaveToDataFiles"] = ["true"]
     settings["ShouldSaveDataWhileRunning"] = ["false"] 
-    settings["ShouldCreateNewDataFile"] = ["true"]
-    settings["DataFileName"] = ["data/" + name + "_data.csv"]
+    settings["ShouldCreateNewDataFile"] = ["false"]
+    settings["DataFileName"] = ["data/" + name]
     return folder, name, parameters, settings
 
 folder, name, parameters, settings = MakeParametersAndSettings()

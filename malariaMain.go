@@ -50,7 +50,7 @@ type Host struct {
 // InitiateRunningModel : Starts the whole simulation and sets the parameter-grid.
 func InitiateRunningModel() {
 
-	fileName := "MaxAntigenLen3"
+	fileName := "test"
 	settings := InsertSettings("parameters/" + fileName + "_set.csv")
 	CreateAvgDataFile("data/" + fileName + "_data.csv")
 
@@ -86,8 +86,8 @@ func GetParametersAndStartTheThing(fileName string, settings ModelSettings) {
 			param := InsertParameters(header, records)
 			go func() {
 				run = StartModel(param, settings)
-				if settings.AppendToCurrentDataFile {
-					SaveToEndFile("data/temp.txt", settings.CurrentDataFile, run)
+				if settings.ShouldCreateNewDataFile == false {
+					SaveToEndFile("data/temp.txt", settings.DataFileNames, run)
 				}
 			}()
 		}
