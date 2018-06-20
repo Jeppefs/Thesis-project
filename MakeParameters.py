@@ -94,7 +94,7 @@ def MakeParametersAndSettings():
 
     parameters['NAntigens'] = np.array([3])
     parameters['MaxAntigenValue'] = np.array([1])
-    parameters['InitialInfected'] = np.array([1])
+    parameters['InitialInfected'] = np.array([100])
 
     parameters['IsMultipleInfectionsPossible'] = np.array(["true"])
 
@@ -102,7 +102,7 @@ def MakeParametersAndSettings():
     settings["Runs"] = [250000] 
     settings["BurnIn"] = [0]
     settings["Repeat"] = [10]
-    settings["ShouldSaveToDataFiles"] = ["true"]
+    settings["ShouldSaveData"] = ["true"]
     settings["ShouldSaveDataWhileRunning"] = ["false"] 
     settings["ShouldCreateNewDataFile"] = ["false"]
     settings["DataFileName"] = ["data/" + name]

@@ -92,3 +92,15 @@ func (h *Host) HasStrain(h2 *Host, NAntigens int) bool {
 
 	return false
 }
+
+// CountNumberOfUniqueAntigens : Counts the number of unique antigens an all hosts. s
+func (m *Malaria) CountNumberOfUniqueAntigens() {
+	AntigenExistence := make([]bool, m.MaxAntigenValue)
+	for _, host := range m.Hosts {
+		for _, antigen := range host.ExpressedStrain {
+			AntigenExistence[antigen] = true
+		}
+	}
+	m.NDifferentAntigens = CountBolleanArray(AntigenExistence)
+	return
+}

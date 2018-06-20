@@ -36,7 +36,7 @@ type ModelSettings struct {
 	ShouldSaveDataWhileRunning bool // Should the program run with saving date after some number of steps
 	ShouldCreateNewDataFile    bool // Should the program create a new data file og append to the data file that already exists.
 
-	DataFileNames string // The name of the files that belong to this run.
+	DataFileName string // The name of the files that belong to this run.
 }
 
 // InsertParameters : Insert parameters into the parameters struct given a string slice.
