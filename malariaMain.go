@@ -84,12 +84,10 @@ func GetParametersAndStartTheThing(fileName string, settings ModelSettings) {
 			}
 		} else {
 			param := InsertParameters(header, records)
-			func() {
-				run = StartModel(param, settings)
-				if settings.ShouldCreateNewDataFile == false {
-					SaveToEndFile("data/temp.txt", settings.DataFileName, run)
-				}
-			}()
+			run = StartModel(param, settings)
+			if settings.ShouldCreateNewDataFile == false {
+				SaveToEndFile("data/temp.txt", settings.DataFileName, run)
+			}
 		}
 		i++
 	}
