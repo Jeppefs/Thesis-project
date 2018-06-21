@@ -13,7 +13,7 @@ import (
 // SaveToEndFile :  Saves data in the test file
 // WARNING! : THERE MUST BE A LINESKIP AT END OF FILE TO REGARD THE LAST NUMBER
 func SaveToEndFile(loadFileName string, saveFileName string, run int) {
-	data, err := ioutil.ReadFile(loadFileName)
+	data, err := ioutil.ReadFile(path + loadFileName)
 	check(err)
 	stringData := string(data)
 
@@ -34,12 +34,12 @@ func SaveToEndFile(loadFileName string, saveFileName string, run int) {
 		}
 	}
 
-	file, err := os.OpenFile(saveFileName+"_data.csv", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	file, err := os.OpenFile(path+saveFileName, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	check(err)
 	defer file.Close()
 
 	mean, variance := CalcMeanAndVar(d)
-
+	fmt.Println(mean, variance)
 	fmt.Fprintf(file, "%v, %f, %f \n", run, mean, variance) // Important, must be the same order as the header.
 
 	return

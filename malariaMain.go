@@ -14,6 +14,10 @@ import (
 	"time"
 )
 
+// We define a set of global constant - mostly
+const path = "data/" + "test_other/"
+
+// main
 func main() {
 	fmt.Println("Starting")
 	startTime := time.Now()
@@ -51,10 +55,16 @@ type Host struct {
 // InitiateRunningModel : Starts the whole simulation and sets the parameter-grid.
 func InitiateRunningModel() {
 
-	folderName := "test_other/"
-	path := "data/" + folderName
 	settings := InsertSettings(path + "settings.csv")
-	CreateAvgDataFile(path + "dataEnd.csv")
+
+	// This creates a new data file if it does not alrady exist or we simply want a clean no run (no appending).
+	if _, err := os.Stat(path + settings.DataFileName); err == nil {
+		if settings.ShouldCreateNewDataFile {
+			CreateAvgDataFile(path + settings.DataFileName)
+		}
+	} else {
+		CreateAvgDataFile(path + settings.DataFileName)
+	}
 
 	GetParametersAndStartTheThing(path, settings)
 
@@ -85,9 +95,9 @@ func GetParametersAndStartTheThing(path string, settings ModelSettings) {
 		} else {
 			param := InsertParameters(header, records)
 			run = StartModel(param, settings)
-			if settings.ShouldCreateNewDataFile == false {
-				SaveToEndFile(path+"temp.txt", settings.DataFileName, run)
-				os.Rename(path+"temp.txt", "path"+"dataSim"+strconv.Itoa(i)+".csv")
+			if settings.ShouldSaveData {
+				SaveToEndFile("temp.txt", settings.DataFileName, run)
+				os.Rename(path+"temp.txt", path+"dataSim"+strconv.Itoa(i)+".csv")
 			}
 		}
 		i++
@@ -130,7 +140,7 @@ func (m *Malaria) RunBurnIn(param Parameters, burnIn int) {
 func (m *Malaria) RunModel(param Parameters, setting ModelSettings) int {
 
 	fileName := "temp"
-	file, err := os.Create("data/" + fileName + ".txt")
+	file, err := os.Create("data/test_other/" + fileName + ".txt")
 	check(err)
 	defer file.Close()
 

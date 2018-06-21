@@ -108,7 +108,7 @@ def MakeParametersAndSettings():
     settings["ShouldSaveData"] = ["true"]
     settings["ShouldSaveDataWhileRunning"] = ["true"] 
     settings["ShouldCreateNewDataFile"] = ["true"]
-    settings["DataFileName"] = ["data/" + "endData"]
+    settings["DataFileName"] = ["dataEnd.csv"]
 
     return folder, name, parameters, settings
 
