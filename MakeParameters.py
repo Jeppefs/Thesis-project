@@ -1,9 +1,13 @@
 import numpy as np
+import os
 from collections import OrderedDict
 
-def CreateFiles(fileName):
-    fileParam = open("parameters/" + fileName + "_param" + ".csv", "w+")
-    fileSet = open("parameters/" + fileName + "_set" + ".csv", "w+")
+def CreateFiles(folderName):
+    if not os.path.exists("data/" + folderName + "/"):
+        os.makedirs("data/" + folderName + "/")
+
+    fileParam = open("data/" + folderName + "/" + "parameters" + ".csv", "w+")
+    fileSet = open("data/" + folderName + "/" +  "settings" + ".csv", "w+")
     return fileParam, fileSet
 
 # Saves the keys onto a header for the given file. 
@@ -79,8 +83,8 @@ def MakeEmptyListFromDict(aDict):
 
 def MakeParametersAndSettings():
 
-    folder = "parameters/"
-    name = "test"
+    folder = "data"
+    name = "test2"
 
     length = 1
     width = 1
@@ -105,7 +109,8 @@ def MakeParametersAndSettings():
     settings["ShouldSaveData"] = ["true"]
     settings["ShouldSaveDataWhileRunning"] = ["false"] 
     settings["ShouldCreateNewDataFile"] = ["false"]
-    settings["DataFileName"] = ["data/" + name]
+    settings["DataFileName"] = ["data/" + "endData"]
+
     return folder, name, parameters, settings
 
 folder, name, parameters, settings = MakeParametersAndSettings()
