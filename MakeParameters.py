@@ -78,13 +78,12 @@ def MakeEmptyListFromDict(aDict):
     EmptyList = []
     for _ in range(length):
         EmptyList.append([None] * len(aDict))
-    print(EmptyList)
     return EmptyList
 
 def MakeParametersAndSettings():
 
     folder = "data"
-    name = "test2"
+    name = "test_other"
 
     length = 1
     width = 1
@@ -96,7 +95,7 @@ def MakeParametersAndSettings():
     parameters["MutationSpeed"] = np.array([0.0])
     parameters["DeathSpeed"] = np.array([0.00])
 
-    parameters['NAntigens'] = np.array([3])
+    parameters['NAntigens'] = np.array([i+1 for i in range(3)])
     parameters['MaxAntigenValue'] = np.array([1])
     parameters['InitialInfected'] = np.array([100])
 
@@ -107,8 +106,8 @@ def MakeParametersAndSettings():
     settings["BurnIn"] = [0]
     settings["Repeat"] = [1]
     settings["ShouldSaveData"] = ["true"]
-    settings["ShouldSaveDataWhileRunning"] = ["false"] 
-    settings["ShouldCreateNewDataFile"] = ["false"]
+    settings["ShouldSaveDataWhileRunning"] = ["true"] 
+    settings["ShouldCreateNewDataFile"] = ["true"]
     settings["DataFileName"] = ["data/" + "endData"]
 
     return folder, name, parameters, settings

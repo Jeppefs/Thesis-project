@@ -51,18 +51,19 @@ type Host struct {
 // InitiateRunningModel : Starts the whole simulation and sets the parameter-grid.
 func InitiateRunningModel() {
 
-	fileName := "test"
-	settings := InsertSettings("parameters/" + fileName + "_set.csv")
-	CreateAvgDataFile("data/" + fileName + "_data.csv")
+	folderName := "test_other/"
+	path := "data/" + folderName
+	settings := InsertSettings(path + "settings.csv")
+	CreateAvgDataFile(path + "dataEnd.csv")
 
-	GetParametersAndStartTheThing(fileName, settings)
+	GetParametersAndStartTheThing(path, settings)
 
 	return
 }
 
 // GetParametersAndStartTheThing : Gets the parameters given in the file, and start the model using the parameters gotten.
-func GetParametersAndStartTheThing(fileName string, settings ModelSettings) {
-	r := LoadCSVFile("parameters/" + fileName + "_param.csv")
+func GetParametersAndStartTheThing(path string, settings ModelSettings) {
+	r := LoadCSVFile(path + "parameters.csv")
 
 	var run int
 	var header []string
