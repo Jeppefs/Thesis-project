@@ -15,7 +15,7 @@ import (
 )
 
 // We define a set of global constant - mostly
-const path = "data/" + "test_other/"
+const path = "data/" + "simpleDeath/"
 
 // main
 func main() {
@@ -140,7 +140,7 @@ func (m *Malaria) RunBurnIn(param Parameters, burnIn int) {
 func (m *Malaria) RunModel(param Parameters, setting ModelSettings) int {
 
 	fileName := "temp"
-	file, err := os.Create("data/test_other/" + fileName + ".txt")
+	file, err := os.Create(path + fileName + ".txt")
 	check(err)
 	defer file.Close()
 
