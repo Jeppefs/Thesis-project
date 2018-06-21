@@ -86,11 +86,8 @@ func GetParametersAndStartTheThing(path string, settings ModelSettings) {
 			param := InsertParameters(header, records)
 			run = StartModel(param, settings)
 			if settings.ShouldCreateNewDataFile == false {
-				SaveToEndFile("data/temp.txt", settings.DataFileName, run)
-				fmt.Println("here")
-				//os.Rename("data/temp.txt", "data/"+fileName+string(i)+".txt")
-				os.Rename("data/temp.txt", "data/"+fileName+strconv.Itoa(i)+".csv")
-				fmt.Println("here2")
+				SaveToEndFile(path+"temp.txt", settings.DataFileName, run)
+				os.Rename(path+"temp.txt", "path"+"dataSim"+strconv.Itoa(i)+".csv")
 			}
 		}
 		i++
