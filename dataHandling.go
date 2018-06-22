@@ -45,6 +45,19 @@ func SaveToEndFile(loadFileName string, saveFileName string, run int) {
 	return
 }
 
+// CheckToCreateNedEndDataFileAndDoSoIfTrue : Creates new end data file if it does not exist, or if we want a clean run.
+func CheckToCreateNedEndDataFileAndDoSoIfTrue(settings *ModelSettings) {
+	// This creates a new data file if it does not alrady exist or we simply want a clean run (no appending).
+	if _, err := os.Stat(path + settings.DataFileName); err == nil {
+		if settings.ShouldCreateNewDataFile {
+			CreateAvgDataFile(path + settings.DataFileName)
+		}
+	} else {
+		CreateAvgDataFile(path + settings.DataFileName)
+	}
+	return
+}
+
 // CreateAvgDataFile : Creates the data file to save run mean and variance. Also inserts the header.
 func CreateAvgDataFile(fileName string) {
 	file, err := os.Create(fileName)
