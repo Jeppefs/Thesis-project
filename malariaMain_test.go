@@ -27,7 +27,7 @@ func init() {
 	rand.Seed(1)
 
 	// Insert the parameters from the
-	r := LoadCSVFile("testing/" + "Test_param.csv")
+	r := LoadCSVFile("data/test/parameters.csv")
 	var header []string
 	i := 0
 
@@ -145,13 +145,11 @@ func TestCombinerParasite(t *testing.T) {
 
 func TestImmunity(t *testing.T) {
 	fmt.Println("\n Testing immunity")
-	m := CreateMalariaStructDummy(ConstructParameterDummy(5, 1, 1), 1)
+	malariaStructs := CreateMalariaStrcutsInSlice()
 
-	m.ImmunityGained()
-	fmt.Println(m.Hosts[0], m.InfectedHosts)
-	m.ImmunityGained()
-	fmt.Println(m.Hosts[0], m.InfectedHosts)
-
+	fmt.Println(malariaStructs[2].Hosts[0].ExpressedStrain)
+	malariaStructs[0].ImmunityGained()
+	CheckIfEqual(t, "Expressed Strain", len(malariaStructs[0].Hosts[0].ExpressedStrain), 0)
 }
 
 func TestDeath(t *testing.T) {
