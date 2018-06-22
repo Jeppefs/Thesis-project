@@ -28,6 +28,7 @@ class MalariaStatistics():
         plt.savefig(figName)
         return
 
+    # Creates a plot of the mean and variance. 
     def PlotMeanInfection(self, vary):
         plt.figure()
         plt.errorbar(self.parameters[vary], self.dataEnd[" mean"], np.sqrt(self.dataEnd[" variance "]))
@@ -37,11 +38,13 @@ class MalariaStatistics():
         plt.savefig(figName)
         return
 
-    # Creates a plot of the mean and variance. 
-    def PlotMeanAndVariance(self):
+    # Recalculates dataEnd, such that it finds the mean and variance from the repeat cases. 
+    def GetMeanAndVarianceFromRepat(self):
+        for i in range(self.parameters["Repeat"]):
+            
         return
 
-q = MalariaStatistics("simpleDeath")
+q = MalariaStatistics("simpleDeathRepeat")
 q.PlotExtinctionTime("DeathSpeed")
 print(q.dataEnd.keys())
 q.PlotMeanInfection("DeathSpeed")

@@ -14,7 +14,7 @@ import (
 )
 
 // We define a set of global constant - mostly
-const path = "data/" + "simpleDeath/"
+const path = "data/" + "VaryAntigen/"
 
 // main
 func main() {
@@ -121,7 +121,7 @@ func (m *Malaria) RunModel(param Parameters, setting ModelSettings) int {
 		m.EventHappens(param)
 		if run%100 == 0 {
 			fmt.Fprintf(file, "%v \n", m.NInfectedHosts)
-			if run%1000000 == 0 {
+			if run%2000000 == 0 {
 				fmt.Println(run)
 			}
 		}
