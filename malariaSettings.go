@@ -65,7 +65,6 @@ func InsertParameters(header []string, records []string) Parameters {
 			fmt.Println("This key is not valid", header[j])
 		}
 	}
-
 	return param
 }
 
@@ -121,43 +120,3 @@ func InsertSettings(fileName string) ModelSettings {
 	return setting
 
 }
-
-/*
-// MakeModelSetting : Constructs the ModelSettings struct, which sets how the data should be saved, if a burnin should exist and so on.
-func MakeModelSetting() ModelSettings {
-
-	var setting ModelSettings
-
-	setting.Runs = 25000000 // Usually 5000000
-	setting.BurnIn = 0      // Usually 5000000
-
-	setting.Test = true
-	setting.AppendToCurrentDataFile = true
-
-	setting.MultipleInfections = true
-
-	setting.CurrentDataFile = "data/avgFile3.txt"
-
-	return setting
-}
-
-// MakeParameterGrid : Creates a parameter grid to search through. Also where settings as applied.
-func MakeParameterGrid() []Parameters {
-	gridsize := 100
-
-	parameterGrid := make([]Parameters, gridsize)
-
-	for i := 0; i < gridsize; i++ {
-		parameterGrid[i].InfectionSpeed = 0.99 //+ float64(i)/1000.0
-		parameterGrid[i].ImmunitySpeed = 1.0
-		parameterGrid[i].MutationSpeed = 0.0
-		parameterGrid[i].DeathSpeed = float64(i) / 1000
-
-		parameterGrid[i].NHosts = 10000
-		parameterGrid[i].NAntigens = 1
-		parameterGrid[i].MaxAntigenValue = 1
-	}
-
-	return parameterGrid
-}
-*/

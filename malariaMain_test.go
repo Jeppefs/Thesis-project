@@ -86,7 +86,9 @@ func TestStructCreation(t *testing.T) {
 	CheckIfEqual(t, "NInfectedHosts", malariaStructs[2].NInfectedHosts, 3)
 
 	CheckIfEqual(t, "IsInfected", malariaStructs[0].Hosts[0].IsInfected, true)
+	CheckIfEqual(t, "IsInfected", malariaStructs[1].Hosts[2].IsInfected, true)
 	CheckIfEqual(t, "IsInfected", malariaStructs[0].Hosts[5].IsInfected, false)
+	CheckIfEqual(t, "IsInfected", malariaStructs[0].Hosts[1].IsInfected, false)
 
 	CheckIfEqual(t, "Antigens", malariaStructs[0].Hosts[0].Infections, []int8{0})
 	CheckIfEqual(t, "AntigenLen", len(malariaStructs[1].Hosts[0].Infections), 2)
@@ -147,7 +149,7 @@ func TestImmunity(t *testing.T) {
 	fmt.Println("\n Testing immunity")
 	malariaStructs := CreateMalariaStrcutsInSlice()
 
-	fmt.Println(malariaStructs[2].Hosts[0].ExpressedStrain)
+	fmt.Println(malariaStructs[0].Hosts[1].IsInfected)
 	malariaStructs[0].ImmunityGained()
 	CheckIfEqual(t, "Expressed Strain", len(malariaStructs[0].Hosts[0].ExpressedStrain), 0)
 }
