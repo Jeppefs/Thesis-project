@@ -104,7 +104,7 @@ def MakeParametersAndSettings():
     settings = OrderedDict()
     settings["Runs"] = [25000000] 
     settings["BurnIn"] = [0]
-    settings["Repeat"] = [10]
+    settings["Repeat"] = [1]
     settings["ShouldSaveData"] = ["true"]
     settings["ShouldSaveDataWhileRunning"] = ["true"] 
     settings["ShouldCreateNewDataFile"] = ["true"]

@@ -1,6 +1,8 @@
 package main
 
-import "math/rand"
+import (
+	"math/rand"
+)
 
 // Malaria : Contains all information that is needed to run the simulation.
 type Malaria struct {
@@ -72,7 +74,6 @@ func MakeHost(infected bool, NAntigens int, MaxAntigenValue int) Host {
 			h.ExpressedStrain[antigen] = int8(rand.Intn(MaxAntigenValue))
 			h.Infections[antigen] = h.ExpressedStrain[antigen]
 		}
-
 	} else {
 		h.IsInfected = false
 	}

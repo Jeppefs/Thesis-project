@@ -39,7 +39,7 @@ func SaveToEndFile(loadFileName string, saveFileName string, run int) {
 	defer file.Close()
 
 	mean, variance := CalcMeanAndVar(d)
-	fmt.Println(mean, variance)
+
 	fmt.Fprintf(file, "%v,%f,%f\n", run, mean, variance) // Important, must be the same order as the header.
 
 	return
