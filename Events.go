@@ -45,7 +45,7 @@ func (h *Host) InfectHost(fromHost *Host, NAntigens int) {
 		for antigen := 0; antigen < NAntigens; antigen++ {
 			h.Infections = append(h.Infections, fromHost.ExpressedStrain[antigen])
 		}
-		h.CombineParasites(NAntigens)
+		//h.CombineParasites(NAntigens)
 	} else {
 		for antigen := 0; antigen < NAntigens; antigen++ {
 			h.Infections = append(h.Infections, fromHost.ExpressedStrain[antigen])
