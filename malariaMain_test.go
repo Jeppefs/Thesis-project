@@ -1,15 +1,10 @@
 package main
 
 import (
-	"encoding/csv"
 	"fmt"
 	"io"
-	"io/ioutil"
-	"log"
 	"math"
 	"math/rand"
-	"reflect"
-	"strings"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
@@ -165,6 +160,7 @@ func TestImmunity(t *testing.T) {
 	CheckIfEqual(t, "Expressed Strain", len(malariaStructs[0].Hosts[0].ExpressedStrain), 0)
 }
 
+/*
 func TestDeath(t *testing.T) {
 	fmt.Println("\n Testing death")
 	m := CreateMalariaStructDummy(ConstructParameterDummy(5, 3, 1), 1)
@@ -185,6 +181,7 @@ func TestDeath(t *testing.T) {
 	fmt.Println(m.Hosts[0], m.InfectedHosts)
 }
 
+
 func TestCalcMeanAndVar(t *testing.T) {
 	fmt.Println("Start Mean and Var test")
 	data := []float64{1.0, 2.0, 3.0, 4.0, 5.0}
@@ -196,52 +193,6 @@ func TestCalcMeanAndVar(t *testing.T) {
 		t.Fatalf("variance incorrect. Is: %f. Should be: %f", variance, 2.0)
 	}
 
-}
-
-// ConstructParameterDummy :
-func ConstructParameterDummy(NHosts int, NAntigens int, MaxAntigenValue int) Parameters {
-	var param Parameters
-
-	// Parameters used when calculating rates and probabilities for next event.
-	param.InfectionSpeed = 1.0
-	param.ImmunitySpeed = 1.0
-	param.MutationSpeed = 1.0
-	param.DeathSpeed = 1.0
-
-	// Other setting that changes the behaviour of the system
-	param.NHosts = NHosts
-	param.NAntigens = NAntigens
-	param.MaxAntigenValue = MaxAntigenValue
-
-	return param
-}
-
-// ConstructMalariaStruct : Initiates a malaria struct and starts initial conditions.
-func CreateMalariaStructDummy(param Parameters, NInfectedHosts int) Malaria {
-	var m Malaria
-
-	// Sets initial values.
-	m.NHosts = param.NHosts // Constant
-	m.NInfectedHosts = NInfectedHosts
-	m.NAntigens = param.NAntigens
-	m.MaxAntigenValue = param.MaxAntigenValue
-
-	m.Hosts = make([]Host, m.NHosts)
-	for host := 0; host < m.NHosts; host++ {
-		if host < m.NInfectedHosts {
-			m.Hosts[host] = MakeHost(true, m.NAntigens, m.MaxAntigenValue)
-		} else {
-			m.Hosts[host] = MakeHost(false, m.NAntigens, m.MaxAntigenValue)
-		}
-	}
-
-	m.InfectedHosts = make([]int, m.NInfectedHosts)
-	for host := 0; host < m.NInfectedHosts; host++ {
-		m.InfectedHosts[host] = host
-	}
-
-	//fmt.Println(m.Antigens, "\n", m.Infections, "\n", m.Antibodies, "\n")
-	return m
 }
 
 func TestSaving(t *testing.T) {
@@ -286,3 +237,4 @@ func TestLoading(t *testing.T) {
 	}
 
 }
+*/
