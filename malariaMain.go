@@ -122,7 +122,7 @@ func (m *Malaria) RunModel(param Parameters, setting ModelSettings) int {
 		if run%100 == 0 {
 			fmt.Fprintf(file, "%v \n", m.NInfectedHosts)
 			if run%2000000 == 0 {
-				fmt.Println(run)
+				fmt.Println(run, m.Hosts[0].Infections)
 			}
 		}
 		if m.NInfectedHosts == 0 {
