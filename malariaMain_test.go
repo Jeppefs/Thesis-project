@@ -60,6 +60,7 @@ func init() {
 
 //
 func CreateMalariaStrcutsInSlice() [3]Malaria {
+
 	malariaStructs := [3]Malaria{ConstructMalariaStruct(p1), ConstructMalariaStruct(p2), ConstructMalariaStruct(p3)}
 
 	return malariaStructs
@@ -81,9 +82,9 @@ func TestStructCreation(t *testing.T) {
 	CheckIfEqual(t, "NHosts", malariaStructs[1].NHosts, 10)
 	CheckIfEqual(t, "NHosts", malariaStructs[2].NHosts, 3)
 
-	CheckIfEqual(t, "NInfectedHosts", malariaStructs[0].NInfectedHosts, 3)
+	CheckIfEqual(t, "NInfectedHosts", malariaStructs[0].NInfectedHosts, 1)
 	CheckIfEqual(t, "NInfectedHosts", malariaStructs[1].NInfectedHosts, 3)
-	CheckIfEqual(t, "NInfectedHosts", malariaStructs[2].NInfectedHosts, 3)
+	CheckIfEqual(t, "NInfectedHosts", malariaStructs[2].NInfectedHosts, 1)
 
 	CheckIfEqual(t, "IsInfected", malariaStructs[0].Hosts[0].IsInfected, true)
 	CheckIfEqual(t, "IsInfected", malariaStructs[1].Hosts[2].IsInfected, true)
@@ -134,8 +135,17 @@ func TestInfectHost(t *testing.T) {
 	CheckIfEqual(t, "Newly infected has correct expressed strain", malariaStructs[0].Hosts[4].ExpressedStrain, malariaStructs[0].Hosts[0].ExpressedStrain)
 
 	malariaStructs[0].Hosts[1].InfectHost(&malariaStructs[0].Hosts[0], p1.NAntigens)
+	malariaStructs[0].Hosts[1].InfectHost(&malariaStructs[0].Hosts[0], p1.NAntigens)
 	CheckIfEqual(t, "Newly infected has same infections", malariaStructs[0].Hosts[1].Infections, []int8{0, 0})
 	CheckIfEqual(t, "Newly infected has correct expressed strain", malariaStructs[0].Hosts[1].ExpressedStrain, []int8{0})
+
+	// This also tests that it is expressedStrain that is used to infect a new person.
+	malariaStructs[1].Hosts[0].ExpressedStrain[0] = 1
+	malariaStructs[1].Hosts[0].ExpressedStrain[1] = 2
+	malariaStructs[1].Hosts[5].InfectHost(&malariaStructs[1].Hosts[0], p2.NAntigens)
+	malariaStructs[1].Hosts[5].InfectHost(&malariaStructs[1].Hosts[0], p2.NAntigens)
+
+	CheckIfEqual(t, "Super Infection with same strain", malariaStructs[1].Hosts[5].Infections, []int8{1, 2, 1, 2})
 
 	return
 
