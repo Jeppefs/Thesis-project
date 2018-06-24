@@ -92,8 +92,8 @@ def MakeParametersAndSettings():
     parameters["NHosts"] = np.array([10000])
     parameters["InfectionSpeed"] = np.array([0.995])
     parameters["ImmunitySpeed"] = np.array([1.0])
-    parameters["DeathSpeed"] = np.arange(0.001)
-    parameters["MutationSpeed"] = np.array([0.00])
+    parameters["DeathSpeed"] = np.array([0.0])
+    parameters["MutationSpeed"] = np.array([0.0])
 
     parameters['NAntigens'] = np.array([1])
     parameters['MaxAntigenValue'] = np.array([i+1 for i in range(20)])
