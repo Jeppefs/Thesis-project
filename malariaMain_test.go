@@ -139,7 +139,7 @@ func TestInfectHost(t *testing.T) {
 	CheckIfEqual(t, "Newly infected has same infections", malariaStructs[0].Hosts[1].Infections, []int8{0, 0})
 	CheckIfEqual(t, "Newly infected has correct expressed strain", malariaStructs[0].Hosts[1].ExpressedStrain, []int8{0})
 
-	// This also tests that it is expressedStrain that is used to infect a new person.
+	// This also tests that it is expressedStrain that is used to infect a new person.g
 	malariaStructs[1].Hosts[0].ExpressedStrain[0] = 1
 	malariaStructs[1].Hosts[0].ExpressedStrain[1] = 2
 	malariaStructs[1].Hosts[5].InfectHost(&malariaStructs[1].Hosts[0], p2.NAntigens)
@@ -152,6 +152,7 @@ func TestInfectHost(t *testing.T) {
 }
 
 func TestCombinerParasite(t *testing.T) {
+
 	return
 }
 

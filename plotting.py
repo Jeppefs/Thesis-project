@@ -15,9 +15,10 @@ class MalariaStatistics():
         self.plotSettings = {}
 
     # Makes a plot of the development of the number of infected over time. 
-    def PlotTimeLinePlot(self, number):
+    def PlotTimeLinePlot(self, number, repeatNumber):
         plt.figure()
-        plt.plot()
+        dat = pandas.read_csv("data/" + self.fileName + "/" + "xDataSim_" + str(number) + "_" + str(repeatNumber) + ".csv")
+        plt.plot(dat)
         return
 
     # Creates a plot with extinction time with whatever parameter given. 
@@ -25,7 +26,7 @@ class MalariaStatistics():
         plt.figure()
         plt.errorbar(self.parameters[vary], self.dataEndRepeat["run"], self.dataEndRepeat["run_error"], fmt='o')
         plt.xlabel(vary)
-        plt.ylabel("run")
+        plt.ylabel("Extinction Time")
         figName = "plots/" + self.fileName + ".svg"
         plt.savefig(figName, format="svg")
         return
@@ -55,7 +56,8 @@ class MalariaStatistics():
 q = MalariaStatistics("VaryAntigen")
 q.GetMeanAndVarianceFromRepeat()
 q.PlotExtinctionTime("MaxAntigenValue")
-q.PlotMeanInfection("MaxAntigenValue")
+#.PlotMeanInfection("MaxAntigenValue")
+q.PlotTimeLinePlot(1,0)
 
 plt.show()
 
