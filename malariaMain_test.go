@@ -58,6 +58,20 @@ func CreateMalariaStrcutsInSlice() [3]Malaria {
 
 	malariaStructs := [3]Malaria{ConstructMalariaStruct(p1), ConstructMalariaStruct(p2), ConstructMalariaStruct(p3)}
 
+	malariaStructs[1].Hosts[0].ExpressedStrain[0] = 3
+	malariaStructs[1].Hosts[0].ExpressedStrain[1] = 4
+	malariaStructs[1].Hosts[1].ExpressedStrain[0] = 1
+	malariaStructs[1].Hosts[1].ExpressedStrain[1] = 2
+	malariaStructs[1].Hosts[2].ExpressedStrain[0] = 1
+	malariaStructs[1].Hosts[2].ExpressedStrain[1] = 2
+
+	malariaStructs[1].Hosts[0].Infections[0] = 3
+	malariaStructs[1].Hosts[0].Infections[1] = 4
+	malariaStructs[1].Hosts[1].Infections[0] = 1
+	malariaStructs[1].Hosts[1].Infections[1] = 2
+	malariaStructs[1].Hosts[2].Infections[0] = 1
+	malariaStructs[1].Hosts[2].Infections[1] = 2
+
 	return malariaStructs
 }
 
@@ -167,20 +181,6 @@ func TestImmunity(t *testing.T) {
 func TestHasStrain(t *testing.T) {
 	m := CreateMalariaStrcutsInSlice()
 
-	m[1].Hosts[0].ExpressedStrain[0] = 3
-	m[1].Hosts[0].ExpressedStrain[1] = 4
-	m[1].Hosts[1].ExpressedStrain[0] = 1
-	m[1].Hosts[1].ExpressedStrain[1] = 2
-	m[1].Hosts[2].ExpressedStrain[0] = 1
-	m[1].Hosts[2].ExpressedStrain[1] = 2
-
-	m[1].Hosts[0].Infections[0] = 3
-	m[1].Hosts[0].Infections[1] = 4
-	m[1].Hosts[1].Infections[0] = 1
-	m[1].Hosts[1].Infections[1] = 2
-	m[1].Hosts[2].Infections[0] = 1
-	m[1].Hosts[2].Infections[1] = 2
-
 	CheckIfEqual(t, "If infection strain is contained in target.", m[1].Hosts[0].HasStrain(&m[1].Hosts[1], 2), false)
 	CheckIfEqual(t, "If infection strain is contained in target.", m[1].Hosts[1].HasStrain(&m[1].Hosts[2], 2), true)
 
@@ -193,6 +193,16 @@ func TestHasStrain(t *testing.T) {
 	CheckIfEqual(t, "If infection strain is contained in target.", m[1].Hosts[0].HasStrain(&m[1].Hosts[1], 2), true)
 	CheckIfEqual(t, "If infection strain is contained in target.", m[1].Hosts[0].HasStrain(&m[1].Hosts[2], 2), true)
 	CheckIfEqual(t, "If infection strain is contained in target.", m[1].Hosts[1].HasStrain(&m[1].Hosts[0], 2), false)
+}
+
+func TestRemoveParasite(t *testing.T) {
+	m := CreateMalariaStrcutsInSlice()
+
+	m[1].Hosts[0].InfectHost(&m[1].Hosts[1], p2.NAntigens)
+
+	m[1].Hosts[0].RemoveParasite(m[1].NAntigens)
+	CheckIfEqual(t, "Removing the first parasite by a host infected by 2", m[1].Hosts[0].Infections, []int8{1, 2})
+	fmt.Println(m[1].Hosts[0])
 }
 
 /*
