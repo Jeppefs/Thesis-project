@@ -53,11 +53,11 @@ class MalariaStatistics():
         print(self.dataEndRepeat)
         return
 
-q = MalariaStatistics("VaryAntigen")
+q = MalariaStatistics("SimpleInfection2")
 q.GetMeanAndVarianceFromRepeat()
-q.PlotExtinctionTime("MaxAntigenValue")
-#.PlotMeanInfection("MaxAntigenValue")
-q.PlotTimeLinePlot(1,0)
+q.PlotExtinctionTime("InfectionSpeed")
+q.PlotMeanInfection("InfectionSpeed")
+q.PlotTimeLinePlot(40,0)
 
 plt.show()
 

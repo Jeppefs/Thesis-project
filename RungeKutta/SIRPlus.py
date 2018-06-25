@@ -55,9 +55,31 @@ def Ross(param, values, t):
     valuesRate[1] = 1 
     return valuesRate
 
+def SimpleInfectionSteadyState(param, values, t):
+    valuesRate = np.zeros(len(values))
+
+    if values[0] < 0: values[0] = 0
+    if values[0] < 0: values[0] = 0
+    if values[1] > 1: values[1] = 1
+    if values[1] > 1: values[1] = 1
+
+    valuesRate[0] = param[0]*values[0]*values[1] - param[1]*values[0]
+    valuesRate[1] = - param[0]*values[0]*values[1] + param[1]*values[0]
+    return valuesRate
+
+def PlotSimple(func, initial, param, legend):
+    q = RK.RungeKutta(initialConditions = initial, equation = func, param = param, dt = 0.001)
+    q.Run(50000)
+    q.PlotTimePlot()
+    plt.legend(legend)
+    plt.show()
+    return
+
+PlotSimple(func = SimpleInfectionSteadyState, initial = [0.1, 0.9], param = [2.0, 1.0], legend = ["I_R","R"])
+
 #RK.TestRungeKutta()
-q = RK.RungeKutta(initialConditions = np.array([0.99, 0.01, 0.0, 0.0]), equation = SIRPlus, param = np.array([2.1, 0.0, 0.0, 1.0, 2.1, 2.0]), dt = 0.001)
-q.Run(75000)
-q.PlotTimePlot()
-plt.legend(["S","I","R","R_I"])
-plt.show()
+#q = RK.RungeKutta(initialConditions = np.array([0.99, 0.01, 0.0, 0.0]), equation = SIRPlus, param = np.array([2.1, 0.0, 0.0, 1.0, 2.1, 2.0]), dt = 0.001)
+#q.Run(75000)
+#q.PlotTimePlot()
+#plt.legend(["S","I","R","R_I"])
+#plt.show()

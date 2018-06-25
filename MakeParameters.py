@@ -90,7 +90,7 @@ def MakeParametersAndSettings():
     parameters = OrderedDict()
 
     parameters["NHosts"] = np.array([10000])
-    parameters["InfectionSpeed"] = np.array([0.99 + 0.001*i for i in range(21)])
+    parameters["InfectionSpeed"] = np.array([0.99 + 0.005*i for i in range(41)])
     parameters["ImmunitySpeed"] = np.array([1.0])
     parameters["DeathSpeed"] = np.array([0.0])
     parameters["MutationSpeed"] = np.array([0.0])
@@ -102,9 +102,9 @@ def MakeParametersAndSettings():
     parameters['IsMultipleInfectionsPossible'] = np.array(["true"])
 
     settings = OrderedDict()
-    settings["Runs"] = [25000000] 
+    settings["Runs"] = [20000000] 
     settings["BurnIn"] = [0]
-    settings["Repeat"] = [10]
+    settings["Repeat"] = [5]
     settings["ShouldSaveData"] = ["true"]
     settings["ShouldSaveDataWhileRunning"] = ["true"] 
     settings["ShouldCreateNewDataFile"] = ["true"]

@@ -193,6 +193,11 @@ func TestHasStrain(t *testing.T) {
 	CheckIfEqual(t, "If infection strain is contained in target.", m[1].Hosts[0].HasStrain(&m[1].Hosts[1], 2), true)
 	CheckIfEqual(t, "If infection strain is contained in target.", m[1].Hosts[0].HasStrain(&m[1].Hosts[2], 2), true)
 	CheckIfEqual(t, "If infection strain is contained in target.", m[1].Hosts[1].HasStrain(&m[1].Hosts[0], 2), false)
+
+	// m[1].Hosts[0].InfectHost(&m[1].Hosts[1], 2)
+
+	// CheckIfEqual(t, "If infection is correct. Infection to a strain already contained should not happen.", m[1].Hosts[0].Infections, []int8{3, 4, 1, 2})
+
 }
 
 func TestRemoveParasite(t *testing.T) {

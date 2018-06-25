@@ -131,5 +131,6 @@ func (m *Malaria) RunModel(param Parameters, setting ModelSettings) int {
 			break
 		}
 	}
+	time.Sleep(time.Second) // Wait a bit for the system to follow up.
 	return run
 }
