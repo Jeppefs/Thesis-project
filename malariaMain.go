@@ -14,7 +14,7 @@ import (
 )
 
 // We define a set of global constant - mostly
-const path = "data/" + "VaryAntigen/"
+const path = "data/" + "SimpleInfection2/"
 
 // main
 func main() {

@@ -16,7 +16,7 @@ func (m *Malaria) Spread() {
 
 	// If the host already is infected by the same strain, then don't infect.
 	if m.Hosts[spreadTo].IsInfected {
-		if m.Hosts[spreadTo].HasStrain(&m.Hosts[spreadFrom], m.NAntigens) == false {
+		if m.Hosts[spreadTo].HasStrain(&m.Hosts[spreadFrom], m.NAntigens) == true {
 			return
 		}
 		m.Hosts[spreadTo].InfectHost(&m.Hosts[spreadFrom], m.NAntigens)
