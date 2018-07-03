@@ -15,10 +15,12 @@ class MalariaStatistics():
         self.plotSettings = {}
 
     # Makes a plot of the development of the number of infected over time. 
-    def PlotTimeLinePlot(self, number, repeatNumber):
+    def PlotTimeLinePlot(self, number, repeatNumber = 0):
         plt.figure()
         dat = pandas.read_csv("data/" + self.fileName + "/" + "xDataSim_" + str(number) + "_" + str(repeatNumber) + ".csv")
         plt.plot(dat)
+        plt.xlabel("")
+        plt.ylabel("Infected")
         return
 
     # Creates a plot with extinction time with whatever parameter given. 
@@ -53,11 +55,15 @@ class MalariaStatistics():
         print(self.dataEndRepeat)
         return
 
-q = MalariaStatistics("SimpleInfection2")
+    def LinearFit(self):
+        return
+
+q = MalariaStatistics("SimpleInfectionFull")
 q.GetMeanAndVarianceFromRepeat()
+
 q.PlotExtinctionTime("InfectionSpeed")
 q.PlotMeanInfection("InfectionSpeed")
-q.PlotTimeLinePlot(40,0)
+q.PlotTimeLinePlot(5,0)
 
 plt.show()
 
