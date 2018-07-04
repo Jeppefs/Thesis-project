@@ -27,10 +27,18 @@ class MalariaStatistics():
     def PlotExtinctionTime(self, vary):
         plt.figure()
         plt.errorbar(self.parameters[vary], self.dataEndRepeat["run"], self.dataEndRepeat["run_error"], fmt='o')
+
+        for i in range(self.settings["Repeat"][0]):
+            #print(self.dataEnd["run"][0+i::self.settings["Repeat"][0]])
+            plt.plot(self.parameters[vary], self.dataEnd["run"][0+i::self.settings["Repeat"][0]],  color = "red", linestyle = "None",  marker='.')
+
         plt.xlabel(vary)
         plt.ylabel("Extinction Time")
         figName = "plots/" + self.fileName + ".svg"
         plt.savefig(figName, format="svg")
+
+        
+
         return
 
     # Creates a plot of the mean and variance. 
@@ -58,11 +66,11 @@ class MalariaStatistics():
     def LinearFit(self):
         return
 
-q = MalariaStatistics("SimpleInfectionFull")
+q = MalariaStatistics("DeathRate")
 q.GetMeanAndVarianceFromRepeat()
 
-q.PlotExtinctionTime("InfectionSpeed")
-q.PlotMeanInfection("InfectionSpeed")
+q.PlotExtinctionTime("DeathSpeed")
+q.PlotMeanInfection("DeathSpeed")
 q.PlotTimeLinePlot(5,0)
 
 plt.show()

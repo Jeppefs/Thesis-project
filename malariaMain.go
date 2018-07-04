@@ -14,7 +14,7 @@ import (
 )
 
 // We define a set of global constant - mostly
-const path = "data/" + "SimpleInfectionFull/"
+const path = "data/" + "DeathRateComplex/"
 
 // main
 func main() {
@@ -61,11 +61,12 @@ func GetParametersAndStartTheThing(settings ModelSettings) {
 		} else {
 			param := InsertParameters(header, records)
 			for j := 0; j < settings.Repeat; j++ {
-				run = StartModel(param, settings)
-				if settings.ShouldSaveData {
-					SaveToEndFile("temp.txt", settings.DataFileName, run)
-					if settings.ShouldSaveDataWhileRunning {
-						os.Rename(path+"temp.txt", path+"xDataSim_"+strconv.Itoa(i)+"_"+strconv.Itoa(j)+".csv")
+				DataFileName := path + "xDataSim_" + strconv.Itoa(i) + "_" + strconv.Itoa(j) + ".csv"
+				run = StartModel(param, settings, DataFileName)
+				if settings.ShouldSaveData == true {
+					SaveToEndFile(DataFileName, settings.DataFileName, run)
+					if settings.ShouldSaveDataWhileRunning == false {
+						os.Remove(DataFileName)
 					}
 				}
 			}
@@ -76,7 +77,7 @@ func GetParametersAndStartTheThing(settings ModelSettings) {
 }
 
 // StartModel : Starts the run of the malaria model
-func StartModel(param Parameters, settings ModelSettings) int {
+func StartModel(param Parameters, settings ModelSettings, DataFileName string) int {
 	modelTime := 0
 	startTime := time.Now()
 	m := ConstructMalariaStruct(param)
@@ -84,7 +85,7 @@ func StartModel(param Parameters, settings ModelSettings) int {
 	m.RunBurnIn(param, settings.BurnIn)
 	var run int
 	if m.NInfectedHosts != 0 {
-		run = m.RunModel(param, settings)
+		run = m.RunModel(param, settings, DataFileName)
 	}
 
 	endTime := time.Now()
@@ -107,12 +108,10 @@ func (m *Malaria) RunBurnIn(param Parameters, burnIn int) {
 }
 
 // RunModel :
-func (m *Malaria) RunModel(param Parameters, setting ModelSettings) int {
+func (m *Malaria) RunModel(param Parameters, setting ModelSettings, DataFileName string) int {
 
-	fileName := "temp"
-	file, err := os.Create(path + fileName + ".txt")
+	file, err := os.Create(DataFileName)
 	check(err)
-	defer file.Close()
 
 	run := 0
 
@@ -120,17 +119,18 @@ func (m *Malaria) RunModel(param Parameters, setting ModelSettings) int {
 
 		m.EventHappens(param)
 		if run%100 == 0 {
-			fmt.Fprintf(file, "%v \n", m.NInfectedHosts)
+			fmt.Fprintf(file, "%v\n", m.NInfectedHosts)
 			if run%2000000 == 0 {
 				fmt.Println(run, m.Hosts[0].Infections, m.Hosts[1].Infections)
 			}
 		}
 		if m.NInfectedHosts == 0 {
 			fmt.Println("Malaria is dead in", run, "runs")
-			fmt.Fprintf(file, "%v \n", m.NInfectedHosts)
+			fmt.Fprintf(file, "%v\n", m.NInfectedHosts)
 			break
 		}
 	}
+	file.Close()
 	time.Sleep(time.Second) // Wait a bit for the system to follow up.
 	return run
 }

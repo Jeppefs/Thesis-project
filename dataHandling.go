@@ -13,7 +13,7 @@ import (
 // SaveToEndFile :  Saves data in the test file
 // WARNING! : THERE MUST BE A LINESKIP AT END OF FILE TO REGARD THE LAST NUMBER
 func SaveToEndFile(loadFileName string, saveFileName string, run int) {
-	data, err := ioutil.ReadFile(path + loadFileName)
+	data, err := ioutil.ReadFile(loadFileName)
 	check(err)
 	stringData := string(data)
 
