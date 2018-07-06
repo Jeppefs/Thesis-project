@@ -41,7 +41,6 @@ func InitiateRunningModel() {
 func GetParametersAndStartTheThing(settings ModelSettings) {
 	r := LoadCSVFile(path + "parameters.csv")
 
-	var run int
 	var header []string
 
 	i := 0
@@ -60,20 +59,28 @@ func GetParametersAndStartTheThing(settings ModelSettings) {
 			}
 		} else {
 			param := InsertParameters(header, records)
-			for j := 0; j < settings.Repeat; j++ {
-				DataFileName := path + "xDataSim_" + strconv.Itoa(i) + "_" + strconv.Itoa(j) + ".csv"
-				run = StartModel(param, settings, DataFileName)
-				if settings.ShouldSaveData == true {
-					SaveToEndFile(DataFileName, settings.DataFileName, run)
-					if settings.ShouldSaveDataWhileRunning == false {
-						os.Remove(DataFileName)
-					}
-				}
-			}
+			GetReadyToStartModelSaveAndCreateDataFiles(param, settings, i)
 		}
 		i++
 	}
 	return
+}
+
+// GetReadyToStartModelSaveAndCreateDataFiles : This is getting really confusing. So many nested functions. No idea how to change it though.
+func GetReadyToStartModelSaveAndCreateDataFiles(param Parameters, settings ModelSettings, i int) {
+
+	var run int
+
+	for j := 0; j < settings.Repeat; j++ {
+		DataFileName := path + "xDataSim_" + strconv.Itoa(i) + "_" + strconv.Itoa(j) + ".csv"
+		run = StartModel(param, settings, DataFileName)
+		if settings.ShouldSaveData == true {
+			SaveToEndFile(DataFileName, settings.DataFileName, run)
+			if settings.ShouldSaveDataWhileRunning == false {
+				os.Remove(DataFileName)
+			}
+		}
+	}
 }
 
 // StartModel : Starts the run of the malaria model
