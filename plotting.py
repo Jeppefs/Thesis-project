@@ -34,6 +34,9 @@ class MalariaStatistics():
         fitResults = q.LinearFit(x, y)
         print(fitResults)
         plt.plot(x, x*fitResults["slope"] + fitResults["intersect"])
+        
+        figName = "plots/" + self.simulationName + "TimeLine" + ".svg" 
+        plt.savefig(figName, format="svg")
 
         return
 
@@ -79,7 +82,7 @@ class MalariaStatistics():
 
         mean_x = np.mean(x)
         mean_y = np.mean(y)
-        print(len(x), len(y))
+
         mean_xy = np.mean(x*y)
         mean_x_squared = np.mean(x**2)
 

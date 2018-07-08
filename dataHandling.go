@@ -79,3 +79,12 @@ func LoadCSVFile(fileName string) *csv.Reader {
 
 	return r
 }
+
+// CreateSimulationHeader : Creates the header for timeline daa
+func CreateSimulationHeader(pathName string) {
+	file, err := os.Create(pathName + "simHeader.csv")
+	check(err)
+	fmt.Fprintf(file, "%s,%s,%s\n", "infected", "infected 1x", "infected 2x")
+	file.Close()
+	return
+}
