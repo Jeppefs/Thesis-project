@@ -5,10 +5,11 @@ import pandas as pandas
 class MalariaStatistics():
 
     def __init__(self, folderName):
-        self.fileName = folderName 
-        self.dataEnd = pandas.read_csv("data/" + folderName + "/" + "dataEnd.csv")
-        self.parameters = pandas.read_csv("data/" + folderName + "/" + "parameters.csv")
-        self.settings = pandas.read_csv("data/" + folderName + "/" + "settings.csv")
+        self.simulationName = folderName
+        self.pathName = "data/" + folderName + "/"
+        self.dataEnd = pandas.read_csv(self.pathName + "dataEnd.csv")
+        self.parameters = pandas.read_csv(self.pathName + "parameters.csv")
+        self.settings = pandas.read_csv(self.pathName + "settings.csv")
 
         self.NUniqueRuns = len(self.parameters['NHosts'])
 
@@ -17,10 +18,13 @@ class MalariaStatistics():
     # Makes a plot of the development of the number of infected over time. 
     def PlotTimeLinePlot(self, number, repeatNumber = 0):
         plt.figure()
-        dat = pandas.read_csv("data/" + self.fileName + "/" + "xDataSim_" + str(number) + "_" + str(repeatNumber) + ".csv")
+        dat = pandas.read_csv(self.pathName + "xDataSim_" + str(number) + "_" + str(repeatNumber) + ".csv")
         plt.plot(dat)
-        plt.xlabel("")
+        plt.xlabel("Run")
         plt.ylabel("Infected")
+
+        print("hej")
+
         return
 
     # Creates a plot with extinction time with whatever parameter given. 
@@ -34,7 +38,7 @@ class MalariaStatistics():
 
         plt.xlabel(vary)
         plt.ylabel("Extinction Time")
-        figName = "plots/" + self.fileName + ".svg"
+        figName = "plots/" + self.simulationName + ".svg"
         plt.savefig(figName, format="svg")
 
         return
@@ -45,7 +49,7 @@ class MalariaStatistics():
         plt.errorbar(self.parameters[vary], self.dataEndRepeat["mean"], np.sqrt(self.dataEndRepeat["variance"]/self.settings["Repeat"][0]), fmt='o')
         plt.xlabel(vary)
         plt.ylabel("Mean infected")
-        figName = "plots/" + self.fileName + "Mean" + ".svg"
+        figName = "plots/" + self.simulationName + "Mean" + ".svg"
         plt.savefig(figName, format="svg")
         return
 
@@ -64,12 +68,15 @@ class MalariaStatistics():
     def LinearFit(self):
         return
 
-q = MalariaStatistics("SimpleInfectionFull")
+q = MalariaStatistics("InfectionSpeedFull")
 q.GetMeanAndVarianceFromRepeat()
 
 q.PlotExtinctionTime("InfectionSpeed")
 q.PlotMeanInfection("InfectionSpeed")
-q.PlotTimeLinePlot(5,0)
+q.PlotTimeLinePlot(25,0)
+
+#for i in range(25):
+#    q.PlotTimeLinePlot(i+1,0)
 
 plt.show()
 
