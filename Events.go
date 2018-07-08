@@ -112,19 +112,23 @@ func (m *Malaria) Death() {
 
 	hostIndex := rand.Intn(m.NHosts)
 
-	m.Hosts[hostIndex].Die(m.NAntigens, m.MaxAntigenValue)
+	if m.Hosts[hostIndex].IsInfected == true {
+		m.InfectedHosts = append(m.InfectedHosts[:hostIndex], m.InfectedHosts[hostIndex+1:]...)
+		m.NInfectedHosts--
+	}
 
-	m.InfectedHosts = append(m.InfectedHosts[:hostIndex], m.InfectedHosts[hostIndex+1:]...)
-	m.NInfectedHosts--
+	m.Hosts[hostIndex].Die(m.NAntigens, m.MaxAntigenValue)
 
 	return
 }
 
 // Die : A host dies
 func (h *Host) Die(NAntigens int, MaxAntigenValue int) {
-	h.Infections = append(h.Infections[:0], h.Infections[len(h.Infections):]...)
+	if h.IsInfected == true {
+		h.Infections = append(h.Infections[:0], h.Infections[len(h.Infections):]...)
+		h.IsInfected = false
+	}
 	h.Lookout = 0
-	h.IsInfected = false
 
 	for antibody := 0; antibody < MaxAntigenValue; antibody++ {
 		h.Antibodies[antibody] = false
