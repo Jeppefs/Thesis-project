@@ -4,9 +4,11 @@ import pandas as pandas
 
 class MalariaStatistics():
 
-    def __init__(self, folderName):
+    def __init__(self, folderName, timeLineIndex = [0,0]):
+        
         self.simulationName = folderName
         self.pathName = "data/" + folderName + "/"
+
         self.dataEnd = pandas.read_csv(self.pathName + "dataEnd.csv")
         self.parameters = pandas.read_csv(self.pathName + "parameters.csv")
         self.settings = pandas.read_csv(self.pathName + "settings.csv")
@@ -15,15 +17,23 @@ class MalariaStatistics():
 
         self.plotSettings = {}
 
+        if timeLineIndex[0] != 0:
+            self.timeLine = np.genfromtxt(self.pathName + "xDataSim_" + str(timeLineIndex[0]) + "_" + str(timeLineIndex[1]) + ".csv", delimiter=",")
+
     # Makes a plot of the development of the number of infected over time. 
-    def PlotTimeLinePlot(self, number, repeatNumber = 0):
+    def PlotTimeLinePlot(self):
+
+        x = np.arange(100000, len(self.timeLine))*100
+        y = self.timeLine[100000: len(self.timeLine)]
+
         plt.figure()
-        dat = pandas.read_csv(self.pathName + "xDataSim_" + str(number) + "_" + str(repeatNumber) + ".csv")
-        plt.plot(dat)
+        plt.plot(np.arange(0, len(self.timeLine))*100, self.timeLine)
         plt.xlabel("Run")
         plt.ylabel("Infected")
 
-        print("hej")
+        fitResults = q.LinearFit(x, y)
+        print(fitResults)
+        plt.plot(x, x*fitResults["slope"] + fitResults["intersect"])
 
         return
 
@@ -65,15 +75,31 @@ class MalariaStatistics():
         print(self.dataEndRepeat)
         return
 
-    def LinearFit(self):
-        return
+    def LinearFit(self, x, y):
 
-q = MalariaStatistics("InfectionSpeedFull")
+        mean_x = np.mean(x)
+        mean_y = np.mean(y)
+        print(len(x), len(y))
+        mean_xy = np.mean(x*y)
+        mean_x_squared = np.mean(x**2)
+
+        self.LinearFitResults = {}
+
+        self.LinearFitResults["slope"] = (mean_xy - mean_x*mean_y) / (mean_x_squared - mean_x**2) 
+        self.LinearFitResults["intersect"] = mean_y - self.LinearFitResults["slope"] * mean_x
+        #self.LinearFitResults["slope_err"] = 0
+        #self.LinearFitResults["intersect_err"] = 0
+        
+        return self.LinearFitResults
+
+q = MalariaStatistics("InfectionSpeedFull", timeLineIndex = [25,0])
 q.GetMeanAndVarianceFromRepeat()
 
 q.PlotExtinctionTime("InfectionSpeed")
 q.PlotMeanInfection("InfectionSpeed")
-q.PlotTimeLinePlot(25,0)
+q.PlotTimeLinePlot()
+
+
 
 #for i in range(25):
 #    q.PlotTimeLinePlot(i+1,0)
