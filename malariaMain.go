@@ -14,7 +14,7 @@ import (
 )
 
 // We define a set of global constant - mostly
-const path = "data/" + "DeathRateComplex/"
+const path = "data/" + "InfectionSpeedFull/"
 
 // main
 func main() {
@@ -93,6 +93,8 @@ func StartModel(param Parameters, settings ModelSettings, DataFileName string) i
 	var run int
 	if m.NInfectedHosts != 0 {
 		run = m.RunModel(param, settings, DataFileName)
+	} else {
+		fmt.Println("Malaria died in burnin")
 	}
 
 	endTime := time.Now()
@@ -126,7 +128,7 @@ func (m *Malaria) RunModel(param Parameters, setting ModelSettings, DataFileName
 
 		m.EventHappens(param)
 		if run%100 == 0 {
-			fmt.Fprintf(file, "%v\n", m.NInfectedHosts)
+			fmt.Fprintf(file, "%v\n", m.NInfectedHosts) // We need to have a new function that saves the data properly. We should probably have a header, yeah.
 			if run%2000000 == 0 {
 				fmt.Println(run, m.Hosts[0].Infections, m.Hosts[1].Infections)
 			}

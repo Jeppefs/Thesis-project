@@ -37,8 +37,6 @@ class MalariaStatistics():
         figName = "plots/" + self.fileName + ".svg"
         plt.savefig(figName, format="svg")
 
-        
-
         return
 
     # Creates a plot of the mean and variance. 
@@ -66,11 +64,11 @@ class MalariaStatistics():
     def LinearFit(self):
         return
 
-q = MalariaStatistics("DeathRate")
+q = MalariaStatistics("SimpleInfectionFull")
 q.GetMeanAndVarianceFromRepeat()
 
-q.PlotExtinctionTime("DeathSpeed")
-q.PlotMeanInfection("DeathSpeed")
+q.PlotExtinctionTime("InfectionSpeed")
+q.PlotMeanInfection("InfectionSpeed")
 q.PlotTimeLinePlot(5,0)
 
 plt.show()
