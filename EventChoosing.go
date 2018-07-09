@@ -41,18 +41,6 @@ func ChooseEvent(m *Malaria, param Parameters) int {
 	return event
 }
 
-/*
-// CalcRates : Calculates all the rates.
-func CalcRates(m *Malaria, param Parameters) []float64 {
-	r := make([]float64, 4)
-	r[0] = param.InfectionSpeed * float64(m.NInfectedHosts) * float64(m.NHosts)
-	r[1] = param.ImmunitySpeed * float64(m.NInfectedHosts) / float64(m.NHosts)
-	r[2] = param.MutationSpeed * float64(m.NInfectedHosts)
-	r[3] = param.DeathSpeed * float64(m.NInfectedHosts)
-	return r
-}
-*/
-
 // CalcRates : Calculates all the rates.
 func CalcRates(m *Malaria, param Parameters) []float64 {
 	r := make([]float64, 4)

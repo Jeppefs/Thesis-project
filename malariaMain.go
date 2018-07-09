@@ -14,7 +14,7 @@ import (
 )
 
 // We define a set of global constant - mostly
-const path = "data/" + "InfectionSpeedFull/"
+const path = "data/" + "fullTest/"
 
 // main
 func main() {

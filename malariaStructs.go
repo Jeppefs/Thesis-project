@@ -18,7 +18,7 @@ type Malaria struct {
 
 	Hosts []Host // An array which contains the host struct. Each index in the array is a single host.
 
-	SuperInfectionCounter [20]int // An array that keeps count of the number of infections in all hosts. 0 is the how no infected there is.
+	SuperInfectionCounter []int // An array that keeps count of the number of infections in all hosts. 0 is the how no infected there is.
 }
 
 // Host : Contains information about a host/person
@@ -56,6 +56,7 @@ func ConstructMalariaStruct(param Parameters) Malaria {
 		m.InfectedHosts[host] = host
 	}
 
+	m.SuperInfectionCounter = make([]int, param.MaxSuperInfections+1)
 	m.SuperInfectionCounter[0] = m.NHosts - m.NInfectedHosts
 	m.SuperInfectionCounter[1] = m.NInfectedHosts
 	//fmt.Println(m.Antigens, "\n", m.Infections, "\n", m.Antibodies, "\n")

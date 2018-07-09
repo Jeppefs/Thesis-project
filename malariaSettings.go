@@ -17,13 +17,11 @@ type Parameters struct {
 	DeathSpeed     float64 // The rate of hosts death.
 
 	// Other setting that changes the behaviour of the system
-	NHosts          int // Number of hosts
-	NAntigens       int // The number of antigens each strain contains
-	MaxAntigenValue int // The maximum value a single antigen can take. In other words it decides the number of different antigens.
-	InitialInfected int // How many infected there is at start of simulation.
-
-	// Boolean settings
-	IsMultipleInfectionsPossible bool // NOT IMPLENTED!!!!
+	NHosts             int // Number of hosts
+	NAntigens          int // The number of antigens each strain contains
+	MaxAntigenValue    int // The maximum value a single antigen can take. In other words it decides the number of different antigens.
+	InitialInfected    int // How many infected there is at start of simulation.
+	MaxSuperInfections int // The maximum number of infections a single host can have
 }
 
 // ModelSettings : A structure that contains information ab	out model settings such as
