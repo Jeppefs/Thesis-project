@@ -35,8 +35,8 @@ class MalariaStatistics():
         print(fitResults)
         plt.plot(x, x*fitResults["slope"] + fitResults["intersect"])
         
-        figName = "plots/" + self.simulationName + "TimeLine" + ".svg" 
-        plt.savefig(figName, format="svg")
+        figName = "plots/" + self.simulationName + "TimeLine" + ".pdf" 
+        plt.savefig(figName, format="pdf")
 
         return
 
@@ -51,8 +51,8 @@ class MalariaStatistics():
 
         plt.xlabel(vary)
         plt.ylabel("Extinction Time")
-        figName = "plots/" + self.simulationName + ".svg"
-        plt.savefig(figName, format="svg")
+        figName = "plots/" + self.simulationName + ".pdf"
+        plt.savefig(figName, format="pdf")
 
         return
 
@@ -62,8 +62,8 @@ class MalariaStatistics():
         plt.errorbar(self.parameters[vary], self.dataEndRepeat["mean"], np.sqrt(self.dataEndRepeat["variance"]/self.settings["Repeat"][0]), fmt='o')
         plt.xlabel(vary)
         plt.ylabel("Mean infected")
-        figName = "plots/" + self.simulationName + "Mean" + ".svg"
-        plt.savefig(figName, format="svg")
+        figName = "plots/" + self.simulationName + "Mean" + ".pdf"
+        plt.savefig(figName, format="pdf")
         return
 
     # Recalculates dataEnd, such that it finds the mean and variance from the repeat cases. 
