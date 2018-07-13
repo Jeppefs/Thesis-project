@@ -126,8 +126,12 @@ func TestEventChoosing(t *testing.T) {
 		eventCount[event]++
 	}
 
+	rSum := 0.0
 	for i := 0; i < NEventTypes; i++ {
-		r[i] = r[i] * float64(NEvents)
+		rSum += r[i]
+	}
+	for i := 0; i < NEventTypes; i++ {
+		r[i] = r[i] * float64(NEvents) / rSum
 	}
 
 	fmt.Println(eventCount, r)
