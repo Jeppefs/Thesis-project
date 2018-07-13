@@ -58,6 +58,7 @@ func CreateMalariaStrcutsInSlice() [3]Malaria {
 
 	malariaStructs := [3]Malaria{ConstructMalariaStruct(p1), ConstructMalariaStruct(p2), ConstructMalariaStruct(p3)}
 
+	// Make the expressed strains and infection definitive.
 	malariaStructs[1].Hosts[0].ExpressedStrain[0] = 3
 	malariaStructs[1].Hosts[0].ExpressedStrain[1] = 4
 	malariaStructs[1].Hosts[1].ExpressedStrain[0] = 1
@@ -173,9 +174,14 @@ func TestImmunity(t *testing.T) {
 	fmt.Println("\n Testing immunity")
 	malariaStructs := CreateMalariaStrcutsInSlice()
 
-	fmt.Println(malariaStructs[0].Hosts[1].IsInfected)
+	CheckIfEqual(t, "Antibodies", malariaStructs[0].Hosts[0].Antibodies[0], false)
 	malariaStructs[0].ImmunityGained()
-	CheckIfEqual(t, "Expressed Strain", len(malariaStructs[0].Hosts[0].ExpressedStrain), 0)
+	CheckIfEqual(t, "Antibodies", malariaStructs[0].Hosts[0].Antibodies[0], true)
+
+	malariaStructs[0].ImmunityGained()
+	CheckIfEqual(t, "Number of infected", len(malariaStructs[0].InfectedHosts), 0)
+	CheckIfEqual(t, "Is Infected", malariaStructs[0].Hosts[0].IsInfected, false)
+	CheckIfEqual(t, "Infections", len(malariaStructs[0].Hosts[0].Infections), 0)
 }
 
 func TestHasStrain(t *testing.T) {
@@ -207,7 +213,6 @@ func TestRemoveParasite(t *testing.T) {
 
 	m[1].Hosts[0].RemoveParasite(m[1].NAntigens)
 	CheckIfEqual(t, "Removing the first parasite by a host infected by 2", m[1].Hosts[0].Infections, []int8{1, 2})
-	fmt.Println(m[1].Hosts[0])
 }
 
 /*

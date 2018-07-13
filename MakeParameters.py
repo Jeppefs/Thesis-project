@@ -100,7 +100,7 @@ def MakeParametersAndSettings():
     parameters["MaxSuperInfections"] = np.array([5])
     parameters["InitialInfected"] = np.array([10000])
 
-    
+
 
     settings = OrderedDict()
     settings["Runs"] = [20000000] 

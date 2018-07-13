@@ -104,3 +104,9 @@ func (m *Malaria) CountNumberOfUniqueAntigens() {
 	m.NDifferentAntigens = CountBolleanArray(AntigenExistence)
 	return
 }
+
+// FindAllStrainCombinations :
+func FindAllStrainCombinations(antigenLen int, antigenMax int) (int, []int) {
+
+	return 1, []int{1, 2}
+}
