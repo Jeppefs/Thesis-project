@@ -54,7 +54,7 @@ func init() {
 }
 
 //
-func CreateMalariaStrcutsInSlice() [3]Malaria {
+func CreateMalariaStructsInSlice() [3]Malaria {
 
 	malariaStructs := [3]Malaria{ConstructMalariaStruct(p1), ConstructMalariaStruct(p2), ConstructMalariaStruct(p3)}
 
@@ -86,7 +86,7 @@ func CheckIfEqual(t *testing.T, s string, a interface{}, b interface{}) {
 }
 
 func TestStructCreation(t *testing.T) {
-	malariaStructs := CreateMalariaStrcutsInSlice()
+	malariaStructs := CreateMalariaStructsInSlice()
 
 	CheckIfEqual(t, "NHosts", malariaStructs[0].NHosts, 10)
 	CheckIfEqual(t, "NHosts", malariaStructs[1].NHosts, 10)
@@ -113,7 +113,7 @@ func TestStructCreation(t *testing.T) {
 }
 
 func TestEventChoosing(t *testing.T) {
-	malariaStructs := CreateMalariaStrcutsInSlice()
+	malariaStructs := CreateMalariaStructsInSlice()
 
 	r := CalcRates(&malariaStructs[0], p1)
 
@@ -140,13 +140,13 @@ func TestEventChoosing(t *testing.T) {
 }
 
 func TestSpread(t *testing.T) {
-	//malariaStructs := CreateMalariaStrcutsInSlice()
+	//malariaStructs := CreateMalariaStructsInSlice()
 
 	return
 }
 
 func TestInfectHost(t *testing.T) {
-	malariaStructs := CreateMalariaStrcutsInSlice()
+	malariaStructs := CreateMalariaStructsInSlice()
 
 	malariaStructs[0].Hosts[4].InfectHost(&malariaStructs[0].Hosts[0], p1.NAntigens)
 	CheckIfEqual(t, "Newly infected has same infections", malariaStructs[0].Hosts[4].Infections, malariaStructs[0].Hosts[0].Infections)
@@ -176,20 +176,20 @@ func TestCombinerParasite(t *testing.T) {
 
 func TestImmunity(t *testing.T) {
 	fmt.Println("\n Testing immunity")
-	malariaStructs := CreateMalariaStrcutsInSlice()
+	malariaStructs := CreateMalariaStructsInSlice()
 
 	CheckIfEqual(t, "Antibodies", malariaStructs[0].Hosts[0].Antibodies[0], false)
-	malariaStructs[0].ImmunityGained()
+	malariaStructs[0].ImmunityGained(0)
 	CheckIfEqual(t, "Antibodies", malariaStructs[0].Hosts[0].Antibodies[0], true)
 
-	malariaStructs[0].ImmunityGained()
+	malariaStructs[0].ImmunityGained(0)
 	CheckIfEqual(t, "Number of infected", len(malariaStructs[0].InfectedHosts), 0)
 	CheckIfEqual(t, "Is Infected", malariaStructs[0].Hosts[0].IsInfected, false)
 	CheckIfEqual(t, "Infections", len(malariaStructs[0].Hosts[0].Infections), 0)
 }
 
 func TestHasStrain(t *testing.T) {
-	m := CreateMalariaStrcutsInSlice()
+	m := CreateMalariaStructsInSlice()
 
 	CheckIfEqual(t, "If infection strain is contained in target.", m[1].Hosts[0].HasStrain(&m[1].Hosts[1], 2), false)
 	CheckIfEqual(t, "If infection strain is contained in target.", m[1].Hosts[1].HasStrain(&m[1].Hosts[2], 2), true)
@@ -211,12 +211,17 @@ func TestHasStrain(t *testing.T) {
 }
 
 func TestRemoveParasite(t *testing.T) {
-	m := CreateMalariaStrcutsInSlice()
+	m := CreateMalariaStructsInSlice()
 
 	m[1].Hosts[0].InfectHost(&m[1].Hosts[1], p2.NAntigens)
 
 	m[1].Hosts[0].RemoveParasite(m[1].NAntigens)
 	CheckIfEqual(t, "Removing the first parasite by a host infected by 2", m[1].Hosts[0].Infections, []int8{1, 2})
+}
+
+func TestDeath(t *testing.T) {
+	//m := CreateMalariaStructsInSlice()
+	return
 }
 
 /*
