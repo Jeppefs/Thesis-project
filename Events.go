@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"math/rand"
 )
 
@@ -71,6 +72,15 @@ func (m *Malaria) ImmunityGained() {
 	infectedHostIndex := rand.Intn(m.NInfectedHosts)
 	infectedHost := m.InfectedHosts[infectedHostIndex]
 
+	// Checking error stuff...
+	if m.Hosts[infectedHost].IsInfected == false {
+		for i := 0; i < m.NInfectedHosts; i++ {
+			if m.Hosts[m.InfectedHosts[i]].IsInfected == false {
+				fmt.Println("yup")
+			}
+		}
+	}
+
 	m.Hosts[infectedHost].GiveHostAntibody(m.NAntigens)
 
 	if m.Hosts[infectedHost].IsInfected == false {
@@ -81,8 +91,9 @@ func (m *Malaria) ImmunityGained() {
 	return
 }
 
-// GiveHostAntibody : Gives the host an antibody for its current lookout in the antigens. Also send to RemoveParaiste method if removal should happend
+// GiveHostAntibody : Gives the host an antibody for its current lookout in the antigens. Also send to RemoveParaiste method if removal should happen
 func (h *Host) GiveHostAntibody(NAntigens int) {
+
 	if h.Lookout > NAntigens-1 { //-1 because NAntigens is one larger than lookout because of 0 indexing
 		h.RemoveParasite(NAntigens)
 	} else if h.Antibodies[h.Infections[h.Lookout]] {
@@ -113,12 +124,16 @@ func (m *Malaria) Death() {
 	hostIndex := rand.Intn(m.NHosts)
 
 	if m.Hosts[hostIndex].IsInfected == true {
-		m.InfectedHosts = append(m.InfectedHosts[:hostIndex], m.InfectedHosts[hostIndex+1:]...)
 		m.NInfectedHosts--
+		for i := 0; i < m.NInfectedHosts; i++ {
+			if hostIndex == m.InfectedHosts[i] {
+				m.InfectedHosts = append(m.InfectedHosts[:i], m.InfectedHosts[i+1:]...)
+			}
+		}
+		//m.InfectedHosts = append(m.InfectedHosts[:hostIndex], m.InfectedHosts[hostIndex+1:]...)
 	}
 
 	m.Hosts[hostIndex].Die(m.NAntigens, m.MaxAntigenValue)
-
 	return
 }
 

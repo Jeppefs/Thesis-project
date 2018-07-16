@@ -45,9 +45,9 @@ class MalariaStatistics():
         plt.figure()
         plt.errorbar(self.parameters[vary], self.dataEndRepeat["run"], self.dataEndRepeat["run_error"], fmt='o')
 
-        for i in range(self.settings["Repeat"][0]):
+        #for i in range(self.settings["Repeat"][0]):
             #print(self.dataEnd["run"][0+i::self.settings["Repeat"][0]])
-            plt.plot(self.parameters[vary], self.dataEnd["run"][0+i::self.settings["Repeat"][0]],  color = "red", linestyle = "None",  marker='.')
+            #plt.plot(self.parameters[vary], self.dataEnd["run"][0+i::self.settings["Repeat"][0]],  color = "red", linestyle = "None",  marker='.', alpha=0.1)
 
         plt.xlabel(vary)
         plt.ylabel("Extinction Time")
@@ -75,7 +75,7 @@ class MalariaStatistics():
             for key in self.dataEnd.keys():
                 self.dataEndRepeat.loc[i,key] = np.mean(self.dataEnd[key][i*r:i*r+r])
             self.dataEndRepeat.loc[i,"run_error"] = np.sqrt(np.var(self.dataEnd["run"][i*r:i*r+r])/(self.settings["Repeat"][0]-1))
-        print(self.dataEndRepeat)
+        #print(self.dataEndRepeat)
         return
 
     def LinearFit(self, x, y):
@@ -95,12 +95,13 @@ class MalariaStatistics():
         
         return self.LinearFitResults
 
-q = MalariaStatistics("InfectionSpeedFull", timeLineIndex = [25,0])
+q = MalariaStatistics("DeathRate", timeLineIndex = [25,0])
+#print(q.parameters)
 q.GetMeanAndVarianceFromRepeat()
 
-q.PlotExtinctionTime("InfectionSpeed")
-q.PlotMeanInfection("InfectionSpeed")
-q.PlotTimeLinePlot()
+q.PlotExtinctionTime("DeathSpeed")
+q.PlotMeanInfection("DeathSpeed")
+#q.PlotTimeLinePlot()
 
 
 
