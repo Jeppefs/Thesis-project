@@ -220,30 +220,25 @@ func TestRemoveParasite(t *testing.T) {
 }
 
 func TestDeath(t *testing.T) {
-	//m := CreateMalariaStructsInSlice()
+	m := CreateMalariaStructsInSlice()
+
+	fmt.Println(m[1].InfectedHosts)
+	m[1].Death(0)
+	fmt.Println(m[1].InfectedHosts)
+
+	m[1].Spread(9, 1)
+	m[1].Spread(8, 1)
+
+	fmt.Println(m[1].InfectedHosts)
+
+	m[1].Death(8)
+	fmt.Println(m[1].InfectedHosts)
+	fmt.Println(m[1].Hosts[8].IsInfected)
+
 	return
 }
 
 /*
-func TestDeath(t *testing.T) {
-	fmt.Println("\n Testing death")
-	m := CreateMalariaStructDummy(ConstructParameterDummy(5, 3, 1), 1)
-	m.Death()
-
-	if len(m.Hosts[0].Infections) != 0 {
-		t.Fatalf("Error in Infections. Is: %d Should be: %d", len(m.Hosts[0].Infections), 0)
-	}
-	if m.NInfectedHosts != 0 {
-		t.Fatalf("Error in NINfectedHosts")
-	}
-	for _, host := range m.Hosts {
-		if host.IsInfected != false {
-			t.Fatalf("Error in Antibodies. Is: %t Should be: %t", host.IsInfected, false)
-		}
-	}
-
-	fmt.Println(m.Hosts[0], m.InfectedHosts)
-}
 
 
 func TestCalcMeanAndVar(t *testing.T) {

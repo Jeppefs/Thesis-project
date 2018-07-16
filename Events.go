@@ -117,15 +117,17 @@ func (h *Host) RemoveParasite(NAntigens int) {
 
 // Death : Kills a host removing it from the system and adding a new one.
 func (m *Malaria) Death(hostIndex int) {
-	//host, hostIndex := m.GetRandomInfectedHost()
 
 	if m.Hosts[hostIndex].IsInfected == true {
-		m.NInfectedHosts--
+
 		for i := 0; i < m.NInfectedHosts; i++ {
 			if hostIndex == m.InfectedHosts[i] {
 				m.InfectedHosts = append(m.InfectedHosts[:i], m.InfectedHosts[i+1:]...)
+				break
 			}
 		}
+
+		m.NInfectedHosts--
 		//m.InfectedHosts = append(m.InfectedHosts[:hostIndex], m.InfectedHosts[hostIndex+1:]...)
 	}
 
