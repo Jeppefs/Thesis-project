@@ -6,9 +6,7 @@ import (
 )
 
 // Spread : Another person gets infected.
-func (m *Malaria) Spread() {
-
-	spreadTo, spreadFrom := m.GetSpreadToAndSpreadFrom()
+func (m *Malaria) Spread(spreadTo int, spreadFrom int) {
 
 	// If spread to is equal to spread from, do not spread.
 	if spreadTo == spreadFrom {
@@ -68,8 +66,8 @@ func (h *Host) CombineParasites(NAntigens int) {
 }
 
 // ImmunityGained : An infected person get immunity from one strain. If that one already exist, the parasite dies.
-func (m *Malaria) ImmunityGained() {
-	infectedHostIndex := rand.Intn(m.NInfectedHosts)
+func (m *Malaria) ImmunityGained(infectedHostIndex int) {
+
 	infectedHost := m.InfectedHosts[infectedHostIndex]
 
 	// Checking error stuff...
@@ -118,10 +116,8 @@ func (h *Host) RemoveParasite(NAntigens int) {
 }
 
 // Death : Kills a host removing it from the system and adding a new one.
-func (m *Malaria) Death() {
+func (m *Malaria) Death(hostIndex int) {
 	//host, hostIndex := m.GetRandomInfectedHost()
-
-	hostIndex := rand.Intn(m.NHosts)
 
 	if m.Hosts[hostIndex].IsInfected == true {
 		m.NInfectedHosts--
