@@ -24,12 +24,12 @@ class MalariaStatistics():
         self.NSaves = len(self.timeLine)
     
     # Makes a plot of the development of the number of infected over time. 
-    def PlotTimeLinePlot(self):
+    def PlotTimeLinePlot(self, newFigure = True):
 
         x = np.arange(100000, len(self.timeLine))*self.saveSpace
         y = self.timeLine[100000: len(self.timeLine)]
 
-        plt.figure()
+        if newFigure: plt.figure()
         plt.plot(np.arange(0, len(self.timeLine))*self.saveSpace, self.timeLine)
         plt.xlabel("Run")
         plt.ylabel("Infected")
@@ -44,8 +44,8 @@ class MalariaStatistics():
         return
 
     # Creates a plot with extinction time with whatever parameter given. 
-    def PlotExtinctionTime(self, vary):
-        plt.figure()
+    def PlotExtinctionTime(self, vary, newFigure = True):
+        if newFigure: plt.figure()
         plt.errorbar(self.parameters[vary], self.dataEndRepeat["run"], self.dataEndRepeat["run_error"], fmt='o')
 
         #for i in range(self.settings["Repeat"][0]):
@@ -60,8 +60,8 @@ class MalariaStatistics():
         return
 
     # Creates a plot of the mean and variance. 
-    def PlotMeanInfection(self, vary):
-        plt.figure()
+    def PlotMeanInfection(self, vary, newFigure = True):
+        if newFigure: plt.figure()
         plt.errorbar(self.parameters[vary], self.dataEndRepeat["mean"], np.sqrt(self.dataEndRepeat["variance"]/self.settings["Repeat"][0]), fmt='o')
         plt.xlabel(vary)
         plt.ylabel("Mean infected")
@@ -113,7 +113,6 @@ class MalariaStatistics():
             for j in range(self.settings["Repeat"][0]):
                 if self.dataEnd["run"][i*self.settings["Repeat"][0]+j] >= stop*self.saveSpace:
                     loaded = np.genfromtxt(self.pathName + "xDataSim_" + str(i+1) + "_" + str(j) + ".csv", delimiter=",")
-                    print(len(loaded[start:stop]))
                     mean += np.mean(loaded[start:stop])
                     var += np.var(loaded[start:stop])
                     count += 1
@@ -129,8 +128,18 @@ class MalariaStatistics():
         return        
 
     def ImportTimeLine(self, timeLineIndex = [0, 0]):
+        if timeLineIndex[0] != 0:
+            self.timeLine = np.genfromtxt(self.pathName + "xDataSim_" + str(timeLineIndex[0]) + "_" + str(timeLineIndex[1]) + ".csv", delimiter=",")
         return
 
 
+def Loglike2D(X, Y, Y_err, fitFunc, param):
+    loglike = np.sum( np.log(1/(np.sqrt(2*np.pi)*Y_err)) ) +  np.sum( (Y - fitFunc(X, param))**2 / (Y_err**2) )
+    return loglike
+
+def FitFunc_Power(X, param):
+    return param[1]*X**param[0] + param[2]
 
 
+def CalcChi2():
+    return

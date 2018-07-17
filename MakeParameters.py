@@ -83,24 +83,21 @@ def MakeEmptyListFromDict(aDict):
 def MakeParametersAndSettings():
 
     folder = "data"
-    name = "deathRate"
+    name = "replacement"
 
     length = 1
     width = 1
-    parameters = OrderedDict()
 
+    parameters = OrderedDict()
     parameters["NHosts"] = np.array([10000])
     parameters["InfectionSpeed"] = np.array([1.0]) #np.arange(1.0, 1.05 + np.finfo(float).eps, 0.002) 
     parameters["ImmunitySpeed"] = np.array([1.0])
     parameters["DeathSpeed"] = np.arange(0, 0.01+0.0000001, 0.0005)
     parameters["MutationSpeed"] = np.array([0.0])
-
     parameters["NAntigens"] = np.array([1])
     parameters["MaxAntigenValue"] = np.array([1])
     parameters["MaxSuperInfections"] = np.array([5])
     parameters["InitialInfected"] = np.array([500])
-
-
 
     settings = OrderedDict()
     settings["Runs"] = [20000000] 

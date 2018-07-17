@@ -9,9 +9,11 @@ def DeathRate():
     q.GetMeanAndVarianceFromRepeat()
     q.CalcNewMean(int(10**7 / q.saveSpace), int(2*10**7 / q.saveSpace))
 
-    q.PlotExtinctionTime("DeathSpeed")
-    q.PlotMeanInfection("DeathSpeed")
-    q.PlotTimeLinePlot()
+    #q.PlotExtinctionTime("DeathSpeed")
+    plt.figure()
+    q.PlotMeanInfection("DeathSpeed", newFigure = False)
+    #q.PlotTimeLinePlot()
+    
     return
 
 DeathRate()
