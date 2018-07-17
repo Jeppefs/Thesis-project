@@ -11,11 +11,10 @@ func (m *Malaria) EventHappens(param Parameters) {
 	case 1:
 		m.ImmunityGained(rand.Intn(m.NInfectedHosts))
 	case 2:
+		m.Replace(rand.Intn(m.NHosts))
+	case 3:
 		host, _ := m.GetRandomInfectedHost()
 		m.MutateParasite(host)
-	case 3:
-		m.Death(rand.Intn(m.NHosts))
-
 	}
 
 	return
@@ -46,7 +45,7 @@ func CalcRates(m *Malaria, param Parameters) []float64 {
 	r := make([]float64, 4)
 	r[0] = param.InfectionSpeed * float64(m.NInfectedHosts)
 	r[1] = param.ImmunitySpeed * float64(m.NInfectedHosts)
-	r[2] = param.MutationSpeed * float64(m.NInfectedHosts)
-	r[3] = param.DeathSpeed * float64(m.NHosts)
+	r[2] = param.ReplacementSpeed * float64(m.NHosts)
+	r[3] = param.MutationSpeed * float64(m.NInfectedHosts)
 	return r
 }

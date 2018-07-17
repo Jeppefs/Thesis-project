@@ -1,2 +1,2 @@
 import numpy as np 
-import MakeParameters
+import make_parameters as mp

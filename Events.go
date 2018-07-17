@@ -115,8 +115,8 @@ func (h *Host) RemoveParasite(NAntigens int) {
 	return
 }
 
-// Death : Kills a host removing it from the system and adding a new one.
-func (m *Malaria) Death(hostIndex int) {
+// Replace : Kills a host removing it from the system and adding a new one.
+func (m *Malaria) Replace(hostIndex int) {
 
 	if m.Hosts[hostIndex].IsInfected == true {
 

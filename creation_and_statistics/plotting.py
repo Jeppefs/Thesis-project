@@ -1,4 +1,4 @@
-import MalariaStatistics as MS 
+import malaria_statistics as MS 
 
 import numpy as np
 import matplotlib.pyplot as plt

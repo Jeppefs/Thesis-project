@@ -11,10 +11,10 @@ import (
 // Parameters : Sets the parameters for a particular run. These are all set before the simulation.
 type Parameters struct {
 	// Parameters used when calculating rates and probabilities for next event.
-	InfectionSpeed float64 // The rate of which malaria spreads.
-	ImmunitySpeed  float64 // The rate of gaining immunity to a single antigen.  Always set to 1.0
-	MutationSpeed  float64 //  The rate of strains to switch a random antigen to a new random one.
-	DeathSpeed     float64 // The rate of hosts death.
+	InfectionSpeed   float64 // The rate of which malaria spreads.
+	ImmunitySpeed    float64 // The rate of gaining immunity to a single antigen.  Always set to 1.0
+	MutationSpeed    float64 //  The rate of strains to switch a random antigen to a new random one.
+	ReplacementSpeed float64 // The rate of hosts death.
 
 	// Other setting that changes the behaviour of the system
 	NHosts             int // Number of hosts
