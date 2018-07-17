@@ -20,16 +20,17 @@ class MalariaStatistics():
         if timeLineIndex[0] != 0:
             self.timeLine = np.genfromtxt(self.pathName + "xDataSim_" + str(timeLineIndex[0]) + "_" + str(timeLineIndex[1]) + ".csv", delimiter=",")
         
+        self.saveSpace = 100
         self.NSaves = len(self.timeLine)
     
     # Makes a plot of the development of the number of infected over time. 
     def PlotTimeLinePlot(self):
 
-        x = np.arange(100000, len(self.timeLine))*100
+        x = np.arange(100000, len(self.timeLine))*self.saveSpace
         y = self.timeLine[100000: len(self.timeLine)]
 
         plt.figure()
-        plt.plot(np.arange(0, len(self.timeLine))*100, self.timeLine)
+        plt.plot(np.arange(0, len(self.timeLine))*self.saveSpace, self.timeLine)
         plt.xlabel("Run")
         plt.ylabel("Infected")
 
@@ -98,7 +99,13 @@ class MalariaStatistics():
         return self.LinearFitResults
 
     def CalcNewMean(self, start, stop):
-        
+                
+        for i in range(self.NUniqueRuns):
+            mean = 0
+            for j in range(self.settings["Repeat"][0]):
+                loaded = np.genfromtxt(self.pathName + "xDataSim_" + str(i+1) + "_" + str(j) + ".csv", delimiter=",")
+                mean += np.mean(loaded[start:stop])
+            newMean.append()
         
         return        
 

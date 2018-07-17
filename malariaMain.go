@@ -72,7 +72,7 @@ func GetReadyToStartModelSaveAndCreateDataFiles(param Parameters, settings Model
 	var run int
 
 	for j := 0; j < settings.Repeat; j++ {
-		DataFileName := path + "xDataSim_" + strconv.Itoa(i) + "_" + strconv.Itoa(j) + ".csv"
+		DataFileName := path + "xDataSim_" + strconv.Itoa(i) + "_" + strconv.Itoa(j+1) + ".csv"
 		run = StartModel(param, settings, DataFileName)
 		if settings.ShouldSaveData == true {
 			SaveToEndFile(DataFileName, settings.DataFileName, run)
