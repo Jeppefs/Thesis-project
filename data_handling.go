@@ -80,11 +80,16 @@ func LoadCSVFile(fileName string) *csv.Reader {
 	return r
 }
 
-// CreateSimulationHeader : Creates the header for timeline daa
-func CreateSimulationHeader(pathName string) {
-	file, err := os.Create(pathName + "simHeader.csv")
+// CreateTimelineFile : Creates the header for timeline daa
+func CreateTimelineFile(DataFileName string) *os.File {
+	file, err := os.Create(DataFileName)
 	check(err)
-	fmt.Fprintf(file, "%s,%s,%s\n", "infected", "infected 1x", "infected 2x")
-	file.Close()
+	fmt.Fprintf(file, "%s,%s\n", "run", "infected")
+	return file
+}
+
+// SaveTimeline : Save current state to timeline data
+func SaveTimeline(file *os.File, run *int, NInfected *int) {
+	fmt.Fprintf(file, "%v,%v\n", *run, *NInfected)
 	return
 }

@@ -89,7 +89,7 @@ func GetReadyToStartModelSaveAndCreateDataFiles(param Parameters, settings Model
 	var run int
 
 	for j := 0; j < settings.Repeat; j++ {
-		DataFileName := path + "xDataSim_" + strconv.Itoa(i) + "_" + strconv.Itoa(j+1) + ".csv"
+		DataFileName := path + "timeline/" + strconv.Itoa(i) + "_" + strconv.Itoa(j+1) + ".csv"
 		run = StartModel(param, settings, DataFileName)
 		if settings.ShouldSaveData == true {
 			SaveToEndFile(DataFileName, settings.DataFileName, run)
@@ -136,8 +136,7 @@ func (m *Malaria) RunBurnIn(param Parameters, burnIn int) {
 // RunModel :
 func (m *Malaria) RunModel(param Parameters, setting ModelSettings, DataFileName string) int {
 
-	file, err := os.Create(DataFileName)
-	check(err)
+	file := CreateTimelineFile(DataFileName)
 
 	run := 0
 
@@ -145,14 +144,14 @@ func (m *Malaria) RunModel(param Parameters, setting ModelSettings, DataFileName
 
 		m.EventHappens(param)
 		if run%100 == 0 {
-			fmt.Fprintf(file, "%v\n", m.NInfectedHosts) // We need to have a new function that saves the data properly. We should probably have a header, yeah.
+			SaveTimeline(file, &run, &m.NInfectedHosts) // We need to have a new function that saves the data properly. We should probably have a header, yeah.
 			if run%2000000 == 0 {
 				fmt.Println(run)
 			}
 		}
 		if m.NInfectedHosts == 0 {
 			fmt.Println("Malaria is dead in", run, "runs")
-			fmt.Fprintf(file, "%v\n", m.NInfectedHosts)
+			SaveTimeline(file, &run, &m.NInfectedHosts)
 			break
 		}
 	}
