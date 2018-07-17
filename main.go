@@ -8,21 +8,38 @@ package main
 import (
 	"fmt"
 	"io"
+	"io/ioutil"
 	"os"
 	"strconv"
 	"time"
 )
 
 // We define a set of global constant - mostly
-const path = "data/" + "DeathRate/"
+const path = "data/" + "standard/"
 
 // main
 func main() {
 	fmt.Println("Starting")
+	PrintNotes()
+
 	startTime := time.Now()
 	InitiateRunningModel()
 	endTime := time.Now()
 	fmt.Println("The end. Congrats! The whole run took:", endTime.Sub(startTime), "d")
+}
+
+// PrintNotes : Print the notes in the data file.
+func PrintNotes() {
+	if _, err := os.Stat(path + "notes.txt"); os.IsNotExist(err) {
+		fmt.Println("Notes does not exist")
+	} else {
+		b, err := ioutil.ReadFile(path + "notes.txt")
+		if err != nil {
+			panic(err)
+		}
+		fmt.Println(string(b))
+	}
+	return
 }
 
 // InitiateRunningModel : Starts the whole simulation and sets the parameter-grid.
