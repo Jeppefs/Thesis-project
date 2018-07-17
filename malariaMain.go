@@ -130,7 +130,7 @@ func (m *Malaria) RunModel(param Parameters, setting ModelSettings, DataFileName
 		if run%100 == 0 {
 			fmt.Fprintf(file, "%v\n", m.NInfectedHosts) // We need to have a new function that saves the data properly. We should probably have a header, yeah.
 			if run%2000000 == 0 {
-				fmt.Println(run, m.Hosts[0].Infections, m.Hosts[1].Infections)
+				fmt.Println(run)
 			}
 		}
 		if m.NInfectedHosts == 0 {

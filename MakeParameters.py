@@ -90,9 +90,9 @@ def MakeParametersAndSettings():
     parameters = OrderedDict()
 
     parameters["NHosts"] = np.array([10000])
-    parameters["InfectionSpeed"] = np.array([1.02]) #np.arange(1.0, 1.05 + np.finfo(float).eps, 0.002) 
+    parameters["InfectionSpeed"] = np.array([1.0]) #np.arange(1.0, 1.05 + np.finfo(float).eps, 0.002) 
     parameters["ImmunitySpeed"] = np.array([1.0])
-    parameters["DeathSpeed"] = np.arange(0, 0.1+0.0000001, 0.001)
+    parameters["DeathSpeed"] = np.arange(0, 0.01+0.0000001, 0.0005)
     parameters["MutationSpeed"] = np.array([0.0])
 
     parameters["NAntigens"] = np.array([1])
