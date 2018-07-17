@@ -7,11 +7,11 @@ def CreateParametersAndSettings(func, name, notes):
     if notes == "" and name == "":
         folder, name, parameters, settings, notes = func()
     elif notes == "":
-        folder, name, parameters, settings, notes = func(name)
+        folder, name, parameters, settings, notes = func(name = name)
     elif name == "":
         folder, name, parameters, settings, notes = func(notes = notes) 
     else:
-        folder, name, parameters, settings, notes = func(name, notes) 
+        folder, name, parameters, settings, notes = func(name = name, notes = notes) 
 
     fileParam, fileSet, fileNotes = CreateFiles(name)
     CreateNotes(fileNotes, notes)
@@ -20,6 +20,8 @@ def CreateParametersAndSettings(func, name, notes):
     CreateHeader(fileSet, settings) 
     InsertValues(fileParam, parameters)
     InsertValues(fileSet, settings)
+
+    CreateDataAndPlotFolders(name)
 
     fileParam.close()
     fileSet.close()
@@ -109,4 +111,11 @@ def MakeEmptyListFromDict(aDict):
     for _ in range(length):
         EmptyList.append([None] * len(aDict))
     return EmptyList
+
+def CreateDataAndPlotFolders(folderName):
+    if not os.path.exists("data/" + folderName + "/plots"):
+        os.makedirs("data/" + folderName + "/plots")
+    if not os.path.exists("data/" + folderName + "/timeline"):
+        os.makedirs("data/" + folderName + "/timeline")
+    return
 
