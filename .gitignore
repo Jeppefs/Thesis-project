@@ -1,5 +1,4 @@
 data/
-plots/
-testing/
 .vscode/
 malaria.exe
+debug.test
