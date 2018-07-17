@@ -18,7 +18,7 @@ class MalariaStatistics():
         self.plotSettings = {}
 
         if timeLineIndex[0] != 0:
-            self.timeLine = np.genfromtxt(self.pathName + "xDataSim_" + str(timeLineIndex[0]) + "_" + str(timeLineIndex[1]) + ".csv", delimiter=",")
+            self.timeLine = np.genfromtxt(self.pathName + "timeline/" + str(timeLineIndex[0]) + "_" + str(timeLineIndex[1]) + ".csv", delimiter=",")
         
         self.saveSpace = 100
         self.NSaves = len(self.timeLine)
@@ -110,7 +110,7 @@ class MalariaStatistics():
             mean = 0
             var = 0
             count = 0
-            for j in range(self.settings["Repeat"][0]):
+            for j in range(self.settings["Repeat"][0])+1:
                 if self.dataEnd["run"][i*self.settings["Repeat"][0]+j] >= stop*self.saveSpace:
                     loaded = np.genfromtxt(self.pathName + "xDataSim_" + str(i+1) + "_" + str(j) + ".csv", delimiter=",")
                     mean += np.mean(loaded[start:stop])
@@ -129,7 +129,7 @@ class MalariaStatistics():
 
     def ImportTimeLine(self, timeLineIndex = [0, 0]):
         if timeLineIndex[0] != 0:
-            self.timeLine = np.genfromtxt(self.pathName + "xDataSim_" + str(timeLineIndex[0]) + "_" + str(timeLineIndex[1]) + ".csv", delimiter=",")
+            self.timeLine = np.genfromtxt(self.pathName + "timeline" + str(timeLineIndex[0]) + "_" + str(timeLineIndex[1]) + ".csv", delimiter=",")
         return
 
 
