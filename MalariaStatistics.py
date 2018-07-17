@@ -99,14 +99,33 @@ class MalariaStatistics():
         return self.LinearFitResults
 
     def CalcNewMean(self, start, stop):
-                
+
+        #self.dataEndRepeat = pandas.DataFrame(0, index=np.arange(self.NUniqueRuns), columns=self.dataEnd.keys())
+
+        self.dataEndRepeat["mean_variance"] =  pandas.Series(index=np.arange(self.NUniqueRuns))
+
+        print(start, stop)
+
         for i in range(self.NUniqueRuns):
             mean = 0
+            var = 0
+            count = 0
             for j in range(self.settings["Repeat"][0]):
-                loaded = np.genfromtxt(self.pathName + "xDataSim_" + str(i+1) + "_" + str(j) + ".csv", delimiter=",")
-                mean += np.mean(loaded[start:stop])
-            newMean.append()
-        
+                if self.dataEnd["run"][i*self.settings["Repeat"][0]+j] >= stop*self.saveSpace:
+                    loaded = np.genfromtxt(self.pathName + "xDataSim_" + str(i+1) + "_" + str(j) + ".csv", delimiter=",")
+                    print(len(loaded[start:stop]))
+                    mean += np.mean(loaded[start:stop])
+                    var += np.var(loaded[start:stop])
+                    count += 1
+            if count > 0:
+                mean = mean / count
+                var = var / count
+
+            self.dataEndRepeat.loc[i, "mean"] = mean
+            self.dataEndRepeat.loc[i, "variance"] = var
+
+            #self.dataEndRepeat.loc[i, "mean_variance"] = var / 
+
         return        
 
     def ImportTimeLine(self, timeLineIndex = [0, 0]):
