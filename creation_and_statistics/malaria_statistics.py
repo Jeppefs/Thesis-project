@@ -38,7 +38,7 @@ class MalariaStatistics():
         print(fitResults)
         plt.plot(x, x*fitResults["slope"] + fitResults["intersect"])
         
-        figName = "plots/" + self.simulationName + "TimeLine" + ".pdf" 
+        figName = self.pathName + "/" + self.simulationName + "TimeLine" + ".pdf" 
         plt.savefig(figName, format="pdf")
 
         return
@@ -54,7 +54,7 @@ class MalariaStatistics():
 
         plt.xlabel(vary)
         plt.ylabel("Extinction Time")
-        figName = "plots/" + self.simulationName + ".pdf"
+        figName = self.pathName + "/" + self.simulationName + ".pdf"
         plt.savefig(figName, format="pdf")
 
         return
@@ -65,7 +65,7 @@ class MalariaStatistics():
         plt.errorbar(self.parameters[vary], self.dataEndRepeat["mean"], np.sqrt(self.dataEndRepeat["variance"]/self.settings["Repeat"][0]), fmt='o')
         plt.xlabel(vary)
         plt.ylabel("Mean infected")
-        figName = "plots/" + self.simulationName + "Mean" + ".pdf"
+        figName = self.pathName + "/" + self.simulationName + "Mean" + ".pdf"
         plt.savefig(figName, format="pdf")
         return
 
@@ -112,7 +112,7 @@ class MalariaStatistics():
             count = 0
             for j in range(self.settings["Repeat"][0])+1:
                 if self.dataEnd["run"][i*self.settings["Repeat"][0]+j] >= stop*self.saveSpace:
-                    loaded = np.genfromtxt(self.pathName + "xDataSim_" + str(i+1) + "_" + str(j) + ".csv", delimiter=",")
+                    loaded = np.genfromtxt(self.pathName + "timeline" + str(i+1) + "_" + str(j) + ".csv", delimiter=",")
                     mean += np.mean(loaded[start:stop])
                     var += np.var(loaded[start:stop])
                     count += 1

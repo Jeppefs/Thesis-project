@@ -111,9 +111,11 @@ func FindAllStrainCombinations(strainLen int, antigenMax int) (int, [][]int) {
 	base := make([]int, strainLen)
 	maxJump := antigenMax - strainLen
 	antigenList = append(antigenList, base)
+
 	for i := 0; i < antigenMax; i++ {
 
 	}
+
 	return 1, antigenList
 }
 
