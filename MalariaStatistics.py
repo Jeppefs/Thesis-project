@@ -133,8 +133,9 @@ class MalariaStatistics():
         return
 
 
-def Loglike2D(X, Y, Y_err, fitFunc, param):
-    loglike = np.sum( np.log(1/(np.sqrt(2*np.pi)*Y_err)) ) +  np.sum( (Y - fitFunc(X, param))**2 / (Y_err**2) )
+def Loglike2D(param, X, Y, Y_err, fitFunc):
+    #loglike = -1* ( np.sum( np.log(1/(np.sqrt(2*np.pi)*Y_err)) ) + np.sum( (Y - fitFunc(X, param))**2 / (Y_err**2) ) )
+    loglike = -1* np.sum( (Y - fitFunc(X, param))**2 / (Y_err**2) )
     return loglike
 
 def FitFunc_Power(X, param):
