@@ -2,6 +2,26 @@ import numpy as np
 import os
 from collections import OrderedDict
 
+def CreateParametersAndSettings(func, name, notes):
+
+    if notes == "" and name == "":
+        folder, name, parameters, settings, notes = func()
+    elif notes == "":
+        folder, name, parameters, settings, notes = func(name)
+    elif name == "":
+        folder, name, parameters, settings, notes = func(notes = notes) 
+    else:
+        folder, name, parameters, settings, notes = func(name, notes) 
+
+    fileParam, fileSet = CreateFiles(name)
+    CreateHeader(fileParam, parameters)
+    CreateHeader(fileSet, settings) 
+    InsertValues(fileParam, parameters)
+    InsertValues(fileSet, settings)
+
+    fileParam.close()
+    fileSet.close()
+
 def CreateFiles(folderName):
     if not os.path.exists("data/" + folderName + "/"):
         os.makedirs("data/" + folderName + "/")
@@ -80,45 +100,3 @@ def MakeEmptyListFromDict(aDict):
         EmptyList.append([None] * len(aDict))
     return EmptyList
 
-def MakeParametersAndSettings():
-
-    folder = "data"
-    name = "replacement"
-
-    length = 1
-    width = 1
-
-    parameters = OrderedDict()
-    parameters["NHosts"] = np.array([10000])
-    parameters["InfectionSpeed"] = np.array([1.0]) #np.arange(1.0, 1.05 + np.finfo(float).eps, 0.002) 
-    parameters["ImmunitySpeed"] = np.array([1.0])
-    parameters["ReplacementSpeed"] = np.arange(0, 0.01+0.0000001, 0.0005)
-    parameters["MutationSpeed"] = np.array([0.0])
-    parameters["NAntigens"] = np.array([1])
-    parameters["MaxAntigenValue"] = np.array([1])
-    parameters["MaxSuperInfections"] = np.array([5])
-    parameters["InitialInfected"] = np.array([500])
-
-    settings = OrderedDict()
-    settings["Runs"] = [20000000] 
-    settings["BurnIn"] = [0]
-    settings["Repeat"] = [10]
-    settings["ShouldSaveData"] = ["true"]
-    settings["ShouldSaveDataWhileRunning"] = ["true"] 
-    settings["ShouldCreateNewDataFile"] = ["true"]
-    settings["DataFileName"] = ["dataEnd.csv"]
-
-    return folder, name, parameters, settings
-
-folder, name, parameters, settings = MakeParametersAndSettings()
-
-##
-
-fileParam, fileSet = CreateFiles(name)
-CreateHeader(fileParam, parameters)
-CreateHeader(fileSet, settings) 
-InsertValues(fileParam, parameters)
-InsertValues(fileSet, settings)
-
-fileParam.close()
-fileSet.close()
