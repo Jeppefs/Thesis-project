@@ -106,17 +106,27 @@ func (m *Malaria) CountNumberOfUniqueAntigens() {
 }
 
 // FindAllStrainCombinations :
+/*
 func FindAllStrainCombinations(strainLen int, antigenMax int) (int, [][]int) {
+
+	if strainLen > antigenMax {
+		panic("Strain length is greater than the maximum possible antigen value")
+	}
+
 	antigenList := make([][]int, 0)
 	base := make([]int, strainLen)
 	maxJump := antigenMax - strainLen
 	antigenList = append(antigenList, base)
 
-	for i := 0; i < antigenMax; i++ {
+	if strainLen == 1 {
+		for i := 0; i < antigenMax; i++ {
+			antigenList = append(antigenList, i)
+		}
+	} else if strainLen == 2 {
 
 	}
 
 	return 1, antigenList
 }
-
+*/
 // 1, 4, 3+2+1 2+1 1, 20

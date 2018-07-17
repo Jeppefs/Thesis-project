@@ -219,21 +219,22 @@ func TestRemoveParasite(t *testing.T) {
 	CheckIfEqual(t, "Removing the first parasite by a host infected by 2", m[1].Hosts[0].Infections, []int8{1, 2})
 }
 
-func TestDeath(t *testing.T) {
+func TestReplace(t *testing.T) {
 	m := CreateMalariaStructsInSlice()
 
-	fmt.Println(m[1].InfectedHosts)
-	m[1].Death(0)
-	fmt.Println(m[1].InfectedHosts)
-
+	m[1].Replace(0)
 	m[1].Spread(9, 1)
 	m[1].Spread(8, 1)
+	m[1].Replace(8)
 
-	fmt.Println(m[1].InfectedHosts)
+	CheckIfEqual(t, "Decreased number of infected after replacement", m[1].NInfectedHosts, 3)
+	CheckIfEqual(t, "The last index in infectedHosts", m[1].InfectedHosts[2], 9)
+	CheckIfEqual(t, "Should not be infected after replacement", m[1].Hosts[8].IsInfected, false)
 
-	m[1].Death(8)
-	fmt.Println(m[1].InfectedHosts)
-	fmt.Println(m[1].Hosts[8].IsInfected)
+	return
+}
+
+func TestFindAllStrainCombinations(t *testing.T) {
 
 	return
 }
