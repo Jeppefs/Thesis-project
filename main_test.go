@@ -230,12 +230,17 @@ func TestReplace(t *testing.T) {
 	CheckIfEqual(t, "Decreased number of infected after replacement", m[1].NInfectedHosts, 3)
 	CheckIfEqual(t, "The last index in infectedHosts", m[1].InfectedHosts[2], 9)
 	CheckIfEqual(t, "Should not be infected after replacement", m[1].Hosts[8].IsInfected, false)
+	CheckIfEqual(t, "Expressed strain, replacement", int(m[1].Hosts[8].ExpressedStrain[0]), 0)
+	CheckIfEqual(t, "Infections, replacement", len(m[1].Hosts[8].Infections), 0)
 
 	return
 }
 
 func TestFindAllStrainCombinations(t *testing.T) {
-
+	strainLen := 1
+	antigenMax := 5
+	maxStrains, strainCount := FindAllStrainCombinations(strainLen, antigenMax)
+	fmt.Println(maxStrains, strainCount)
 	return
 }
 
