@@ -13,7 +13,9 @@ def CreateParametersAndSettings(func, name, notes):
     else:
         folder, name, parameters, settings, notes = func(name, notes) 
 
-    fileParam, fileSet = CreateFiles(name)
+    fileParam, fileSet, fileNotes = CreateFiles(name)
+    CreateNotes(fileNotes, notes)
+    fileNotes.close()
     CreateHeader(fileParam, parameters)
     CreateHeader(fileSet, settings) 
     InsertValues(fileParam, parameters)
@@ -21,6 +23,7 @@ def CreateParametersAndSettings(func, name, notes):
 
     fileParam.close()
     fileSet.close()
+    
 
 def CreateFiles(folderName):
     if not os.path.exists("data/" + folderName + "/"):
@@ -28,7 +31,14 @@ def CreateFiles(folderName):
 
     fileParam = open("data/" + folderName + "/" + "parameters" + ".csv", "w+")
     fileSet = open("data/" + folderName + "/" +  "settings" + ".csv", "w+")
-    return fileParam, fileSet
+    fileNotes = open("data/" + folderName + "/" +  "notes" + ".txt", "w+")
+
+    return fileParam, fileSet, fileNotes
+
+def CreateNotes(file, notes):
+    file.write(notes)
+    return
+
 
 # Saves the keys onto a header for the given file. 
 def CreateHeader(file, aDict):
