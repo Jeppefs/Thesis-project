@@ -244,6 +244,14 @@ func TestFindAllStrainCombinations(t *testing.T) {
 	return
 }
 
+func TestListToString(t *testing.T) {
+	s1 := ListToString([]int{1, 2, 3})
+	s2 := ListToString([]int{13})
+	CheckIfEqual(t, "List to string", s1, "1,2,3")
+	CheckIfEqual(t, "List to string", s2, "13")
+	return
+}
+
 /*
 
 

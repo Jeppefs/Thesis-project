@@ -65,7 +65,7 @@ class MalariaStatistics():
         plt.errorbar(self.parameters[vary], self.dataEndRepeat["mean"], np.sqrt(self.dataEndRepeat["variance"]/self.settings["Repeat"][0]), fmt='o')
         plt.xlabel(vary)
         plt.ylabel("Mean infected")
-        figName = self.pathName + "/" + self.simulationName + "Mean" + ".pdf"
+        figName = self.pathName + "/" + self.simulationName  + "Mean" + ".pdf"
         plt.savefig(figName, format="pdf")
         return
 
