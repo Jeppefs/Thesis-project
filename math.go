@@ -138,19 +138,21 @@ func FindAllStrainCombinations(strainLen int, antigenMax int) (int, map[string]i
 // CountStrains : Count the strains and change StrainCounter variable in malaria struct.
 func (m *Malaria) CountStrains() {
 	for i := 0; i < m.NHosts; i++ {
-
+		if m.Hosts[i].IsInfected {
+			m.StrainCounter[ListToString(m.Hosts[i].ExpressedStrain)]++
+		}
 	}
 	return
 }
 
 // ListToString : Converts a list of intergers to a string with komma seperation
-func ListToString(list []int) string {
+func ListToString(list []int8) string {
 	s := ""
 	for i := 0; i < len(list); i++ {
 		if i == 0 {
-			s += strconv.Itoa(list[i])
+			s += strconv.Itoa(int(list[i]))
 		} else {
-			s += "," + strconv.Itoa(list[i])
+			s += "," + strconv.Itoa(int(list[i]))
 		}
 	}
 

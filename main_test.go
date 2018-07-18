@@ -73,6 +73,8 @@ func CreateMalariaStructsInSlice() [3]Malaria {
 	malariaStructs[1].Hosts[2].Infections[0] = 1
 	malariaStructs[1].Hosts[2].Infections[1] = 2
 
+	malariaStructs[1].CountStrains()
+
 	return malariaStructs
 }
 
@@ -236,6 +238,13 @@ func TestReplace(t *testing.T) {
 	return
 }
 
+func TestCountStrains(t *testing.T) {
+	m := CreateMalariaStructsInSlice()
+
+	fmt.Println(m[1].StrainCounter)
+	return
+}
+
 func TestFindAllStrainCombinations(t *testing.T) {
 	strainLen := 1
 	antigenMax := 5
@@ -245,8 +254,8 @@ func TestFindAllStrainCombinations(t *testing.T) {
 }
 
 func TestListToString(t *testing.T) {
-	s1 := ListToString([]int{1, 2, 3})
-	s2 := ListToString([]int{13})
+	s1 := ListToString([]int8{1, 2, 3})
+	s2 := ListToString([]int8{13})
 	CheckIfEqual(t, "List to string", s1, "1,2,3")
 	CheckIfEqual(t, "List to string", s2, "13")
 	return
