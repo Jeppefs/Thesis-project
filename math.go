@@ -122,17 +122,28 @@ func FindAllStrainCombinations(strainLen int, antigenMax int) (int, map[string]i
 			strainCount[strconv.Itoa(i)] = 0
 		}
 		maxStrains = antigenMax
-		return maxStrains, strainCount
 
 	} else if strainLen == 2 {
 
-		for i := 0; i < antigenMax; i++ {
-			maxStrains += i
+		for i := 0; i < antigenMax-1; i++ {
+			for j := i + 1; j < antigenMax; j++ {
+				strainCount[ListToString([]int8{int8(i), int8(j)})] = 0
+				maxStrains++
+			}
 		}
-		return maxStrains, strainCount
+
+	} else if strainLen == 3 {
+		for i := 0; i < antigenMax-2; i++ {
+			for j := i + 1; j < antigenMax-1; j++ {
+				for k := j + 1; k < antigenMax; k++ {
+					strainCount[ListToString([]int8{int8(i), int8(j), int8(k)})] = 0
+					maxStrains++
+				}
+			}
+		}
 	}
 
-	return 1, strainCount
+	return maxStrains, strainCount
 }
 
 // CountStrains : Count the strains and change StrainCounter variable in malaria struct.

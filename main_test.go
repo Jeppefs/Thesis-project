@@ -249,6 +249,19 @@ func TestFindAllStrainCombinations(t *testing.T) {
 	strainLen := 1
 	antigenMax := 5
 	maxStrains, strainCount := FindAllStrainCombinations(strainLen, antigenMax)
+	CheckIfEqual(t, "Correct number of maximum strains for strainLen 1", maxStrains, 5)
+	fmt.Println(maxStrains, strainCount)
+
+	strainLen = 2
+	antigenMax = 5
+	maxStrains, strainCount = FindAllStrainCombinations(strainLen, antigenMax)
+	CheckIfEqual(t, "Correct number of maximum strains for strainLen 2", maxStrains, 10)
+	fmt.Println(maxStrains, strainCount)
+
+	strainLen = 3
+	antigenMax = 5
+	maxStrains, strainCount = FindAllStrainCombinations(strainLen, antigenMax)
+	CheckIfEqual(t, "Correct number of maximum strains for strainLen 3", maxStrains, 10)
 	fmt.Println(maxStrains, strainCount)
 	return
 }

@@ -33,6 +33,8 @@ def standard(name = "standard", notes = "Standard data for non-systematic tests"
 
     return folder, name, parameters, settings, notes
 
+
+##-------------------------------------------------------------------------------##
 mp.CreateParametersAndSettings(eval(func), name, notes)
 
 
