@@ -294,6 +294,17 @@ func TestCheckUniqueInt8(t *testing.T) {
 
 }
 
+func TestInsertRandomInfection(t *testing.T) {
+	m := CreateMalariaStructsInSlice()
+
+	for hostIndex := 0; hostIndex < m[1].NHosts; hostIndex++ {
+		m[1].Hosts[hostIndex].InsertRandomInfection(2, 2)
+		CheckIfEqual(t, "Random infection all antigens unique in same strain", m[1].Hosts[hostIndex].ExpressedStrain, []int8{0, 1})
+		CheckIfEqual(t, "Random infection all antigens unique in same strain", m[1].Hosts[hostIndex].Infections, []int8{0, 1})
+	}
+
+}
+
 /*
 
 

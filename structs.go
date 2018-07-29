@@ -64,7 +64,6 @@ func ConstructMalariaStruct(param Parameters) Malaria {
 
 	_, m.StrainCounter = FindAllStrainCombinations(param.NAntigens, param.MaxAntigenValue)
 	m.CountStrains()
-	fmt.Println(m.StrainCounter)
 
 	//fmt.Println(m.Antigens, "\n", m.Infections, "\n", m.Antibodies, "\n")
 	return m
@@ -96,7 +95,13 @@ func MakeHost(infected bool, NAntigens int, MaxAntigenValue int) Host {
 func (h *Host) InsertRandomInfection(NAntigens int, MaxAntigenValue int) {
 	for antigen := 0; antigen < NAntigens; antigen++ {
 		h.ExpressedStrain[antigen] = int8(rand.Intn(MaxAntigenValue))
+		fmt.Println(h.Infections)
 		h.Infections[antigen] = h.ExpressedStrain[antigen]
+		if antigen > 0 {
+			if CheckUniqueInt8(h.ExpressedStrain[0:antigen], h.ExpressedStrain[antigen]) == false {
+				antigen--
+			}
+		}
 	}
 	return
 }
