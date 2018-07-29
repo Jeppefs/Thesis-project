@@ -5,6 +5,7 @@ import (
 	"io"
 	"math"
 	"math/rand"
+	"sort"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
@@ -271,6 +272,11 @@ func TestListToString(t *testing.T) {
 	s2 := ListToString([]int8{13})
 	CheckIfEqual(t, "List to string", s1, "1,2,3")
 	CheckIfEqual(t, "List to string", s2, "13")
+
+	s := []int8{3, 2, 5, 8, 1}
+	sort.Slice(s, func(i, j int) bool { return s[i] < s[j] })
+	CheckIfEqual(t, "Sorting int8 slice", s, []int8{1, 2, 3, 5, 8})
+
 	return
 }
 

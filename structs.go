@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"math/rand"
 )
 
@@ -63,6 +64,7 @@ func ConstructMalariaStruct(param Parameters) Malaria {
 
 	_, m.StrainCounter = FindAllStrainCombinations(param.NAntigens, param.MaxAntigenValue)
 	m.CountStrains()
+	fmt.Println(m.StrainCounter)
 
 	//fmt.Println(m.Antigens, "\n", m.Infections, "\n", m.Antibodies, "\n")
 	return m
@@ -78,15 +80,24 @@ func MakeHost(infected bool, NAntigens int, MaxAntigenValue int) Host {
 	h.Antibodies = make([]bool, MaxAntigenValue)
 
 	if infected {
+
 		h.IsInfected = true
 		h.Infections = make([]int8, NAntigens)
-		for antigen := 0; antigen < NAntigens; antigen++ {
-			h.ExpressedStrain[antigen] = int8(rand.Intn(MaxAntigenValue))
-			h.Infections[antigen] = h.ExpressedStrain[antigen]
-		}
+		h.InsertRandomInfection(NAntigens, MaxAntigenValue)
+
 	} else {
 		h.IsInfected = false
 	}
 
 	return h
+}
+
+// InsertRandomInfection : A host becomes infected by a random strain.
+func (h *Host) InsertRandomInfection(NAntigens int, MaxAntigenValue int) {
+	for antigen := 0; antigen < NAntigens; antigen++ {
+		h.ExpressedStrain[antigen] = int8(rand.Intn(MaxAntigenValue))
+		h.Infections[antigen] = h.ExpressedStrain[antigen]
+
+	}
+	return
 }
