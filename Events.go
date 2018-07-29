@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"math/rand"
 )
 
@@ -70,15 +69,6 @@ func (m *Malaria) ImmunityGained(infectedHostIndex int) {
 
 	infectedHost := m.InfectedHosts[infectedHostIndex]
 
-	// Checking error stuff...
-	if m.Hosts[infectedHost].IsInfected == false {
-		for i := 0; i < m.NInfectedHosts; i++ {
-			if m.Hosts[m.InfectedHosts[i]].IsInfected == false {
-				fmt.Println("yup")
-			}
-		}
-	}
-
 	m.Hosts[infectedHost].GiveHostAntibody(m.NAntigens)
 
 	if m.Hosts[infectedHost].IsInfected == false {
@@ -92,26 +82,27 @@ func (m *Malaria) ImmunityGained(infectedHostIndex int) {
 // GiveHostAntibody : Gives the host an antibody for its current lookout in the antigens. Also send to RemoveParaiste method if removal should happen
 func (h *Host) GiveHostAntibody(NAntigens int) {
 
-	if h.Lookout > NAntigens-1 { //-1 because NAntigens is one larger than lookout because of 0 indexing
-		h.RemoveParasite(NAntigens)
-	} else if h.Antibodies[h.Infections[h.Lookout]] {
-		h.RemoveParasite(NAntigens)
+	nInfections := len(h.Infections) / NAntigens
+	strainTarget := rand.Intn(nInfections)
+	antigenTarget := rand.Intn(NAntigens) + strainTarget*NAntigens
+
+	if h.Antibodies[h.Infections[antigenTarget]] {
+		h.RemoveParasite(NAntigens, strainTarget)
 	} else {
-		// If at end, make him healthy
-		// Make immunity in the hosts antibody and set the lookout one up
-		h.Antibodies[h.Infections[h.Lookout]] = true
-		h.Lookout++
+		h.Antibodies[h.Infections[antigenTarget]] = true
 	}
 	return
 }
 
 // RemoveParasite :  Removes a parasite from a host after immunization
-func (h *Host) RemoveParasite(NAntigens int) {
-	h.Infections = append(h.Infections[:0], h.Infections[NAntigens:]...)
+func (h *Host) RemoveParasite(NAntigens int, strainTarget int) {
+	h.Infections = append(h.Infections[:0+strainTarget*NAntigens], h.Infections[strainTarget*NAntigens+NAntigens:]...)
 	if len(h.Infections) == 0 { // If the last parasite of the host dies, then that host is not infected anymore.
 		h.IsInfected = false
+		for i := 0; i < NAntigens; i++ {
+			h.ExpressedStrain[i] = 0
+		}
 	}
-	h.Lookout = 0
 	return
 }
 
@@ -141,7 +132,6 @@ func (h *Host) Die(NAntigens int, MaxAntigenValue int) {
 		h.Infections = append(h.Infections[:0], h.Infections[len(h.Infections):]...)
 		h.IsInfected = false
 	}
-	h.Lookout = 0
 
 	for antibody := 0; antibody < MaxAntigenValue; antibody++ {
 		h.Antibodies[antibody] = false

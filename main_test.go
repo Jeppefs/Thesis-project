@@ -218,10 +218,15 @@ func TestHasStrain(t *testing.T) {
 func TestRemoveParasite(t *testing.T) {
 	m := CreateMalariaStructsInSlice()
 
-	m[1].Hosts[0].InfectHost(&m[1].Hosts[1], p2.NAntigens)
+	m[1].Hosts[0].InfectHost(&m[1].Hosts[2], p2.NAntigens)
+	m[1].Hosts[1].InfectHost(&m[1].Hosts[2], p2.NAntigens)
 
-	m[1].Hosts[0].RemoveParasite(m[1].NAntigens)
-	CheckIfEqual(t, "Removing the first parasite by a host infected by 2", m[1].Hosts[0].Infections, []int8{1, 2})
+	m[1].Hosts[0].RemoveParasite(m[1].NAntigens, 1)
+	CheckIfEqual(t, "Removing the first parasite by a host infected by 2", m[1].Hosts[0].Infections, []int8{3, 4})
+	m[1].Hosts[0].RemoveParasite(m[1].NAntigens, 0)
+	CheckIfEqual(t, "Removing the first parasite by a host infected by 2", m[1].Hosts[0].Infections, []int8{})
+	m[1].Hosts[1].RemoveParasite(m[1].NAntigens, 0)
+	CheckIfEqual(t, "Removing the first parasite by a host infected by 2", m[1].Hosts[1].Infections, []int8{1, 2})
 }
 
 func TestReplace(t *testing.T) {

@@ -27,7 +27,6 @@ type Malaria struct {
 type Host struct {
 	IsAlive    bool
 	IsInfected bool
-	Lookout    int // The antigen spot which the host currently looks at.
 
 	ExpressedStrain []int8 // The strain which another person will be infected with.
 	Infections      []int8 // The strains that are currently infecting a host.
@@ -74,7 +73,6 @@ func MakeHost(infected bool, NAntigens int, MaxAntigenValue int) Host {
 	var h Host
 
 	h.IsAlive = true
-	h.Lookout = 0
 	h.ExpressedStrain = make([]int8, NAntigens)
 	h.Antibodies = make([]bool, MaxAntigenValue)
 
