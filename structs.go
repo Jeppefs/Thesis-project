@@ -1,8 +1,8 @@
 package main
 
 import (
-	"fmt"
 	"math/rand"
+	"sort"
 )
 
 // Malaria : Contains all information that is needed to run the simulation.
@@ -95,7 +95,6 @@ func MakeHost(infected bool, NAntigens int, MaxAntigenValue int) Host {
 func (h *Host) InsertRandomInfection(NAntigens int, MaxAntigenValue int) {
 	for antigen := 0; antigen < NAntigens; antigen++ {
 		h.ExpressedStrain[antigen] = int8(rand.Intn(MaxAntigenValue))
-		fmt.Println(h.Infections)
 		h.Infections[antigen] = h.ExpressedStrain[antigen]
 		if antigen > 0 {
 			if CheckUniqueInt8(h.ExpressedStrain[0:antigen], h.ExpressedStrain[antigen]) == false {
@@ -103,5 +102,7 @@ func (h *Host) InsertRandomInfection(NAntigens int, MaxAntigenValue int) {
 			}
 		}
 	}
+	sort.Slice(h.ExpressedStrain, func(i, j int) bool { return h.ExpressedStrain[i] < h.ExpressedStrain[j] })
+	sort.Slice(h.Infections, func(i, j int) bool { return h.Infections[i] < h.Infections[j] })
 	return
 }
