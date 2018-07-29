@@ -70,7 +70,10 @@ func (m *Malaria) ImmunityGained(infectedHostIndex int) {
 
 	infectedHost := m.InfectedHosts[infectedHostIndex]
 
-	m.Hosts[infectedHost].GiveHostAntibody(m.NAntigens)
+	nInfections := CountInfections(m.Hosts[infectedHost].Infections, m.NAntigens)
+	strainTarget := rand.Intn(nInfections)
+	antigenTarget := rand.Intn(m.NAntigens) + strainTarget*m.NAntigens
+	m.Hosts[infectedHost].GiveHostAntibody(m.NAntigens, strainTarget, antigenTarget, &m.StrainCounter)
 
 	if m.Hosts[infectedHost].IsInfected == false {
 		m.NInfectedHosts--
@@ -81,13 +84,10 @@ func (m *Malaria) ImmunityGained(infectedHostIndex int) {
 }
 
 // GiveHostAntibody : Gives the host an antibody for its current lookout in the antigens. Also send to RemoveParaiste method if removal should happen
-func (h *Host) GiveHostAntibody(NAntigens int) {
-
-	nInfections := len(h.Infections) / NAntigens
-	strainTarget := rand.Intn(nInfections)
-	antigenTarget := rand.Intn(NAntigens) + strainTarget*NAntigens
+func (h *Host) GiveHostAntibody(NAntigens int, strainTarget int, antigenTarget int, strainCounter *map[string]int) {
 
 	if h.Antibodies[h.Infections[antigenTarget]] {
+		(*strainCounter)[ListToString(h.Infections[strainTarget*NAntigens:NAntigens+strainTarget*NAntigens])]--
 		h.RemoveParasite(NAntigens, strainTarget)
 	} else {
 		h.Antibodies[h.Infections[antigenTarget]] = true

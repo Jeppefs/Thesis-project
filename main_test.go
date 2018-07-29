@@ -191,16 +191,23 @@ func TestCombinerParasite(t *testing.T) {
 
 func TestImmunity(t *testing.T) {
 	fmt.Println("\n Testing immunity")
-	malariaStructs := CreateMalariaStructsInSlice()
+	m := CreateMalariaStructsInSlice()
 
-	CheckIfEqual(t, "Antibodies", malariaStructs[0].Hosts[0].Antibodies[0], false)
-	malariaStructs[0].ImmunityGained(0)
-	CheckIfEqual(t, "Antibodies", malariaStructs[0].Hosts[0].Antibodies[0], true)
+	CheckIfEqual(t, "Antibodies", m[0].Hosts[0].Antibodies[0], false)
+	m[0].ImmunityGained(0)
+	m[0].ImmunityGained(0)
+	CheckIfEqual(t, "Antibodies", m[0].Hosts[0].Antibodies[0], true)
+	CheckIfEqual(t, "Number of infected", len(m[0].InfectedHosts), 0)
+	CheckIfEqual(t, "Is Infected", m[0].Hosts[0].IsInfected, false)
+	CheckIfEqual(t, "Infections", len(m[0].Hosts[0].Infections), 0)
 
-	malariaStructs[0].ImmunityGained(0)
-	CheckIfEqual(t, "Number of infected", len(malariaStructs[0].InfectedHosts), 0)
-	CheckIfEqual(t, "Is Infected", malariaStructs[0].Hosts[0].IsInfected, false)
-	CheckIfEqual(t, "Infections", len(malariaStructs[0].Hosts[0].Infections), 0)
+	m[1].ImmunityGained(0)
+	m[1].ImmunityGained(0)
+	m[1].ImmunityGained(0)
+	CheckIfEqual(t, "Is Infected", m[1].Hosts[0].IsInfected, false)
+	CheckIfEqual(t, "Infections", len(m[1].Hosts[0].Infections), 0)
+	CheckIfEqual(t, "StrainCounter after immunity", m[1].StrainCounter[ListToString([]int8{3, 4})], 0)
+
 }
 
 func TestHasStrain(t *testing.T) {
