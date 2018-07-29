@@ -25,6 +25,7 @@ func (m *Malaria) Spread(spreadTo int, spreadFrom int) {
 		m.Hosts[spreadTo].IsInfected = true
 		m.Hosts[spreadTo].InfectHost(&m.Hosts[spreadFrom], m.NAntigens)
 	}
+	m.StrainCounter[ListToString(m.Hosts[spreadFrom].ExpressedStrain)]++
 
 	return
 }

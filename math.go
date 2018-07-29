@@ -148,9 +148,17 @@ func FindAllStrainCombinations(strainLen int, antigenMax int) (int, map[string]i
 
 // CountStrains : Count the strains and change StrainCounter variable in malaria struct.
 func (m *Malaria) CountStrains() {
+
+	for key := range m.StrainCounter {
+		m.StrainCounter[key] = 0
+	}
+
 	for i := 0; i < m.NHosts; i++ {
 		if m.Hosts[i].IsInfected {
-			m.StrainCounter[ListToString(m.Hosts[i].ExpressedStrain)]++
+			nInfections := CountInfections(m.Hosts[i].Infections, m.NAntigens)
+			for j := 0; j < nInfections; j++ {
+				m.StrainCounter[ListToString(m.Hosts[i].Infections[j*m.NAntigens:j*m.NAntigens+m.NAntigens])]++
+			}
 		}
 	}
 	return
@@ -180,6 +188,11 @@ func CheckUniqueInt8(s []int8, v int8) bool {
 	}
 
 	return true
+}
+
+// CountInfections : Counts the number of infection of a int8 slice
+func CountInfections(infections []int8, NAntigens int) int {
+	return int(len(infections) / NAntigens)
 }
 
 // 1, 4, 3+2+1 2+1 1, 20
