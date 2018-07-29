@@ -170,4 +170,16 @@ func ListToString(list []int8) string {
 	return s
 }
 
+// CheckUniqueInt8 : Checks if a number already exist in a slice.
+func CheckUniqueInt8(s []int8, v int8) bool {
+
+	for _, val := range s {
+		if val == v {
+			return false
+		}
+	}
+
+	return true
+}
+
 // 1, 4, 3+2+1 2+1 1, 20

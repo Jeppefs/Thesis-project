@@ -97,7 +97,6 @@ func (h *Host) InsertRandomInfection(NAntigens int, MaxAntigenValue int) {
 	for antigen := 0; antigen < NAntigens; antigen++ {
 		h.ExpressedStrain[antigen] = int8(rand.Intn(MaxAntigenValue))
 		h.Infections[antigen] = h.ExpressedStrain[antigen]
-
 	}
 	return
 }

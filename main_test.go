@@ -5,6 +5,7 @@ import (
 	"io"
 	"math"
 	"math/rand"
+	"runtime/debug"
 	"sort"
 	"testing"
 
@@ -84,6 +85,7 @@ func CheckIfEqual(t *testing.T, s string, a interface{}, b interface{}) {
 	if cmp.Equal(a, b) {
 		return
 	}
+	debug.PrintStack()
 	t.Fatalf("Error in %s. The two values are not equal. \n Is: %v. \n Should be: %v", s, a, b)
 	return
 }
@@ -278,6 +280,18 @@ func TestListToString(t *testing.T) {
 	CheckIfEqual(t, "Sorting int8 slice", s, []int8{1, 2, 3, 5, 8})
 
 	return
+}
+
+func TestCheckUniqueInt8(t *testing.T) {
+	s1 := []int8{2, 6, 48, 100}
+	s2 := []int8{4, 3, 98, 5, 98}
+
+	t1 := CheckUniqueInt8(s1[0:len(s1)-1], s1[len(s1)-1])
+	t2 := CheckUniqueInt8(s2[0:len(s2)-1], s2[len(s2)-1])
+
+	CheckIfEqual(t, "End index in int8 slice is unique", t1, true)
+	CheckIfEqual(t, "End index in int8 slice is unique", t2, false)
+
 }
 
 /*
