@@ -259,9 +259,10 @@ func TestReplace(t *testing.T) {
 	CheckIfEqual(t, "Decreased number of infected after replacement", m[1].NInfectedHosts, 3)
 	CheckIfEqual(t, "The last index in infectedHosts", m[1].InfectedHosts[2], 9)
 	CheckIfEqual(t, "Should not be infected after replacement", m[1].Hosts[8].IsInfected, false)
-	CheckIfEqual(t, "Expressed strain, replacement", int(m[1].Hosts[8].ExpressedStrain[0]), 0)
+	CheckIfEqual(t, "Expressed strain, replacement", int(m[1].Hosts[8].ExpressedStrain[0]), 1)
 	CheckIfEqual(t, "Infections, replacement", len(m[1].Hosts[8].Infections), 0)
 	CheckIfEqual(t, "StrainCounter replacement", m[1].StrainCounter["1,2"], 3)
+
 	CheckIfEqual(t, "StrainCounter replacement", m[1].StrainCounter["3,4"], 0)
 
 	return
@@ -348,7 +349,6 @@ func TestCountInfections(t *testing.T) {
 }
 
 func TestCalcMeanAndVar(t *testing.T) {
-	fmt.Println("Start Mean and Var test")
 	data := []float64{1.0, 2.0, 3.0, 4.0, 5.0}
 	mean, variance := CalcMeanAndVar(data)
 	if mean != 3.0 {
