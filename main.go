@@ -15,7 +15,7 @@ import (
 )
 
 // We define a set of global constant - mostly
-const path = "data/" + "standard/"
+const path = "data/" + "complexFun/"
 
 // main
 func main() {
@@ -89,12 +89,12 @@ func GetReadyToStartModelSaveAndCreateDataFiles(param Parameters, settings Model
 	var run int
 
 	for j := 0; j < settings.Repeat; j++ {
-		DataFileName := path + "timeline/" + strconv.Itoa(i) + "_" + strconv.Itoa(j+1)
-		run = StartModel(param, settings, DataFileName)
+		dataFileName := path + "timeline/" + strconv.Itoa(i) + "_" + strconv.Itoa(j+1)
+		run = StartModel(param, settings, dataFileName)
 		if settings.ShouldSaveData == true {
-			SaveToEndFile(DataFileName, settings.DataFileName, run)
+			SaveToEndFile(dataFileName+".csv", settings.DataFileName, run)
 			if settings.ShouldSaveDataWhileRunning == false {
-				os.Remove(DataFileName)
+				os.Remove(dataFileName + ".csv")
 			}
 		}
 	}

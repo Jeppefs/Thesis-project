@@ -346,9 +346,6 @@ func TestCountInfections(t *testing.T) {
 	CheckIfEqual(t, "Number of infections in a host", nInfections2, 4)
 }
 
-/*
-
-
 func TestCalcMeanAndVar(t *testing.T) {
 	fmt.Println("Start Mean and Var test")
 	data := []float64{1.0, 2.0, 3.0, 4.0, 5.0}
@@ -361,47 +358,3 @@ func TestCalcMeanAndVar(t *testing.T) {
 	}
 
 }
-
-func TestSaving(t *testing.T) {
-	// TODO: Make this test work under the new scheme.
-	fmt.Println("\n Testing Saving")
-	loadFileName := "testing/SaveInfo.txt"
-	saveFileName := "testing/avgTesting.txt"
-
-	var param Parameters
-
-	param.InfectionSpeed = 1.0
-	param.ImmunitySpeed = 1.0
-	param.MutationSpeed = 0.0
-	param.DeathSpeed = 2.0
-
-	SaveToEndFile(loadFileName, saveFileName, 5)
-}
-
-func TestLoading(t *testing.T) {
-	fmt.Println("\n Testing loading data")
-	parameterFileName := "parameters/simplest_infectionRate_param.csv"
-	//settingsFileName := "parameters/simplest_infectionRate_set.csv"
-
-	parameterFile, err := ioutil.ReadFile(parameterFileName)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	r := csv.NewReader(strings.NewReader(string(parameterFile)))
-
-	for {
-		record, err := r.Read()
-		if err == io.EOF {
-			break
-		}
-
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		fmt.Println(reflect.TypeOf(record[0]))
-	}
-
-}
-*/
