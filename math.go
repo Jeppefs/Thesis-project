@@ -106,7 +106,7 @@ func (m *Malaria) CountNumberOfUniqueAntigens() {
 }
 
 // FindAllStrainCombinations :
-func FindAllStrainCombinations(strainLen int, antigenMax int) (int, map[string]int) {
+func FindAllStrainCombinations(strainLen int, antigenMax int) (int, []string, map[string]int) {
 
 	if strainLen > antigenMax {
 		panic("Strain length is greater than the maximum possible antigen value")
@@ -115,11 +115,14 @@ func FindAllStrainCombinations(strainLen int, antigenMax int) (int, map[string]i
 	var strainCount map[string]int
 	strainCount = make(map[string]int)
 
+	var strainKeys []string
+
 	maxStrains := 0
 
 	if strainLen == 1 {
 		for i := 0; i < antigenMax; i++ {
 			strainCount[strconv.Itoa(i)] = 0
+			strainKeys = append(strainKeys, strconv.Itoa(i))
 		}
 		maxStrains = antigenMax
 
@@ -128,6 +131,7 @@ func FindAllStrainCombinations(strainLen int, antigenMax int) (int, map[string]i
 		for i := 0; i < antigenMax-1; i++ {
 			for j := i + 1; j < antigenMax; j++ {
 				strainCount[ListToString([]int8{int8(i), int8(j)})] = 0
+				strainKeys = append(strainKeys, ListToString([]int8{int8(i), int8(j)}))
 				maxStrains++
 			}
 		}
@@ -137,13 +141,14 @@ func FindAllStrainCombinations(strainLen int, antigenMax int) (int, map[string]i
 			for j := i + 1; j < antigenMax-1; j++ {
 				for k := j + 1; k < antigenMax; k++ {
 					strainCount[ListToString([]int8{int8(i), int8(j), int8(k)})] = 0
+					strainKeys = append(strainKeys, ListToString([]int8{int8(i), int8(j), int8(k)}))
 					maxStrains++
 				}
 			}
 		}
 	}
 
-	return maxStrains, strainCount
+	return maxStrains, strainKeys, strainCount
 }
 
 // CountStrains : Count the strains and change StrainCounter variable in malaria struct.

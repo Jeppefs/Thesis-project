@@ -10,7 +10,7 @@ import (
 	"strings"
 )
 
-// SaveToEndFile :  Saves data in the test file
+// SaveToEndFile :  Saves ending data
 // WARNING! : THERE MUST BE A LINESKIP AT END OF FILE TO REGARD THE LAST NUMBER
 func SaveToEndFile(loadFileName string, saveFileName string, run int) {
 	data, err := ioutil.ReadFile(loadFileName)
@@ -81,15 +81,34 @@ func LoadCSVFile(fileName string) *csv.Reader {
 }
 
 // CreateTimelineFile : Creates the header for timeline daa
-func CreateTimelineFile(DataFileName string) *os.File {
-	file, err := os.Create(DataFileName)
+func CreateTimelineFile(dataFileName string) *os.File {
+	file, err := os.Create(dataFileName)
 	check(err)
 	fmt.Fprintf(file, "%s,%s\n", "run", "infected")
+	return file
+}
+
+// CreateStrainCounterFile : Creates the file that saves the strains.
+func CreateStrainCounterFile(dataFileName string) *os.File {
+	file, err := os.Create(dataFileName)
+	check(err)
 	return file
 }
 
 // SaveTimeline : Save current state to timeline data
 func SaveTimeline(file *os.File, run *int, NInfected *int) {
 	fmt.Fprintf(file, "%v,%v\n", *run, *NInfected)
+	return
+}
+
+// SaveStrainCounter : Save strainCounter
+func SaveStrainCounter(file *os.File, strainCounter *map[string]int, keys *[]string) {
+	for i, key := range *keys {
+		fmt.Fprintf(file, "%v", (*strainCounter)[key])
+		if i != len(*keys)-1 {
+			fmt.Fprintf(file, ",")
+		}
+	}
+	fmt.Fprintf(file, "\n")
 	return
 }

@@ -89,7 +89,7 @@ func GetReadyToStartModelSaveAndCreateDataFiles(param Parameters, settings Model
 	var run int
 
 	for j := 0; j < settings.Repeat; j++ {
-		DataFileName := path + "timeline/" + strconv.Itoa(i) + "_" + strconv.Itoa(j+1) + ".csv"
+		DataFileName := path + "timeline/" + strconv.Itoa(i) + "_" + strconv.Itoa(j+1)
 		run = StartModel(param, settings, DataFileName)
 		if settings.ShouldSaveData == true {
 			SaveToEndFile(DataFileName, settings.DataFileName, run)
@@ -101,7 +101,7 @@ func GetReadyToStartModelSaveAndCreateDataFiles(param Parameters, settings Model
 }
 
 // StartModel : Starts the run of the malaria model
-func StartModel(param Parameters, settings ModelSettings, DataFileName string) int {
+func StartModel(param Parameters, settings ModelSettings, dataFileName string) int {
 	modelTime := 0
 	startTime := time.Now()
 	m := ConstructMalariaStruct(param)
@@ -109,7 +109,7 @@ func StartModel(param Parameters, settings ModelSettings, DataFileName string) i
 	m.RunBurnIn(param, settings.BurnIn)
 	var run int
 	if m.NInfectedHosts != 0 {
-		run = m.RunModel(param, settings, DataFileName)
+		run = m.RunModel(param, settings, dataFileName)
 	} else {
 		fmt.Println("Malaria died in burnin")
 	}
@@ -134,9 +134,10 @@ func (m *Malaria) RunBurnIn(param Parameters, burnIn int) {
 }
 
 // RunModel :
-func (m *Malaria) RunModel(param Parameters, setting ModelSettings, DataFileName string) int {
+func (m *Malaria) RunModel(param Parameters, setting ModelSettings, dataFileName string) int {
 
-	file := CreateTimelineFile(DataFileName)
+	file := CreateTimelineFile(dataFileName + ".csv")
+	file_strainCounter := CreateStrainCounterFile(dataFileName + "strainCounter" + ".csv")
 
 	run := 0
 
@@ -144,7 +145,8 @@ func (m *Malaria) RunModel(param Parameters, setting ModelSettings, DataFileName
 
 		m.EventHappens(param)
 		if run%100 == 0 {
-			SaveTimeline(file, &run, &m.NInfectedHosts) // We need to have a new function that saves the data properly. We should probably have a header, yeah.
+			SaveTimeline(file, &run, &m.NInfectedHosts)
+			SaveStrainCounter(file_strainCounter, &m.StrainCounter, &m.StrainKeys)
 			if run%2000000 == 0 {
 				fmt.Println(run)
 			}
@@ -152,6 +154,7 @@ func (m *Malaria) RunModel(param Parameters, setting ModelSettings, DataFileName
 		if m.NInfectedHosts == 0 {
 			fmt.Println("Malaria is dead in", run, "runs")
 			SaveTimeline(file, &run, &m.NInfectedHosts)
+			SaveStrainCounter(file_strainCounter, &m.StrainCounter, &m.StrainKeys)
 			break
 		}
 	}
