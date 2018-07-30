@@ -22,16 +22,7 @@ func (m *Malaria) Spread(spreadTo int, spreadFrom int) {
 		// If the target is not currently infected put him on the infected list, add to the number of incfected and append the disease to him.
 		m.NInfectedHosts++
 		m.InfectedHosts = append(m.InfectedHosts, spreadTo)
-		m.Hosts[spreadTo].IsInfected = true
 		m.Hosts[spreadTo].InfectHost(&m.Hosts[spreadFrom], m.NAntigens)
-
-		/*
-			if ListToString(m.Hosts[spreadFrom].ExpressedStrain) == "0,0" {
-				fmt.Println("warning:", m.Hosts[spreadFrom].ExpressedStrain, m.Hosts[spreadFrom].IsInfected)
-			}
-
-			m.StrainCounter[ListToString(m.Hosts[spreadFrom].ExpressedStrain)]++
-		*/
 
 	}
 
@@ -59,6 +50,7 @@ func (h *Host) InfectHost(fromHost *Host, NAntigens int) {
 		for antigen := 0; antigen < NAntigens; antigen++ {
 			h.Infections = append(h.Infections, fromHost.ExpressedStrain[antigen])
 			h.ExpressedStrain[antigen] = fromHost.ExpressedStrain[antigen]
+			h.IsInfected = true
 		}
 	}
 	return
