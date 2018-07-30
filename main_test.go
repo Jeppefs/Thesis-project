@@ -249,9 +249,11 @@ func TestRemoveParasite(t *testing.T) {
 func TestReplace(t *testing.T) {
 	m := CreateMalariaStructsInSlice()
 
-	m[1].Replace(0)
 	m[1].Spread(9, 1)
 	m[1].Spread(8, 1)
+	m[1].Spread(8, 0)
+
+	m[1].Replace(0)
 	m[1].Replace(8)
 
 	CheckIfEqual(t, "Decreased number of infected after replacement", m[1].NInfectedHosts, 3)
@@ -259,6 +261,8 @@ func TestReplace(t *testing.T) {
 	CheckIfEqual(t, "Should not be infected after replacement", m[1].Hosts[8].IsInfected, false)
 	CheckIfEqual(t, "Expressed strain, replacement", int(m[1].Hosts[8].ExpressedStrain[0]), 0)
 	CheckIfEqual(t, "Infections, replacement", len(m[1].Hosts[8].Infections), 0)
+	CheckIfEqual(t, "StrainCounter replacement", m[1].StrainCounter["1,2"], 3)
+	CheckIfEqual(t, "StrainCounter replacement", m[1].StrainCounter["3,4"], 0)
 
 	return
 }

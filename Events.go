@@ -118,18 +118,20 @@ func (m *Malaria) Replace(hostIndex int) {
 				break
 			}
 		}
-
 		m.NInfectedHosts--
-		//m.InfectedHosts = append(m.InfectedHosts[:hostIndex], m.InfectedHosts[hostIndex+1:]...)
 	}
 
-	m.Hosts[hostIndex].Die(m.NAntigens, m.MaxAntigenValue)
+	m.Hosts[hostIndex].Die(m.NAntigens, m.MaxAntigenValue, &m.StrainCounter)
 	return
 }
 
 // Die : A host dies
-func (h *Host) Die(NAntigens int, MaxAntigenValue int) {
+func (h *Host) Die(NAntigens int, MaxAntigenValue int, strainCounter *map[string]int) {
 	if h.IsInfected == true {
+		nInfections := CountInfections(h.Infections, NAntigens)
+		for i := 0; i < nInfections; i++ {
+			(*strainCounter)[ListToString(h.Infections[i*NAntigens:NAntigens+i*NAntigens])]--
+		}
 		h.Infections = append(h.Infections[:0], h.Infections[len(h.Infections):]...)
 		h.IsInfected = false
 	}
