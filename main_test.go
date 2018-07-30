@@ -277,20 +277,23 @@ func TestCountStrains(t *testing.T) {
 func TestFindAllStrainCombinations(t *testing.T) {
 	strainLen := 1
 	antigenMax := 5
-	maxStrains, _, strainCount := FindAllStrainCombinations(strainLen, antigenMax)
+	maxStrains, keys, strainCount := FindAllStrainCombinations(strainLen, antigenMax)
 	CheckIfEqual(t, "Correct number of maximum strains for strainLen 1", maxStrains, 5)
+	CheckIfEqual(t, "Strain keys for strainLen 1", keys, []string{"0", "1", "2", "3", "4"})
 	fmt.Println(maxStrains, strainCount)
 
 	strainLen = 2
 	antigenMax = 5
-	maxStrains, _, strainCount = FindAllStrainCombinations(strainLen, antigenMax)
+	maxStrains, keys, strainCount = FindAllStrainCombinations(strainLen, antigenMax)
 	CheckIfEqual(t, "Correct number of maximum strains for strainLen 2", maxStrains, 10)
+	CheckIfEqual(t, "Strain keys for strainLen 2", keys, []string{"0,1", "0,2", "0,3", "0,4", "1,2", "1,3", "1,4", "2,3", "2,4", "3,4"})
 	fmt.Println(maxStrains, strainCount)
 
 	strainLen = 3
 	antigenMax = 5
-	maxStrains, _, strainCount = FindAllStrainCombinations(strainLen, antigenMax)
+	maxStrains, keys, strainCount = FindAllStrainCombinations(strainLen, antigenMax)
 	CheckIfEqual(t, "Correct number of maximum strains for strainLen 3", maxStrains, 10)
+	CheckIfEqual(t, "Strain keys for strainLen 1", keys, []string{"0,1,2", "0,1,3", "0,1,4", "0,2,3", "0,2,4", "0,3,4", "1,2,3", "1,2,4", "1,3,4", "2,3,4"})
 	fmt.Println(maxStrains, strainCount)
 	return
 }
