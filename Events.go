@@ -24,7 +24,17 @@ func (m *Malaria) Spread(spreadTo int, spreadFrom int) {
 		m.InfectedHosts = append(m.InfectedHosts, spreadTo)
 		m.Hosts[spreadTo].IsInfected = true
 		m.Hosts[spreadTo].InfectHost(&m.Hosts[spreadFrom], m.NAntigens)
+
+		/*
+			if ListToString(m.Hosts[spreadFrom].ExpressedStrain) == "0,0" {
+				fmt.Println("warning:", m.Hosts[spreadFrom].ExpressedStrain, m.Hosts[spreadFrom].IsInfected)
+			}
+
+			m.StrainCounter[ListToString(m.Hosts[spreadFrom].ExpressedStrain)]++
+		*/
+
 	}
+
 	m.StrainCounter[ListToString(m.Hosts[spreadFrom].ExpressedStrain)]++
 
 	return
@@ -86,11 +96,11 @@ func (m *Malaria) ImmunityGained(infectedHostIndex int) {
 // GiveHostAntibody : Gives the host an antibody for its current lookout in the antigens. Also send to RemoveParaiste method if removal should happen
 func (h *Host) GiveHostAntibody(NAntigens int, strainTarget int, antigenTarget int, strainCounter *map[string]int) {
 
-	if h.Antibodies[h.Infections[antigenTarget]] {
+	if h.Antibodies[h.Infections[antigenTarget]-1] {
 		(*strainCounter)[ListToString(h.Infections[strainTarget*NAntigens:NAntigens+strainTarget*NAntigens])]--
 		h.RemoveParasite(NAntigens, strainTarget)
 	} else {
-		h.Antibodies[h.Infections[antigenTarget]] = true
+		h.Antibodies[h.Infections[antigenTarget]-1] = true
 	}
 	return
 }
@@ -136,10 +146,10 @@ func (h *Host) Die(NAntigens int, MaxAntigenValue int, strainCounter *map[string
 		h.IsInfected = false
 	}
 
-	for antibody := 0; antibody < MaxAntigenValue; antibody++ {
-		h.Antibodies[antibody] = false
+	for antibody := 1; antibody < MaxAntigenValue+1; antibody++ {
+		h.Antibodies[antibody-1] = false
 	}
-
+	return
 }
 
 // MutateParasite : Changes a single antigen in a host to a new random one.

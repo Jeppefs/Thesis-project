@@ -40,8 +40,8 @@ def complexFun(name = "complexFun", notes = "Adjusts number of possible antigens
     parameters = OrderedDict()
     parameters["NHosts"] = np.array([10000])
     parameters["InfectionSpeed"] = np.array([1.0]) 
-    parameters["ImmunitySpeed"] = np.array([1.0])
-    parameters["ReplacementSpeed"] = np.array([0.01])
+    parameters["ImmunitySpeed"] = np.array([0.0])
+    parameters["ReplacementSpeed"] = np.array([0.0])
     parameters["MutationSpeed"] = np.array([0.0])
     parameters["NAntigens"] = np.array([2])
     parameters["MaxAntigenValue"] = np.array([2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20])
@@ -49,7 +49,7 @@ def complexFun(name = "complexFun", notes = "Adjusts number of possible antigens
     parameters["InitialInfected"] = np.array([500])
 
     settings = OrderedDict()
-    settings["Runs"] = [20000000] 
+    settings["Runs"] = [320] # 20000000
     settings["BurnIn"] = [0]
     settings["Repeat"] = [1]
     settings["ShouldSaveData"] = ["true"]

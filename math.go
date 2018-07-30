@@ -120,7 +120,7 @@ func FindAllStrainCombinations(strainLen int, antigenMax int) (int, []string, ma
 	maxStrains := 0
 
 	if strainLen == 1 {
-		for i := 0; i < antigenMax; i++ {
+		for i := 1; i < antigenMax+1; i++ {
 			strainCount[strconv.Itoa(i)] = 0
 			strainKeys = append(strainKeys, strconv.Itoa(i))
 		}
@@ -128,8 +128,8 @@ func FindAllStrainCombinations(strainLen int, antigenMax int) (int, []string, ma
 
 	} else if strainLen == 2 {
 
-		for i := 0; i < antigenMax-1; i++ {
-			for j := i + 1; j < antigenMax; j++ {
+		for i := 1; i < antigenMax; i++ {
+			for j := i + 1; j < antigenMax+1; j++ {
 				strainCount[ListToString([]int8{int8(i), int8(j)})] = 0
 				strainKeys = append(strainKeys, ListToString([]int8{int8(i), int8(j)}))
 				maxStrains++
@@ -137,9 +137,9 @@ func FindAllStrainCombinations(strainLen int, antigenMax int) (int, []string, ma
 		}
 
 	} else if strainLen == 3 {
-		for i := 0; i < antigenMax-2; i++ {
-			for j := i + 1; j < antigenMax-1; j++ {
-				for k := j + 1; k < antigenMax; k++ {
+		for i := 1; i < antigenMax-1; i++ {
+			for j := i + 1; j < antigenMax; j++ {
+				for k := j + 1; k < antigenMax+1; k++ {
 					strainCount[ListToString([]int8{int8(i), int8(j), int8(k)})] = 0
 					strainKeys = append(strainKeys, ListToString([]int8{int8(i), int8(j), int8(k)}))
 					maxStrains++
