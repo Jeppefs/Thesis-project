@@ -8,7 +8,6 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
-	"reflect"
 	"strconv"
 	"strings"
 )
@@ -30,7 +29,6 @@ func SaveToEndFile(loadFileName string, saveFileName string, run int) {
 		} else if err != nil {
 			log.Fatal(err)
 		}
-		fmt.Println(reflect.TypeOf(line[0]))
 		if lineNumber > 0 {
 			floatTemp, _ := strconv.ParseFloat(line[1], 64)
 			d = append(d, floatTemp)

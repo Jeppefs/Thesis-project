@@ -28,7 +28,7 @@ class MalariaStatistics():
     def PlotExtinctionTime(self, vary, newFigure = True, plotAllMeasurements = False):
 
         if newFigure: plt.figure()
-        plt.errorbar(self.parameters[vary], self.dataEndRepeat["run"], self.dataEndRepeat["run_error"], fmt='o')
+        plt.errorbar(self.parameters[vary], self.dataEnd["run"], fmt='o')
 
         if plotAllMeasurements == True:
             for i in range(self.settings["Repeat"][0]):
@@ -46,7 +46,7 @@ class MalariaStatistics():
     # Creates a plot of the mean and variance. 
     def PlotMeanInfection(self, vary, newFigure = True):
         if newFigure: plt.figure()
-        plt.errorbar(self.parameters[vary], self.dataEndRepeat["mean"], np.sqrt(self.dataEndRepeat["variance"]/self.settings["Repeat"][0]), fmt='o')
+        plt.errorbar(self.parameters[vary], self.dataEnd["halfMean"], np.sqrt(self.dataEnd["halfVariance"]), fmt='o')
         plt.xlabel(vary)
         plt.ylabel("Mean infected")
 

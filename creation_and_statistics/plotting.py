@@ -4,7 +4,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pandas
 import scipy.optimize as op
-import nestle 
 
 def deathRate():
     q = MS.MalariaStatistics("DeathRate", timelineIndex = [10,1])
@@ -25,8 +24,15 @@ def complexFun():
     
     q.PlotExtinctionTime(vary = "MaxAntigenValue")
     q.PlotMeanInfection(vary = "MaxAntigenValue")
-    q.PlotTimeline()
-    q.PlotStrainCounter(newFigure=False)
+    
+    for i in np.arange(19)+1:
+        q.timelineIndex = [i,1]
+        q.ImportTimeline()
+        q.ImportStrainCounter()
+        q.PlotTimeline(newFigure = True)
+        q.PlotStrainCounter(newFigure=False)
+    
+    return
 
 complexFun()
 plt.show()
