@@ -56,7 +56,7 @@ class MalariaStatistics():
         return
 
     # Makes a plot of the development of the number of infected over time. 
-    def PlotTimeLinePlot(self, newFigure = True):
+    def PlotTimeline(self, newFigure = True):
 
         if newFigure: plt.figure()
         plt.plot(self.timelineRuns, self.timelineNInfected)

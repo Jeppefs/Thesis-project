@@ -1,11 +1,14 @@
 package main
 
 import (
+	"bufio"
 	"encoding/csv"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"log"
 	"os"
+	"reflect"
 	"strconv"
 	"strings"
 )
@@ -13,34 +16,60 @@ import (
 // SaveToEndFile :  Saves ending data
 // WARNING! : THERE MUST BE A LINESKIP AT END OF FILE TO REGARD THE LAST NUMBER
 func SaveToEndFile(loadFileName string, saveFileName string, run int) {
-	data, err := ioutil.ReadFile(loadFileName)
-	check(err)
-	stringData := string(data)
-
-	var s string
-	var sSum string
+	csvFile, errTemp := os.Open(loadFileName)
+	check(errTemp)
+	reader := csv.NewReader(bufio.NewReader(csvFile))
 	var d []float64
-	var q int
 
-	for _, k := range stringData {
-		s = string(k)
-		if (s != "\n") && (s != " ") && (s != "\t") && (k != 13) {
-			sSum += s
+	lineNumber := 0
+
+	for {
+		line, err := reader.Read()
+		if err == io.EOF {
+			break
+		} else if err != nil {
+			log.Fatal(err)
 		}
-		if s == "\n" {
-			q, _ = strconv.Atoi(sSum)
-			d = append(d, float64(q))
-			sSum = ""
+		fmt.Println(reflect.TypeOf(line[0]))
+		if lineNumber > 0 {
+			floatTemp, _ := strconv.ParseFloat(line[1], 64)
+			d = append(d, floatTemp)
 		}
+		lineNumber++
 	}
+
+	/*
+		data, err := ioutil.ReadFile(loadFileName)
+		check(err)
+		stringData := string(data)
+
+		var s string
+		var sSum string
+		var d []float64
+		var q int
+
+		for _, k := range stringData {
+			s = string(k)
+			fmt.Println(s)
+			if (s != "\n") && (s != " ") && (s != "\t") && (k != 13) {
+				sSum += s
+			}
+			if s == "\n" {
+				q, _ = strconv.Atoi(sSum)
+				d = append(d, float64(q))
+				sSum = ""
+			}
+		}
+	*/
 
 	file, err := os.OpenFile(path+saveFileName, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	check(err)
 	defer file.Close()
 
 	mean, variance := CalcMeanAndVar(d)
+	halfMean, halfVariance := CalcMeanAndVar(d[len(d)/2 : len(d)])
 
-	fmt.Fprintf(file, "%v,%f,%f\n", run, mean, variance) // Important, must be the same order as the header.
+	fmt.Fprintf(file, "%v,%f,%f,%f,%f\n", run, mean, variance, halfMean, halfVariance) // Important, must be the same order as the header.
 
 	return
 }
@@ -62,7 +91,7 @@ func CheckToCreateNedEndDataFileAndDoSoIfTrue(settings *ModelSettings) {
 func CreateAvgDataFile(fileName string) {
 	file, err := os.Create(fileName)
 	check(err)
-	fmt.Fprintf(file, "%s,%s,%s\n", "run", "mean", "variance")
+	fmt.Fprintf(file, "%s,%s,%s,%s,%s\n", "run", "mean", "variance", "halfMean", "halfVariance")
 	file.Close()
 	return
 }

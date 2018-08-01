@@ -23,7 +23,10 @@ def deathRate():
 def complexFun():
     q = MS.MalariaStatistics("complexFun", timelineIndex = [5,1])
     
-    q.PlotStrainCounter()
+    q.PlotExtinctionTime(vary = "MaxAntigenValue")
+    q.PlotMeanInfection(vary = "MaxAntigenValue")
+    q.PlotTimeline()
+    q.PlotStrainCounter(newFigure=False)
 
 complexFun()
 plt.show()
