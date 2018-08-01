@@ -26,9 +26,10 @@ type Parameters struct {
 
 // ModelSettings : A structure that contains information ab	out model settings such as
 type ModelSettings struct {
-	Runs   int // Number of runs
-	BurnIn int // Number of runs that is not counted
-	Repeat int // How many times the simulation should be repeated for each parameter.
+	Runs       int // Number of runs
+	BurnIn     int // Number of runs that is not counted
+	SkipSaving int // Number of runs for each saving
+	Repeat     int // How many times the simulation should be repeated for each parameter.
 
 	ShouldSaveData             bool // Should the program run with saving data?
 	ShouldSaveDataWhileRunning bool // Should the program run with saving date after some number of steps

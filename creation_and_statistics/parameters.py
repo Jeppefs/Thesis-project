@@ -51,6 +51,7 @@ def complexFun(name = "complexFun", notes = "Adjusts number of possible antigens
     settings = OrderedDict()
     settings["Runs"] = [20000000]
     settings["BurnIn"] = [0]
+    settings["SkipSaving"] = [500]
     settings["Repeat"] = [1]
     settings["ShouldSaveData"] = ["true"]
     settings["ShouldSaveDataWhileRunning"] = ["true"]
@@ -77,6 +78,7 @@ def complexFunReplacement(name = "complexFunDeath", notes = "Adjusts number of p
     settings = OrderedDict()
     settings["Runs"] = [20000000]
     settings["BurnIn"] = [0]
+    settings["SkipSaving"] = [500]
     settings["Repeat"] = [1]
     settings["ShouldSaveData"] = ["true"]
     settings["ShouldSaveDataWhileRunning"] = ["true"]

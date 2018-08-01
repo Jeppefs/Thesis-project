@@ -120,8 +120,8 @@ class MalariaStatistics():
 
         self.dataEndRepeat["mean_variance"] =  pandas.Series(index=np.arange(self.NUniqueRuns))
 
-        stop = self.settings["Runs"] / self.skip
-        start = stop / 2
+        stop = int(self.settings["Runs"] / self.skip)
+        start = int(stop / 2)
         
         if self.settings["Repeat"][0] > 1:
             for i in range(self.NUniqueRuns):
@@ -131,7 +131,7 @@ class MalariaStatistics():
                 for j in range(self.settings["Repeat"][0])+1:
                     if self.dataEnd["run"][i*self.settings["Repeat"][0]+j] >= stop:
 
-                        loaded = np.genfromtxt(self.pathName + "timeline" + str(i+1) + "_" + str(j) + ".csv", delimiter=",")
+                        loaded = np.genfromtxt(self.pathName + "/timeline" + str(i+1) + "_" + str(j) + ".csv", delimiter=",")
                         mean += np.mean(loaded[start:stop])
                         var += np.var(loaded[start:stop])
                         count += 1
@@ -142,20 +142,19 @@ class MalariaStatistics():
                 self.dataEndRepeat.loc[i, "mean"] = mean
                 self.dataEndRepeat.loc[i, "variance"] = var
         else:
-            for i in range(self.NUniqueRuns):
+            #for i in range(self.NUniqueRuns):
+            for i in range(1):
                 mean = 0
                 var = 0
-                count = 0
-                if self.dataEnd["run"][i*self.settings["Repeat"][0]+j] >= stop:
-                    loaded = np.genfromtxt(self.pathName + "timeline" + str(i+1) + "_" + str(j) + ".csv", delimiter=",")
-                    mean += np.mean(loaded[start:stop])
-                    var += np.var(loaded[start:stop])
-                    count += 1
+
+                loaded = np.genfromtxt(self.pathName + "timeline/" + str(i+1) + "_" + str(1) + ".csv", delimiter=",", skip_header = 1)
+                print(loaded[start:stop])
+                #mean = np.mean(loaded[start:stop, 1])
+                #var = np.var(loaded[start:stop, 1])
 
                 self.dataEndRepeat.loc[i, "mean"] = mean
                 self.dataEndRepeat.loc[i, "variance"] = var
            
-
         return        
 
 

@@ -25,8 +25,8 @@ def complexFun():
     q.GetMeanAndVarianceFromRepeat()
     q.CalcNewMean()
 
-    plt.figure()
-    q.PlotMeanInfection("MaxAntigenValue", newFigure = False)
+    #q.PlotExtinctionTime("MaxAntigenValue", newFigure = True)
+    #q.PlotMeanInfection("MaxAntigenValue", newFigure = True)
 
 
 complexFun()
