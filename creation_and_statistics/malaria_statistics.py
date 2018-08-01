@@ -20,6 +20,10 @@ class MalariaStatistics():
         self.saveFigs = True
         self.plotSettings = {}
 
+        if timelineIndex[0] > 0:
+            self.ImportTimeline()
+            self.ImportStrainCounter()
+
     # Creates a plot with extinction time with whatever parameter given. 
     def PlotExtinctionTime(self, vary, newFigure = True, plotAllMeasurements = False):
 
@@ -51,33 +55,51 @@ class MalariaStatistics():
             plt.savefig(figName, format="pdf")
         return
 
-    def PlotStrainCounter(self):
-        return
-
     # Makes a plot of the development of the number of infected over time. 
-    def PlotTimeLinePlot(self, importedTimeline = True, newFigure = True):
-
-        if importedTimeline == False: 
-            print("Importing timeline in this metheod has not been implemented yet")
-            return 
+    def PlotTimeLinePlot(self, newFigure = True):
 
         if newFigure: plt.figure()
-        plt.plot(1,1)
+        plt.plot(self.timelineRuns, self.timelineNInfected)
+
+        plt.title("Timeline of N infected")
         plt.xlabel("Run")
         plt.ylabel("Infected")
         
         if self.saveFigs == True:
-            figName = self.pathName + "/plots/" + self.simulationName  + "TimeLine" + ".pdf" 
+            figName = self.pathName + "/plots/" + self.simulationName  + "Timeline" + ".pdf" 
             plt.savefig(figName, format="pdf")
 
         return
 
-    def ImportTimeLine(self): 
-        self.timeline = np.genfromtxt(self.pathName + "timeline/" + str(self.timelineIndex[0]) + "_" + str(self.timelineIndex[1]) + ".csv", delimiter=",")
+    # Plots strain counter 
+    def PlotStrainCounter(self, newFigure = True):
+        if newFigure: plt.figure()
+        for strain in range(self.NStrains):
+            plt.plot(self.timelineRuns, self.strainCounter[:, strain])
+
+        plt.title("Strain count")
+        plt.xlabel("Run")
+        plt.ylabel("NInfected")
+
+        if self.saveFigs == True:
+            figName = self.pathName + "/plots" + self.simulationName + "StrainCounter" + ".pdf"
+            plt.savefig(figName, format="pdf")
+
         return
 
-    def GetStrainCounterData(self):
-        self.strainCounter = np.genfromtxt(self.pathName + "timeline/" + str(self.timelineIndex[0]) + "_" + str(self.timelineIndex[1]) + ".csv", delimiter=",")
+
+    def ImportTimeline(self): 
+        temp = np.genfromtxt(self.pathName + "timeline/" + str(self.timelineIndex[0]) + "_" + str(self.timelineIndex[1]) + ".csv", delimiter=",", skip_header=1)
+        self.timelineRuns = temp[:,0]
+        self.timelineNInfected = temp[:,1]
+        return
+
+    def ImportStrainCounter(self):
+        self.strainCounter = np.genfromtxt(self.pathName + "timeline/" + str(self.timelineIndex[0]) + "_" + str(self.timelineIndex[1]) + "strainCounter" + ".csv", delimiter=",")
+        if len(self.strainCounter.shape) <= 1:
+            self.strainCounter = np.expand_dims(self.strainCounter, axis=1)
+        self.NStrains = self.strainCounter.shape[1]
+
         return
 
     # Recalculates dataEnd, such that it finds the mean and variance from the repeat cases. 
