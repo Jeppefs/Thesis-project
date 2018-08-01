@@ -144,7 +144,7 @@ func (m *Malaria) RunModel(param Parameters, setting ModelSettings, dataFileName
 	for run = 0; run < setting.Runs; run++ {
 
 		m.EventHappens(param)
-		if run%500 == 0 {
+		if run%setting.SkipSaving == 0 {
 			SaveTimeline(file, &run, &m.NInfectedHosts)
 			SaveStrainCounter(file_strainCounter, &m.StrainCounter, &m.StrainKeys)
 			if run%2000000 == 0 {

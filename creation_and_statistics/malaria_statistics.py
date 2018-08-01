@@ -4,59 +4,38 @@ import pandas as pandas
 
 class MalariaStatistics():
 
-    def __init__(self, folderName, skip = 500, timeLineIndex = [0,0]):
+    def __init__(self, simulationName, timelineIndex = [0,0], saveFigs = True):
         
-        self.simulationName = folderName
-        self.pathName = "data/" + folderName + "/"
+        self.simulationName = simulationName
+        self.pathName = "data/" + self.simulationName + "/"
 
         self.dataEnd = pandas.read_csv(self.pathName + "dataEnd.csv")
         self.parameters = pandas.read_csv(self.pathName + "parameters.csv")
         self.settings = pandas.read_csv(self.pathName + "settings.csv")
 
-        self.NUniqueRuns = len(self.parameters['NHosts'])
-
+        self.NUniqueRuns = len(self.parameters['NHosts']) 
+        self.NDifferentRuns = len(self.parameters['NHosts']) * self.settings["Repeat"]
+        self.timelineIndex = timelineIndex
+        
+        self.saveFigs = True
         self.plotSettings = {}
 
-        self.timeLineIndex = timeLineIndex
-        if timeLineIndex[0] != 0:
-            self.ImportTimeLine()
-        
-        self.skip = skip
-        self.NSaves = len(self.timeLine)
-    
-    # Makes a plot of the development of the number of infected over time. 
-    def PlotTimeLinePlot(self, newFigure = True):
-
-        x = np.arange(100000, len(self.timeLine))*self.skip
-        y = self.timeLine[100000: len(self.timeLine)]
-
-        if newFigure: plt.figure()
-        plt.plot(np.arange(0, len(self.timeLine))*self.skip, self.timeLine)
-        plt.xlabel("Run")
-        plt.ylabel("Infected")
-
-        fitResults = self.LinearFit(x, y)
-        print(fitResults)
-        plt.plot(x, x*fitResults["slope"] + fitResults["intersect"])
-        
-        figName = self.pathName + "/" + "/plots/" + self.simulationName  + "TimeLine" + ".pdf" 
-        plt.savefig(figName, format="pdf")
-
-        return
-
     # Creates a plot with extinction time with whatever parameter given. 
-    def PlotExtinctionTime(self, vary, newFigure = True):
+    def PlotExtinctionTime(self, vary, newFigure = True, plotAllMeasurements = False):
+
         if newFigure: plt.figure()
         plt.errorbar(self.parameters[vary], self.dataEndRepeat["run"], self.dataEndRepeat["run_error"], fmt='o')
 
-        #for i in range(self.settings["Repeat"][0]):
-            #plt.plot(self.parameters[vary], self.dataEnd["run"][0+i::self.settings["Repeat"][0]],  color = "red", linestyle = "None",  marker='.', alpha=0.1)
+        if plotAllMeasurements == True:
+            for i in range(self.settings["Repeat"][0]):
+                plt.plot(self.parameters[vary], self.dataEnd["run"][0+i::self.settings["Repeat"][0]],  color = "red", linestyle = "None",  marker='.', alpha=0.1)
 
         plt.xlabel(vary)
         plt.ylabel("Extinction Time")
         
-        figName = self.pathName + "/plots/" + self.simulationName + ".pdf"
-        plt.savefig(figName, format="pdf")
+        if self.saveFigs == True:
+            figName = self.pathName + "/plots/" + self.simulationName + "ExtinctionTime.pdf"
+            plt.savefig(figName, format="pdf")
 
         return
 
@@ -66,19 +45,39 @@ class MalariaStatistics():
         plt.errorbar(self.parameters[vary], self.dataEndRepeat["mean"], np.sqrt(self.dataEndRepeat["variance"]/self.settings["Repeat"][0]), fmt='o')
         plt.xlabel(vary)
         plt.ylabel("Mean infected")
-        figName = self.pathName + "/" + self.simulationName  + "Mean" + ".pdf"
-        plt.savefig(figName, format="pdf")
+
+        if self.saveFigs == True:
+            figName = self.pathName + "/plots/"  + self.simulationName + "Mean.pdf"
+            plt.savefig(figName, format="pdf")
         return
 
     def PlotStrainCounter(self):
         return
 
+    # Makes a plot of the development of the number of infected over time. 
+    def PlotTimeLinePlot(self, importedTimeline = True, newFigure = True):
+
+        if importedTimeline == False: 
+            print("Importing timeline in this metheod has not been implemented yet")
+            return 
+
+        if newFigure: plt.figure()
+        plt.plot(1,1)
+        plt.xlabel("Run")
+        plt.ylabel("Infected")
+        
+        if self.saveFigs == True:
+            figName = self.pathName + "/plots/" + self.simulationName  + "TimeLine" + ".pdf" 
+            plt.savefig(figName, format="pdf")
+
+        return
+
     def ImportTimeLine(self): 
-        self.timeLine = np.genfromtxt(self.pathName + "timeline/" + str(self.timeLineIndex[0]) + "_" + str(self.timeLineIndex[1]) + ".csv", delimiter=",")
+        self.timeline = np.genfromtxt(self.pathName + "timeline/" + str(self.timelineIndex[0]) + "_" + str(self.timelineIndex[1]) + ".csv", delimiter=",")
         return
 
     def GetStrainCounterData(self):
-        self.strainCounter = np.genfromtxt(self.pathName + "timeline/" + str(self.timeLineIndex[0]) + "_" + str(self.timeLineIndex[1]) + ".csv", delimiter=",")
+        self.strainCounter = np.genfromtxt(self.pathName + "timeline/" + str(self.timelineIndex[0]) + "_" + str(self.timelineIndex[1]) + ".csv", delimiter=",")
         return
 
     # Recalculates dataEnd, such that it finds the mean and variance from the repeat cases. 
@@ -99,28 +98,11 @@ class MalariaStatistics():
         
         return
 
-    def LinearFit(self, x, y):
-
-        mean_x = np.mean(x)
-        mean_y = np.mean(y)
-
-        mean_xy = np.mean(x*y)
-        mean_x_squared = np.mean(x**2)
-
-        self.LinearFitResults = {}
-
-        self.LinearFitResults["slope"] = (mean_xy - mean_x*mean_y) / (mean_x_squared - mean_x**2) 
-        self.LinearFitResults["intersect"] = mean_y - self.LinearFitResults["slope"] * mean_x
-        #self.LinearFitResults["slope_err"] = 0
-        #self.LinearFitResults["intersect_err"] = 0
-        
-        return self.LinearFitResults
-
     def CalcNewMean(self):
 
         self.dataEndRepeat["mean_variance"] =  pandas.Series(index=np.arange(self.NUniqueRuns))
 
-        stop = int(self.settings["Runs"] / self.skip)
+        stop = int(self.settings["Runs"] / self.settings["SkipSaving"])
         start = int(stop / 2)
         
         if self.settings["Repeat"][0] > 1:
@@ -156,6 +138,26 @@ class MalariaStatistics():
                 self.dataEndRepeat.loc[i, "variance"] = var
            
         return        
+
+
+    def LinearFit(self, x, y):
+
+        mean_x = np.mean(x)
+        mean_y = np.mean(y)
+
+        mean_xy = np.mean(x*y)
+        mean_x_squared = np.mean(x**2)
+
+        self.LinearFitResults = {}
+
+        self.LinearFitResults["slope"] = (mean_xy - mean_x*mean_y) / (mean_x_squared - mean_x**2) 
+        self.LinearFitResults["intersect"] = mean_y - self.LinearFitResults["slope"] * mean_x
+        #self.LinearFitResults["slope_err"] = 0
+        #self.LinearFitResults["intersect_err"] = 0
+        
+        return self.LinearFitResults
+
+    
 
 
 def Loglike2D(param, X, Y, Y_err, fitFunc):
