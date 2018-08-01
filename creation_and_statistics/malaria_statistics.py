@@ -4,7 +4,7 @@ import pandas as pandas
 
 class MalariaStatistics():
 
-    def __init__(self, folderName, timeLineIndex = [0,0]):
+    def __init__(self, folderName, skip = 500, timeLineIndex = [0,0]):
         
         self.simulationName = folderName
         self.pathName = "data/" + folderName + "/"
@@ -17,20 +17,21 @@ class MalariaStatistics():
 
         self.plotSettings = {}
 
+        self.timeLineIndex = timeLineIndex
         if timeLineIndex[0] != 0:
-            self.timeLine = np.genfromtxt(self.pathName + "timeline/" + str(timeLineIndex[0]) + "_" + str(timeLineIndex[1]) + ".csv", delimiter=",")
+            self.ImportTimeLine()
         
-        self.saveSpace = 100
+        self.skip = skip
         self.NSaves = len(self.timeLine)
     
     # Makes a plot of the development of the number of infected over time. 
     def PlotTimeLinePlot(self, newFigure = True):
 
-        x = np.arange(100000, len(self.timeLine))*self.saveSpace
+        x = np.arange(100000, len(self.timeLine))*self.skip
         y = self.timeLine[100000: len(self.timeLine)]
 
         if newFigure: plt.figure()
-        plt.plot(np.arange(0, len(self.timeLine))*self.saveSpace, self.timeLine)
+        plt.plot(np.arange(0, len(self.timeLine))*self.skip, self.timeLine)
         plt.xlabel("Run")
         plt.ylabel("Infected")
 
@@ -38,7 +39,7 @@ class MalariaStatistics():
         print(fitResults)
         plt.plot(x, x*fitResults["slope"] + fitResults["intersect"])
         
-        figName = self.pathName + "/" + self.simulationName + "TimeLine" + ".pdf" 
+        figName = self.pathName + "/" + "/plots/" + self.simulationName  + "TimeLine" + ".pdf" 
         plt.savefig(figName, format="pdf")
 
         return
@@ -49,12 +50,12 @@ class MalariaStatistics():
         plt.errorbar(self.parameters[vary], self.dataEndRepeat["run"], self.dataEndRepeat["run_error"], fmt='o')
 
         #for i in range(self.settings["Repeat"][0]):
-            #print(self.dataEnd["run"][0+i::self.settings["Repeat"][0]])
             #plt.plot(self.parameters[vary], self.dataEnd["run"][0+i::self.settings["Repeat"][0]],  color = "red", linestyle = "None",  marker='.', alpha=0.1)
 
         plt.xlabel(vary)
         plt.ylabel("Extinction Time")
-        figName = self.pathName + "/" + self.simulationName + ".pdf"
+        
+        figName = self.pathName + "/plots/" + self.simulationName + ".pdf"
         plt.savefig(figName, format="pdf")
 
         return
@@ -69,16 +70,33 @@ class MalariaStatistics():
         plt.savefig(figName, format="pdf")
         return
 
+    def PlotStrainCounter(self):
+        return
+
+    def ImportTimeLine(self): 
+        self.timeLine = np.genfromtxt(self.pathName + "timeline/" + str(self.timeLineIndex[0]) + "_" + str(self.timeLineIndex[1]) + ".csv", delimiter=",")
+        return
+
+    def GetStrainCounterData(self):
+        self.strainCounter = np.genfromtxt(self.pathName + "timeline/" + str(self.timeLineIndex[0]) + "_" + str(self.timeLineIndex[1]) + ".csv", delimiter=",")
+        return
+
     # Recalculates dataEnd, such that it finds the mean and variance from the repeat cases. 
     def GetMeanAndVarianceFromRepeat(self):
         self.dataEndRepeat = pandas.DataFrame(0, index=np.arange(self.NUniqueRuns), columns=self.dataEnd.keys())
         self.dataEndRepeat["run_error"] = pandas.Series(index=np.arange(self.NUniqueRuns))
         r = self.settings["Repeat"][0]
-        for i in range(self.NUniqueRuns):
-            for key in self.dataEnd.keys():
-                self.dataEndRepeat.loc[i,key] = np.mean(self.dataEnd[key][i*r:i*r+r])
-            self.dataEndRepeat.loc[i,"run_error"] = np.sqrt(np.var(self.dataEnd["run"][i*r:i*r+r])/(self.settings["Repeat"][0]-1))
-       
+        if r != 1:
+            print(self.NUniqueRuns)
+            for i in range(self.NUniqueRuns):
+                for key in self.dataEnd.keys():
+                    self.dataEndRepeat.loc[i,key] = np.mean(self.dataEnd[key][i*r:i*r+r])
+                self.dataEndRepeat.loc[i,"run_error"] = np.sqrt(np.var(self.dataEnd["run"][i*r:i*r+r])/(self.settings["Repeat"][0]-1))
+        else:
+           for i in range(self.NUniqueRuns):
+                for key in self.dataEnd.keys():
+                    self.dataEndRepeat.loc[i,key] = np.mean(self.dataEnd[key][0:-1])
+        
         return
 
     def LinearFit(self, x, y):
@@ -98,39 +116,47 @@ class MalariaStatistics():
         
         return self.LinearFitResults
 
-    def CalcNewMean(self, start, stop):
-
-        #self.dataEndRepeat = pandas.DataFrame(0, index=np.arange(self.NUniqueRuns), columns=self.dataEnd.keys())
+    def CalcNewMean(self):
 
         self.dataEndRepeat["mean_variance"] =  pandas.Series(index=np.arange(self.NUniqueRuns))
 
-        print(start, stop)
+        stop = self.settings["Runs"] / self.skip
+        start = stop / 2
+        
+        if self.settings["Repeat"][0] > 1:
+            for i in range(self.NUniqueRuns):
+                mean = 0
+                var = 0
+                count = 0
+                for j in range(self.settings["Repeat"][0])+1:
+                    if self.dataEnd["run"][i*self.settings["Repeat"][0]+j] >= stop:
 
-        for i in range(self.NUniqueRuns):
-            mean = 0
-            var = 0
-            count = 0
-            for j in range(self.settings["Repeat"][0])+1:
-                if self.dataEnd["run"][i*self.settings["Repeat"][0]+j] >= stop*self.saveSpace:
+                        loaded = np.genfromtxt(self.pathName + "timeline" + str(i+1) + "_" + str(j) + ".csv", delimiter=",")
+                        mean += np.mean(loaded[start:stop])
+                        var += np.var(loaded[start:stop])
+                        count += 1
+                if count > 0:
+                    mean = mean / count
+                    var = var / count
+
+                self.dataEndRepeat.loc[i, "mean"] = mean
+                self.dataEndRepeat.loc[i, "variance"] = var
+        else:
+            for i in range(self.NUniqueRuns):
+                mean = 0
+                var = 0
+                count = 0
+                if self.dataEnd["run"][i*self.settings["Repeat"][0]+j] >= stop:
                     loaded = np.genfromtxt(self.pathName + "timeline" + str(i+1) + "_" + str(j) + ".csv", delimiter=",")
                     mean += np.mean(loaded[start:stop])
                     var += np.var(loaded[start:stop])
                     count += 1
-            if count > 0:
-                mean = mean / count
-                var = var / count
 
-            self.dataEndRepeat.loc[i, "mean"] = mean
-            self.dataEndRepeat.loc[i, "variance"] = var
-
-            #self.dataEndRepeat.loc[i, "mean_variance"] = var / 
+                self.dataEndRepeat.loc[i, "mean"] = mean
+                self.dataEndRepeat.loc[i, "variance"] = var
+           
 
         return        
-
-    def ImportTimeLine(self, timeLineIndex = [0, 0]):
-        if timeLineIndex[0] != 0:
-            self.timeLine = np.genfromtxt(self.pathName + "timeline" + str(timeLineIndex[0]) + "_" + str(timeLineIndex[1]) + ".csv", delimiter=",")
-        return
 
 
 def Loglike2D(param, X, Y, Y_err, fitFunc):

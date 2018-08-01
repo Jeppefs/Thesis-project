@@ -6,10 +6,10 @@ import pandas as pandas
 import scipy.optimize as op
 import nestle 
 
-def DeathRate():
+def deathRate():
     q = MS.MalariaStatistics("DeathRate", timeLineIndex = [10,0])
     q.GetMeanAndVarianceFromRepeat()
-    q.CalcNewMean(int(10**7 / q.saveSpace), int(2*10**7 / q.saveSpace))
+    q.CalcNewMean()
 
     #q.PlotExtinctionTime("DeathSpeed")
     plt.figure()
@@ -20,5 +20,14 @@ def DeathRate():
     
     return
 
-DeathRate()
+def complexFun():
+    q = MS.MalariaStatistics("complexFun", timeLineIndex = [5,1])
+    q.GetMeanAndVarianceFromRepeat()
+    q.CalcNewMean()
+
+    plt.figure()
+    q.PlotMeanInfection("MaxAntigenValue", newFigure = False)
+
+
+complexFun()
 plt.show()

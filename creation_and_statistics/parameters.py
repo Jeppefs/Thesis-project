@@ -39,8 +39,8 @@ def complexFun(name = "complexFun", notes = "Adjusts number of possible antigens
     
     parameters = OrderedDict()
     parameters["NHosts"] = np.array([10000])
-    parameters["InfectionSpeed"] = np.array([1.0]) 
-    parameters["ImmunitySpeed"] = np.array([0.0])
+    parameters["InfectionSpeed"] = np.array([0.98]) 
+    parameters["ImmunitySpeed"] = np.array([1.0])
     parameters["ReplacementSpeed"] = np.array([0.0])
     parameters["MutationSpeed"] = np.array([0.0])
     parameters["NAntigens"] = np.array([2])
@@ -49,7 +49,33 @@ def complexFun(name = "complexFun", notes = "Adjusts number of possible antigens
     parameters["InitialInfected"] = np.array([500])
 
     settings = OrderedDict()
-    settings["Runs"] = [320] # 20000000
+    settings["Runs"] = [20000000]
+    settings["BurnIn"] = [0]
+    settings["Repeat"] = [1]
+    settings["ShouldSaveData"] = ["true"]
+    settings["ShouldSaveDataWhileRunning"] = ["true"]
+    settings["ShouldCreateNewDataFile"] = ["true"]
+    settings["DataFileName"] = ["dataEnd.csv"]
+
+    return folder, name, parameters, settings, notes
+
+def complexFunReplacement(name = "complexFunDeath", notes = "Adjusts number of possible antigens, with strain length of 2. and with replacement existing."):
+    
+    folder = "data"
+    
+    parameters = OrderedDict()
+    parameters["NHosts"] = np.array([10000])
+    parameters["InfectionSpeed"] = np.array([0.98]) 
+    parameters["ImmunitySpeed"] = np.array([1.0])
+    parameters["ReplacementSpeed"] = np.array([0.01])
+    parameters["MutationSpeed"] = np.array([0.0])
+    parameters["NAntigens"] = np.array([2])
+    parameters["MaxAntigenValue"] = np.array([2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20])
+    parameters["MaxSuperInfections"] = np.array([5])
+    parameters["InitialInfected"] = np.array([500])
+
+    settings = OrderedDict()
+    settings["Runs"] = [20000000]
     settings["BurnIn"] = [0]
     settings["Repeat"] = [1]
     settings["ShouldSaveData"] = ["true"]
