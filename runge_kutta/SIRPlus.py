@@ -2,6 +2,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 import RungeKutta as RK
 
+from matplotlib import rc
+from matplotlib import rcParams
+
 def SIRPlus(param, values, t):
     valuesRate = np.zeros(len(values))
     
@@ -35,6 +38,13 @@ def UltraSIR(param, values, t):
 
     return valuesRate
 
+def Ross(param, values, t):
+    valuesRate = np.zeros(len(values))
+    
+    valuesRate[0] = param[0] * param[1] * param[2] * values[1] * (1 - values[0]) - param[3] * values[1]
+    valuesRate[1] = param[0] * param[4] * values[0] * (1 - values[1]) - param[5] * values[1]
+    return valuesRate
+
 def Deitz(param, values, t):
     valuesRate = np.zeros(len(values))
 
@@ -48,11 +58,8 @@ def Deitz(param, values, t):
     
     return valuesRate
 
-def Ross(param, values, t):
+def Macdonald(param, values, t):
     valuesRate = np.zeros(len(values))
-    
-    valuesRate[0] = 1
-    valuesRate[1] = 1 
     return valuesRate
 
 def SimpleInfectionSteadyState(param, values, t):
@@ -67,15 +74,20 @@ def SimpleInfectionSteadyState(param, values, t):
     valuesRate[1] = - param[0]*values[0]*values[1] + param[1]*values[0]
     return valuesRate
 
-def PlotSimple(func, initial, param, legend):
+def PlotSimple(func, initial, param, legend, runs = 50000, xlabel = "", ylabel = ""):
     q = RK.RungeKutta(initialConditions = initial, equation = func, param = param, dt = 0.001)
-    q.Run(50000)
+    q.Run(runs)
     q.PlotTimePlot()
+    rcParams.update({'font.size': 16})
     plt.legend(legend)
+    plt.xlabel(xlabel, fontsize=16)
+    plt.ylabel(ylabel, fontsize=16)
+    plt.tick_params(labelsize=13)
     plt.show()
     return
 
-PlotSimple(func = SimpleInfectionSteadyState, initial = [0.1, 0.9], param = [2.0, 1.0], legend = ["I_R","R"])
+
+PlotSimple(func = Ross, initial = [0.1, 0.1], param = [0.01, 0.2, 2.0, 0.01, 0.5, 0.1], legend = ["$I_h$","$I_m$"], runs=1000000, xlabel="Iterations", ylabel="Proportion infected")
 
 #RK.TestRungeKutta()
 #q = RK.RungeKutta(initialConditions = np.array([0.99, 0.01, 0.0, 0.0]), equation = SIRPlus, param = np.array([2.1, 0.0, 0.0, 1.0, 2.1, 2.0]), dt = 0.001)

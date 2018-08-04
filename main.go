@@ -1,8 +1,3 @@
-/*
-	TODO:
-	- Make better tests for Immunity and Spread.
-*/
-
 package main
 
 import (
@@ -15,7 +10,7 @@ import (
 )
 
 // We define a set of global constant - mostly
-const path = "data/" + "complexFun/"
+const path = "data/" + "complexFunReplacement/"
 
 // main
 func main() {

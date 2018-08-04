@@ -5,10 +5,18 @@ import matplotlib.pyplot as plt
 import pandas as pandas
 import scipy.optimize as op
 
+def simple():
+    q = MS.MalariaStatistics("simple")
+
+    #linearFitResults = MS.LinearFit(q.parameters["InfectionSpeed"], q.dataEnd["run"])
+    #q.PlotExtinctionTime("InfectionSpeed")
+    #plt.plot(np.arange())
+    #q.PlotMeanInfection("InfectionSpeed")
+
+    return
+
 def deathRate():
     q = MS.MalariaStatistics("DeathRate", timelineIndex = [10,1])
-    q.GetMeanAndVarianceFromRepeat()
-    q.CalcNewMean()
 
     #q.PlotExtinctionTime("DeathSpeed")
     plt.figure()
@@ -22,17 +30,38 @@ def deathRate():
 def complexFun():
     q = MS.MalariaStatistics("complexFun", timelineIndex = [5,1])
     
-    q.PlotExtinctionTime(vary = "MaxAntigenValue")
+    plt.figure()
+    q.PlotExtinctionTime(vary = "MaxAntigenValue", newFigure=False)
+    linearFitResults = MS.LinearFit(q.parameters["MaxAntigenValue"], q.dataEnd["run"])
+    plt.plot(np.arange(2,21), linearFitResults["slope"]*np.arange(2,21)+linearFitResults["intersect"])
+
     q.PlotMeanInfection(vary = "MaxAntigenValue")
     
-    for i in np.arange(19)+1:
-        q.timelineIndex = [i,1]
-        q.ImportTimeline()
-        q.ImportStrainCounter()
-        q.PlotTimeline(newFigure = True)
-        q.PlotStrainCounter(newFigure=False)
+    
+    
+    #for i in np.arange(19)+1:
+    #    q.timelineIndex = [i,1]
+    #    q.ImportTimeline()
+    #    q.ImportStrainCounter()
+    #    q.PlotTimeline(newFigure = True)
+    #    q.PlotStrainCounter(newFigure=False)
     
     return
 
-complexFun()
+def complexFunReplacement():
+    q = MS.MalariaStatistics("complexFunReplacement", timelineIndex = [8,1])
+    
+    plt.figure()
+    q.PlotExtinctionTime(vary = "MaxAntigenValue", newFigure=False)
+    linearFitResults = MS.LinearFit(q.parameters["MaxAntigenValue"], q.dataEnd["run"])
+    plt.plot(np.arange(2,21), linearFitResults["slope"]*np.arange(2,21)+linearFitResults["intersect"])
+
+    q.PlotMeanInfection(vary = "MaxAntigenValue")
+
+    q.PlotTimeline()
+    q.ImportStrainCounter()
+    q.PlotStrainCounter(newFigure=False)
+    
+
+complexFunReplacement()
 plt.show()
