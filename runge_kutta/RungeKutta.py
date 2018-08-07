@@ -49,7 +49,7 @@ def TestRungeKutta():
     q.Run(100000)
     q.PlotTimePlot()
     plt.legend(["S","I","R"])
-    
+    plt.tight_layout()
     plt.show()
 
     return

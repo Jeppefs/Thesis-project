@@ -84,7 +84,7 @@ class MalariaStatistics():
         plt.ylabel("NInfected")
 
         if self.saveFigs == True:
-            figName = self.pathName + "/plots" + self.simulationName + "StrainCounter" + ".pdf"
+            figName = self.pathName + "/plots/" + self.simulationName + "StrainCounter" + ".pdf"
             plt.savefig(figName, format="pdf")
 
         return

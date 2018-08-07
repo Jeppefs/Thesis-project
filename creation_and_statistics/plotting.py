@@ -28,7 +28,7 @@ def deathRate():
     return
 
 def complexFun():
-    q = MS.MalariaStatistics("complexFun", timelineIndex = [5,1])
+    q = MS.MalariaStatistics("complexFun", timelineIndex = [4,1])
     
     plt.figure()
     q.PlotExtinctionTime(vary = "MaxAntigenValue", newFigure=False)
@@ -37,7 +37,9 @@ def complexFun():
 
     q.PlotMeanInfection(vary = "MaxAntigenValue")
     
-    
+    q.PlotTimeline()
+    q.ImportStrainCounter
+    q.PlotStrainCounter(newFigure=False)
     
     #for i in np.arange(19)+1:
     #    q.timelineIndex = [i,1]
@@ -49,19 +51,20 @@ def complexFun():
     return
 
 def complexFunReplacement():
-    q = MS.MalariaStatistics("complexFunReplacement", timelineIndex = [8,1])
+    q = MS.MalariaStatistics("complexFunReplacement", timelineIndex = [4,1])
     
     plt.figure()
     q.PlotExtinctionTime(vary = "MaxAntigenValue", newFigure=False)
-    linearFitResults = MS.LinearFit(q.parameters["MaxAntigenValue"], q.dataEnd["run"])
-    plt.plot(np.arange(2,21), linearFitResults["slope"]*np.arange(2,21)+linearFitResults["intersect"])
+    #linearFitResults = MS.LinearFit(q.parameters["MaxAntigenValue"], q.dataEnd["run"])
+    #plt.plot(np.arange(2,21), linearFitResults["slope"]*np.arange(2,21)+linearFitResults["intersect"])
 
     q.PlotMeanInfection(vary = "MaxAntigenValue")
 
     q.PlotTimeline()
     q.ImportStrainCounter()
     q.PlotStrainCounter(newFigure=False)
+   
     
 
-complexFunReplacement()
+complexFun()
 plt.show()
