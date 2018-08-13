@@ -4,7 +4,7 @@ import pandas as pandas
 
 class MalariaStatistics():
 
-    def __init__(self, simulationName, timelineIndex = [0,0], saveFigs = True):
+    def __init__(self, simulationName, timelineIndex = [0,0], saveFigs = True, plotSettings = {}):
         
         self.simulationName = simulationName
         self.pathName = "data/" + self.simulationName + "/"
@@ -19,76 +19,16 @@ class MalariaStatistics():
         
         self.dataEndRepeat = self.GetRepeatedMeanAndVariance()
 
-        self.saveFigs = True
-        self.plotSettings = {}
+        self.plotSettings = plotSettings
+        if self.plotSettings == {}:
+            self.plotSettings["fontSize"] = 16
+            self.plotSettings["tickSize"] = 14
+            self.plotSettings["saveFigs"] = saveFigs
+            self.plotSettings["savePath"] = "data/" + self.simulationName + "/" + "plots" + "/" + self.simulationName + "_"
 
         if timelineIndex[0] > 0:
             self.ImportTimeline()
             self.ImportStrainCounter()
-
-    # Creates a plot with extinction time with whatever parameter given. 
-    def PlotExtinctionTime(self, vary, newFigure = True, plotAllMeasurements = False):
-
-        if newFigure: plt.figure()
-        plt.errorbar(self.parameters[vary], self.dataEnd["run"], fmt='o')
-
-        if plotAllMeasurements == True:
-            for i in range(self.settings["Repeat"][0]):
-                plt.plot(self.parameters[vary], self.dataEnd["run"][0+i::self.settings["Repeat"][0]],  color = "red", linestyle = "None",  marker='.', alpha=0.1)
-
-        plt.xlabel(vary)
-        plt.ylabel("Extinction Time")
-        
-        if self.saveFigs == True:
-            figName = self.pathName + "/plots/" + self.simulationName + "ExtinctionTime.pdf"
-            plt.savefig(figName, format="pdf")
-
-        return
-
-    # Creates a plot of the mean and variance. 
-    def PlotMeanInfection(self, vary, newFigure = True):
-        if newFigure: plt.figure()
-        plt.errorbar(self.parameters[vary], self.dataEnd["halfMean"], np.sqrt(self.dataEnd["halfVariance"]), fmt='o')
-        plt.xlabel(vary)
-        plt.ylabel("Mean infected")
-
-        if self.saveFigs == True:
-            figName = self.pathName + "/plots/"  + self.simulationName + "Mean.pdf"
-            plt.savefig(figName, format="pdf")
-        return
-
-    # Makes a plot of the development of the number of infected over time. 
-    def PlotTimeline(self, newFigure = True):
-
-        if newFigure: plt.figure()
-        plt.plot(self.timelineRuns, self.timelineNInfected)
-
-        plt.title("Timeline of N infected")
-        plt.xlabel("Run")
-        plt.ylabel("Infected")
-        
-        if self.saveFigs == True:
-            figName = self.pathName + "/plots/" + self.simulationName  + "Timeline" + ".pdf" 
-            plt.savefig(figName, format="pdf")
-
-        return
-
-    # Plots strain counter 
-    def PlotStrainCounter(self, newFigure = True):
-        if newFigure: plt.figure()
-        for strain in range(self.NStrains):
-            plt.plot(self.timelineRuns, self.strainCounter[:, strain])
-
-        plt.title("Strain count")
-        plt.xlabel("Run")
-        plt.ylabel("NInfected")
-
-        if self.saveFigs == True:
-            figName = self.pathName + "/plots/" + self.simulationName + "StrainCounter" + ".pdf"
-            plt.savefig(figName, format="pdf")
-
-        return
-
 
     def ImportTimeline(self): 
         temp = np.genfromtxt(self.pathName + "timeline/" + str(self.timelineIndex[0]) + "_" + str(self.timelineIndex[1]) + ".csv", delimiter=",", skip_header=1)
@@ -104,9 +44,100 @@ class MalariaStatistics():
 
         return
 
-    # Recalculates dataEnd, such that it finds the mean and variance from the repeat cases. 
-    def GetRepeatedMeanAndVariance(self):
-        dataEndRepeat = pandas.DataFrame(data=None, index=np.arange(self.NUniqueSimulations), columns=self.dataEnd.keys()) 
+    # Creates a plot with extinction time with whatever parameter given. 
+    def PlotExtinctionTime(self, vary, xlabel = "vary", newFigure = True, plotAllMeasurements = False):
+
+        if newFigure: plt.figure()
+        plt.errorbar(self.parameters[vary], self.dataEnd["run"], fmt='o')
+
+        if plotAllMeasurements == True:
+            for i in range(self.settings["Repeat"][0]):
+                plt.plot(self.parameters[vary], self.dataEnd["run"][0+i::self.settings["Repeat"][0]],  color = "red", linestyle = "None",  marker='.', alpha=0.1)
+
+        PlotNiceAndSave(xlabel, "Extinction time", "extinctionTime")
+
+        return
+
+    # Creates a plot of the mean and variance. 
+    def PlotMeanInfection(self, vary, xlabel = "vary", newFigure = True):
+        if newFigure: plt.figure()
+        plt.errorbar(self.parameters[vary], self.dataEnd["halfMean"], np.sqrt(self.dataEnd["halfVariance"]), fmt='o')
+
+        PlotNiceAndSave(xlabel, "Mean infected", "mean")
+
+        return
+
+    # Makes a plot of the development of the number of infected over time. 
+    def PlotTimeline(self, newFigure = True):
+        if newFigure: plt.figure()
+        plt.plot(self.timelineRuns, self.timelineNInfected)
+
+        PlotNiceAndSave("Iteration", "Infected", "timeLine" + str(self.timeLineIndex))
+
+        return
+
+    # Plots strain counter 
+    def PlotStrainCounter(self, newFigure = True):
+        if newFigure: plt.figure()
+        for strain in range(self.NStrains):
+            plt.plot(self.timelineRuns, self.strainCounter[:, strain])
+
+        PlotNiceAndSave("Iteration", "Infected", "strainCounter")
+
+        return
+
+    def PlotNiceAndSave(self, xlabel, ylabel, fileName):
+        plt.xlabel(xlabel, fontsize=self.plotSettings["fontSize"])
+        plt.ylabel(ylabel, fontsize=self.plotSettings(["fontSize"])
+        plt.tick_params(labelsize=self.plotSettings["tickSize"])
+        plt.tight_layout()
+        if self.plotSettings["saveFigs"] == True:
+            figName = self.plotSettings["savePath"] + fileName + ".pdf"
+            plt.savefig(figName, format="pdf")
+
+
+
+def LinearFit(x, y):
+
+    mean_x = np.mean(x)
+    mean_y = np.mean(y)
+
+    mean_xy = np.mean(x*y)
+    mean_x_squared = np.mean(x**2)
+
+    linearFitResults = {}
+
+    linearFitResults["slope"] = (mean_xy - mean_x*mean_y) / (mean_x_squared - mean_x**2) 
+    linearFitResults["intersect"] = mean_y - linearFitResults["slope"] * mean_x
+    #self.LinearFitResults["slope_err"] = 0
+    #self.LinearFitResults["intersect_err"] = 0
+    
+    return linearFitResults
+
+    
+
+
+def Loglike2D(param, X, Y, Y_err, fitFunc):
+    #loglike = -1* ( np.sum( np.log(1/(np.sqrt(2*np.pi)*Y_err)) ) + np.sum( (Y - fitFunc(X, param))**2 / (Y_err**2) ) )
+    loglike = -1* np.sum( (Y - fitFunc(X, param))**2 / (Y_err**2) )
+    return loglike
+
+def FitFunc_Power(X, param):
+    return param[1]*X**param[0] + param[2]
+
+
+def CalcChi2():
+    return
+
+
+
+
+
+
+
+# Recalculates dataEnd, such that it finds the mean and variance from the repeat cases. 
+    #def GetRepeatedMeanAndVariance(self):
+        #dataEndRepeat = pandas.DataFrame(data=None, index=np.arange(self.NUniqueSimulations), columns=self.dataEnd.keys()) 
 
         #for i in range(self.NUniqueSimulations):
             #for key in 
@@ -122,7 +153,7 @@ class MalariaStatistics():
         #         for key in self.dataEnd.keys():
         #             self.dataEndRepeat.loc[i,key] = np.mean(self.dataEnd[key][0:-1])
         
-        return dataEndRepeat
+        #return dataEndRepeat
 
     
     # def CalcNewMean(self):
@@ -165,36 +196,3 @@ class MalariaStatistics():
     #             self.dataEndRepeat.loc[i, "variance"] = var
            
     #     return        
-
-
-def LinearFit(x, y):
-
-    mean_x = np.mean(x)
-    mean_y = np.mean(y)
-
-    mean_xy = np.mean(x*y)
-    mean_x_squared = np.mean(x**2)
-
-    linearFitResults = {}
-
-    linearFitResults["slope"] = (mean_xy - mean_x*mean_y) / (mean_x_squared - mean_x**2) 
-    linearFitResults["intersect"] = mean_y - linearFitResults["slope"] * mean_x
-    #self.LinearFitResults["slope_err"] = 0
-    #self.LinearFitResults["intersect_err"] = 0
-    
-    return linearFitResults
-
-    
-
-
-def Loglike2D(param, X, Y, Y_err, fitFunc):
-    #loglike = -1* ( np.sum( np.log(1/(np.sqrt(2*np.pi)*Y_err)) ) + np.sum( (Y - fitFunc(X, param))**2 / (Y_err**2) ) )
-    loglike = -1* np.sum( (Y - fitFunc(X, param))**2 / (Y_err**2) )
-    return loglike
-
-def FitFunc_Power(X, param):
-    return param[1]*X**param[0] + param[2]
-
-
-def CalcChi2():
-    return

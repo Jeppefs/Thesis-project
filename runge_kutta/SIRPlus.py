@@ -65,30 +65,40 @@ def Macdonald(param, values, t):
 def SimpleInfectionSteadyState(param, values, t):
     valuesRate = np.zeros(len(values))
 
-    if values[0] < 0: values[0] = 0
-    if values[0] < 0: values[0] = 0
-    if values[1] > 1: values[1] = 1
-    if values[1] > 1: values[1] = 1
-
     valuesRate[0] = param[0]*values[0]*values[1] - param[1]*values[0]
     valuesRate[1] = - param[0]*values[0]*values[1] + param[1]*values[0]
+    return valuesRate
+
+def SimpleInfection(param, values, t):
+    valuesRate = np.zeros(len(values))
+
+    valuesRate[0] = - param[0] * values[0] * (values[1] + values[2])
+    valuesRate[1] = param[0] * values[0] * (values[1] + values[2]) - param[1] * values[1]
+    valuesRate[2] = param[0] * values[3] * (values[1] + values[2]) + param[1] * values[1] - param[1] * values[2]
+    valuesRate[3] = - param[0] * values[3] * (values[1] + values[2]) + param[1] * values[2] 
     return valuesRate
 
 def PlotSimple(func, initial, param, legend, runs = 50000, xlabel = "", ylabel = ""):
     q = RK.RungeKutta(initialConditions = initial, equation = func, param = param, dt = 0.01)
     q.Run(runs)
+    print(q.values)
     q.PlotTimePlot()
     rcParams.update({'font.size': 16})
     plt.legend(legend)
     plt.xlabel(xlabel, fontsize=16)
     plt.ylabel(ylabel, fontsize=16)
-    plt.tick_params(labelsize=13)
+    plt.tick_params(labelsize=14)
     plt.tight_layout()
+    plt.savefig("runge_kutta/temp.pdf", format="pdf")
     plt.show()
     return
 
 
-PlotSimple(func = Ross, initial = [0.1, 0.1], param = [0.09, 0.2, 2.0, 0.01, 0.5, 0.1], legend = ["$I_h$","$I_m$"], runs=100000, xlabel="Iterations", ylabel="Proportion infected")
+#PlotSimple(func = SimpleInfection, initial = [0.99, 0.01, 0.0, 0.0], param = [0.9, 1.0], legend = ["S", "I", "I_R", "S_R"], runs=10000, xlabel="Iteration", ylabel="Proportion")
+PlotSimple(func = SimpleInfectionSteadyState, initial = [0.99, 0.01], param = [1.1, 1.0], legend = ["$I_R$", "$S_R$"], runs=10000, xlabel="Iteration", ylabel="Proportion")
+
+#PlotSimple(func = Ross, initial = [0.1, 0.1], param = [0.09, 0.2, 2.0, 0.01, 0.5, 0.1], legend = ["$I_h$","$I_m$"], runs=100000, xlabel="Iterations", ylabel="Proportion infected")
+
 
 #RK.TestRungeKutta()
 #q = RK.RungeKutta(initialConditions = np.array([0.99, 0.01, 0.0, 0.0]), equation = SIRPlus, param = np.array([2.1, 0.0, 0.0, 1.0, 2.1, 2.0]), dt = 0.001)

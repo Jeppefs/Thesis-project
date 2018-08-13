@@ -8,6 +8,8 @@ import scipy.optimize as op
 def simple():
     q = MS.MalariaStatistics("simple")
 
+    q.PlotExtinctionTime("InfectionSpeed")
+
     #linearFitResults = MS.LinearFit(q.parameters["InfectionSpeed"], q.dataEnd["run"])
     #q.PlotExtinctionTime("InfectionSpeed")
     #plt.plot(np.arange())
@@ -66,5 +68,5 @@ def complexFunReplacement():
    
     
 
-complexFun()
+simple()
 plt.show()
