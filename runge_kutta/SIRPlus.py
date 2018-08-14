@@ -78,10 +78,19 @@ def SimpleInfection(param, values, t):
     valuesRate[3] = - param[0] * values[3] * (values[1] + values[2]) + param[1] * values[2] 
     return valuesRate
 
+def Replacement(p, v, t):
+    valuesRate = np.zeros(len(v))
+
+    valuesRate[0] = - p[0] * v[0] * (v[1] + v[2]) + p[2] * (v[1]+v[2]+v[3])
+    valuesRate[1] = p[0] * v[0] * (v[1] + v[2]) - p[1] * v[1] - p[2] * v[1] 
+    valuesRate[2] = p[0] * v[3] * (v[1] + v[2]) + p[1] * v[1] - p[1] * v[2] - p[2] * v[2]
+    valuesRate[3] = - p[0] * v[3] * (v[1] + v[2]) + p[1] * v[2]  - p[2] * v[3]
+    return valuesRate
+
 def PlotSimple(func, initial, param, legend, runs = 50000, xlabel = "", ylabel = ""):
     q = RK.RungeKutta(initialConditions = initial, equation = func, param = param, dt = 0.01)
     q.Run(runs)
-    print(q.values)
+    print(q.values, np.sum(q.values))
     q.PlotTimePlot()
     rcParams.update({'font.size': 16})
     plt.legend(legend)
@@ -95,7 +104,9 @@ def PlotSimple(func, initial, param, legend, runs = 50000, xlabel = "", ylabel =
 
 
 #PlotSimple(func = SimpleInfection, initial = [0.99, 0.01, 0.0, 0.0], param = [0.9, 1.0], legend = ["S", "I", "I_R", "S_R"], runs=10000, xlabel="Iteration", ylabel="Proportion")
-PlotSimple(func = SimpleInfectionSteadyState, initial = [0.99, 0.01], param = [1.1, 1.0], legend = ["$I_R$", "$S_R$"], runs=10000, xlabel="Iteration", ylabel="Proportion")
+#PlotSimple(func = SimpleInfectionSteadyState, initial = [0.99, 0.01], param = [1.1, 1.0], legend = ["$I_R$", "$S_R$"], runs=10000, xlabel="Iteration", ylabel="Proportion")
+
+PlotSimple(Replacement, initial = [0.99, 0.01, 0.0, 0.0], param = [0.99, 1.0, 0.1], legend = ["S","I","$I_R$", "$S_R$"], runs=10000, xlabel="Iteration", ylabel="Proportion")
 
 #PlotSimple(func = Ross, initial = [0.1, 0.1], param = [0.09, 0.2, 2.0, 0.01, 0.5, 0.1], legend = ["$I_h$","$I_m$"], runs=100000, xlabel="Iterations", ylabel="Proportion infected")
 

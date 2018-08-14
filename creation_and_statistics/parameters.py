@@ -2,7 +2,7 @@ import numpy as np
 from collections import OrderedDict
 import make_parameters as mp 
 
-func = "simple"
+func = "replacement2"
 name = ""
 notes = ""
 
@@ -49,7 +49,17 @@ def replacement(name = "replacement", notes = "Replacement increases"):
     folder, name, parameters, settings, notes = standard(name = name, notes = notes)
 
     parameters["InfectionSpeed"] = np.array([0.99]) 
-    parameters["ReplacementSpeed"] = np.arange(0, 0.01, 0.0001)
+    parameters["ReplacementSpeed"] = np.arange(0, 0.005, 0.0001)
+    settings["Repeat"] = [1]
+
+    return folder, name, parameters, settings, notes 
+
+def replacement2(name = "replacement2", notes = "Replacement increases large"):
+    folder, name, parameters, settings, notes = standard(name = name, notes = notes)
+
+    parameters["InfectionSpeed"] = np.array([0.99]) 
+    parameters["ReplacementSpeed"] = np.arange(0, 1.0, 0.005)
+    settings["Repeat"] = [1]
 
     return folder, name, parameters, settings, notes 
 

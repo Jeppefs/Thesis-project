@@ -8,25 +8,43 @@ import scipy.optimize as op
 def simple():
     q = MS.MalariaStatistics("simple")
 
-    q.PlotExtinctionTime("InfectionSpeed")
+    q.PlotExtinctionTime("InfectionSpeed", xlabel = r"$\alpha$")
+    plt.figure()
+    plt.plot(np.arange(1.0, 1.05, 0.0001), 10000*(np.arange(1.0, 1.05, 0.0001)-1), color="r")
+    q.PlotMeanInfection("InfectionSpeed", xlabel = r"$\alpha$", newFigure=False)
+    
 
-    #linearFitResults = MS.LinearFit(q.parameters["InfectionSpeed"], q.dataEnd["run"])
-    #q.PlotExtinctionTime("InfectionSpeed")
-    #plt.plot(np.arange())
-    #q.PlotMeanInfection("InfectionSpeed")
+    q.timelineIndex = [1, 1]
+    print("InfectionSpeed", q.parameters["InfectionSpeed"][q.timelineIndex[0]])
+    q.ImportTimeline()
+    q.PlotTimeline()
 
+    q.timelineIndex = [40, 5]
+    print("InfectionSpeed", q.parameters["InfectionSpeed"][q.timelineIndex[0]])
+    q.ImportTimeline()
+    q.PlotTimeline()
     return
 
-def deathRate():
-    q = MS.MalariaStatistics("DeathRate", timelineIndex = [10,1])
+def replacement(): 
+    q = MS.MalariaStatistics("replacement")
 
-    #q.PlotExtinctionTime("DeathSpeed")
-    plt.figure()
-    q.PlotMeanInfection("DeathSpeed", newFigure = False)
-    #op.minimize( MS.Loglike2D, method="Powell", x0 = tuple([0.5, 1, 400]), 
-    #args=tuple([q.parameters["deathRate"][2:-1], q.dataEndRepeat["mean"][2:-1], np.sqrt( dataEndRepeat["variance"][2:-1]/len(dataEndRepeat["variance"][2:-1]) ), FitFunc_Power]) )
-    #q.PlotTimeLinePlot()
-    
+    q.PlotExtinctionTime("ReplacementSpeed", xlabel = r"$\gamma$")
+    q.PlotMeanInfection("ReplacementSpeed", xlabel = r"$\gamma$")
+
+    q.timelineIndex = [10, 1]
+    print("ReplacementSpeed", q.parameters["ReplacementSpeed"][q.timelineIndex[0]])
+    q.ImportTimeline()
+    q.PlotTimeline()
+
+    q.timelineIndex = [40, 1]
+    print("ReplacementSpeed", q.parameters["ReplacementSpeed"][q.timelineIndex[0]])
+    q.ImportTimeline()
+    q.PlotTimeline()
+   
+    #q2 = MS.MalariaStatistics("replacement2")
+    #q2.PlotExtinctionTime("ReplacementSpeed", xlabel = r"$\gamma$")
+    #q2.PlotMeanInfection("ReplacementSpeed", xlabel = r"$\gamma$")
+
     return
 
 def complexFun():
@@ -68,5 +86,5 @@ def complexFunReplacement():
    
     
 
-simple()
+replacement()
 plt.show()

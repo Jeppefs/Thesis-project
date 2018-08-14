@@ -16,19 +16,23 @@ class MalariaStatistics():
 
         self.NUniqueSimulations = len(self.parameters['NHosts']) 
         self.NSimulations = len(self.dataEnd['run'])
-        
-        self.dataEndRepeat = self.GetRepeatedMeanAndVariance()
 
         self.plotSettings = plotSettings
         if self.plotSettings == {}:
             self.plotSettings["fontSize"] = 16
             self.plotSettings["tickSize"] = 14
             self.plotSettings["saveFigs"] = saveFigs
-            self.plotSettings["savePath"] = "data/" + self.simulationName + "/" + "plots" + "/" + self.simulationName + "_"
+            self.plotSettings["savePath"] = self.pathName + "plots" + "/" + self.simulationName + "_"
 
         if timelineIndex[0] > 0:
             self.ImportTimeline()
             self.ImportStrainCounter()
+
+        if self.settings["Repeat"][0] > 1:
+            self.isRepeated = True
+            self.dataEndRepeat = self.GetRepeatedMeanAndVariance()
+        else: 
+            self.isRepeated = False
 
     def ImportTimeline(self): 
         temp = np.genfromtxt(self.pathName + "timeline/" + str(self.timelineIndex[0]) + "_" + str(self.timelineIndex[1]) + ".csv", delimiter=",", skip_header=1)
@@ -44,26 +48,50 @@ class MalariaStatistics():
 
         return
 
+    # Calculates mean and variance of repeated runs. 
+    def GetRepeatedMeanAndVariance(self):
+        dataEndRepeat = pandas.DataFrame(data=None, index=np.arange(self.NUniqueSimulations), columns=self.dataEnd.keys()) 
+
+        r = self.settings["Repeat"][0]
+        for i in range(self.NUniqueSimulations):
+            for key in self.dataEnd.keys():
+                dataEndRepeat.loc[i,key] = np.mean(self.dataEnd[key][i*r:i*r+r])
+            dataEndRepeat.loc[i,"run_error"] = np.sqrt(np.var(self.dataEnd["run"][i*r:i*r+r]))
+            dataEndRepeat.loc[i, "halfMean_error"] = np.sqrt(np.var(self.dataEnd["halfMean"][i*r:i*r+r]))
+        
+        return dataEndRepeat
+
     # Creates a plot with extinction time with whatever parameter given. 
     def PlotExtinctionTime(self, vary, xlabel = "vary", newFigure = True, plotAllMeasurements = False):
 
         if newFigure: plt.figure()
-        plt.errorbar(self.parameters[vary], self.dataEnd["run"], fmt='o')
+        
+        if self.isRepeated:
+            plt.errorbar(self.parameters[vary], self.dataEndRepeat["run"], self.dataEndRepeat["run_error"], fmt='o')
+        else:
+            plt.plot(self.parameters[vary], self.dataEnd["run"],marker='o')
+            
 
         if plotAllMeasurements == True:
             for i in range(self.settings["Repeat"][0]):
                 plt.plot(self.parameters[vary], self.dataEnd["run"][0+i::self.settings["Repeat"][0]],  color = "red", linestyle = "None",  marker='.', alpha=0.1)
 
-        PlotNiceAndSave(xlabel, "Extinction time", "extinctionTime")
+        self.PlotNiceAndSave(xlabel, "Extinction time", "extinctionTime")
 
         return
 
     # Creates a plot of the mean and variance. 
     def PlotMeanInfection(self, vary, xlabel = "vary", newFigure = True):
         if newFigure: plt.figure()
-        plt.errorbar(self.parameters[vary], self.dataEnd["halfMean"], np.sqrt(self.dataEnd["halfVariance"]), fmt='o')
+        
+        if self.isRepeated:
+            print(len(self.parameters[vary]), len(self.dataEnd["halfMean"]), len(self.dataEndRepeat["halfMean_error"]))
+            plt.errorbar(self.parameters[vary], self.dataEndRepeat["halfMean"], self.dataEndRepeat["halfMean_error"], fmt='o')
+        else: 
+            plt.errorbar(self.parameters[vary], self.dataEnd["halfMean"], np.sqrt(self.dataEnd["halfVariance"]), fmt='o')
+            
 
-        PlotNiceAndSave(xlabel, "Mean infected", "mean")
+        self.PlotNiceAndSave(xlabel, "Mean infected", "mean")
 
         return
 
@@ -72,7 +100,7 @@ class MalariaStatistics():
         if newFigure: plt.figure()
         plt.plot(self.timelineRuns, self.timelineNInfected)
 
-        PlotNiceAndSave("Iteration", "Infected", "timeLine" + str(self.timeLineIndex))
+        self.PlotNiceAndSave("Iteration", "Infected", "timeLine" + str(self.timelineIndex))
 
         return
 
@@ -82,18 +110,19 @@ class MalariaStatistics():
         for strain in range(self.NStrains):
             plt.plot(self.timelineRuns, self.strainCounter[:, strain])
 
-        PlotNiceAndSave("Iteration", "Infected", "strainCounter")
+        self.PlotNiceAndSave("Iteration", "Infected", "strainCounter")
 
         return
 
     def PlotNiceAndSave(self, xlabel, ylabel, fileName):
         plt.xlabel(xlabel, fontsize=self.plotSettings["fontSize"])
-        plt.ylabel(ylabel, fontsize=self.plotSettings(["fontSize"])
+        plt.ylabel(ylabel, fontsize=self.plotSettings["fontSize"])
         plt.tick_params(labelsize=self.plotSettings["tickSize"])
         plt.tight_layout()
         if self.plotSettings["saveFigs"] == True:
             figName = self.plotSettings["savePath"] + fileName + ".pdf"
             plt.savefig(figName, format="pdf")
+        return
 
 
 
