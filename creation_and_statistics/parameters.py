@@ -2,7 +2,7 @@ import numpy as np
 from collections import OrderedDict
 import make_parameters as mp 
 
-func = "replacement2"
+func = "complexFeatures"
 name = ""
 notes = ""
 
@@ -48,20 +48,47 @@ def replacement(name = "replacement", notes = "Replacement increases"):
     
     folder, name, parameters, settings, notes = standard(name = name, notes = notes)
 
-    parameters["InfectionSpeed"] = np.array([0.99]) 
+    parameters["InfectionSpeed"] = np.array([0.95]) 
     parameters["ReplacementSpeed"] = np.arange(0, 0.005, 0.0001)
-    settings["Repeat"] = [1]
+    settings["Repeat"] = [10]
 
     return folder, name, parameters, settings, notes 
 
 def replacement2(name = "replacement2", notes = "Replacement increases large"):
     folder, name, parameters, settings, notes = standard(name = name, notes = notes)
 
-    parameters["InfectionSpeed"] = np.array([0.99]) 
+    parameters["InfectionSpeed"] = np.array([0.95]) 
     parameters["ReplacementSpeed"] = np.arange(0, 1.0, 0.005)
-    settings["Repeat"] = [1]
+    settings["Repeat"] = [10]
 
     return folder, name, parameters, settings, notes 
+
+def features(name = "features", notes = "Adjusts number of surface features"):
+    folder, name, parameters, settings, notes = standard(name = name, notes = notes)
+    
+    parameters["InfectionSpeed"] = np.array([0.6, 0.8, 0.95])
+    parameters["ReplacementSpeed"] = np.array([0.0, 0.005, 0.01, 0.02])
+    parameters["MaxAntigenValue"] = np.arange(1, 25+1, 1, dtype=int)
+    settings["Repeat"] = [1]
+
+    return folder, name, parameters, settings, notes
+
+def complexFeatures(name = "complexFeatures", notes = "Over the same parameters as features, except antigen size is 2"):
+    folder, name, parameters, settings, notes = features(name = name, notes = notes)
+    
+    parameters["MaxAntigenValue"] = np.arange(2, 25+1, 1, dtype=int)
+    parameters["NAntigens"] = np.array([2])
+
+    return folder, name, parameters, settings, notes
+
+def complexMutation(name = "complexFeatures", notes = "Over the same parameters as features, except antigen size is 2 and mutation exist"):
+    folder, name, parameters, settings, notes = features(name = name, notes = notes)
+    
+    parameters["NAntigens"] = np.array([2])
+    parameters["MutationSpeed"] = np.array([0.005])
+
+    return folder, name, parameters, settings, notes
+
 
 def complexFun(name = "complexFun", notes = "Adjusts number of possible antigens, with strain length of 2."):
     

@@ -34,6 +34,27 @@ class MalariaStatistics():
         else: 
             self.isRepeated = False
 
+    def ApplyMask(self, mask):
+        self.dataEndCopy = self.dataEnd.copy()
+        self.parametersCopy = self.parameters.copy()
+
+        self.dataEnd = self.dataEnd[mask]
+        self.parameters = self.parameters[mask]
+        
+        self.NUniqueSimulations = len(self.parameters["NHosts"])
+        self.NSimulations = len(self.dataEnd["run"])
+
+        return
+
+    def RemoveMask(self):
+        self.dataEnd = self.dataEndCopy.copy()
+        self.parameters = self.parametersCopy.copy()
+
+        self.NUniqueSimulations = len(self.parameters['NHosts'])
+        self.NSimulations = len(self.dataEnd["run"])
+
+        return
+
     def ImportTimeline(self): 
         temp = np.genfromtxt(self.pathName + "timeline/" + str(self.timelineIndex[0]) + "_" + str(self.timelineIndex[1]) + ".csv", delimiter=",", skip_header=1)
         self.timelineRuns = temp[:,0]
@@ -69,14 +90,14 @@ class MalariaStatistics():
         if self.isRepeated:
             plt.errorbar(self.parameters[vary], self.dataEndRepeat["run"], self.dataEndRepeat["run_error"], fmt='o')
         else:
-            plt.plot(self.parameters[vary], self.dataEnd["run"],marker='o')
+            plt.plot(self.parameters[vary], self.dataEnd["run"], 'o')
             
 
         if plotAllMeasurements == True:
             for i in range(self.settings["Repeat"][0]):
                 plt.plot(self.parameters[vary], self.dataEnd["run"][0+i::self.settings["Repeat"][0]],  color = "red", linestyle = "None",  marker='.', alpha=0.1)
 
-        self.PlotNiceAndSave(xlabel, "Extinction time", "extinctionTime")
+        if self.plotSettings["saveFigs"]: self.PlotNiceAndSave(xlabel, "Extinction time", "extinctionTime")
 
         return
 
@@ -86,12 +107,12 @@ class MalariaStatistics():
         
         if self.isRepeated:
             print(len(self.parameters[vary]), len(self.dataEnd["halfMean"]), len(self.dataEndRepeat["halfMean_error"]))
-            plt.errorbar(self.parameters[vary], self.dataEndRepeat["halfMean"], self.dataEndRepeat["halfMean_error"], fmt='o')
+            plt.errorbar(self.parameters[vary], self.dataEndRepeat["halfMean"]/self.parameters["NHosts"], self.dataEndRepeat["halfMean_error"]/self.parameters["NHosts"], fmt='o')
         else: 
-            plt.errorbar(self.parameters[vary], self.dataEnd["halfMean"], np.sqrt(self.dataEnd["halfVariance"]), fmt='o')
+            plt.errorbar(self.parameters[vary], self.dataEnd["halfMean"]/self.parameters["NHosts"], np.sqrt(self.dataEnd["halfVariance"])/self.parameters["NHosts"], fmt='o')
             
 
-        self.PlotNiceAndSave(xlabel, "Mean infected", "mean")
+        if self.plotSettings["saveFigs"]: self.PlotNiceAndSave(xlabel, "Mean infected", "mean")
 
         return
 
@@ -100,7 +121,7 @@ class MalariaStatistics():
         if newFigure: plt.figure()
         plt.plot(self.timelineRuns, self.timelineNInfected)
 
-        self.PlotNiceAndSave("Iteration", "Infected", "timeLine" + str(self.timelineIndex))
+        if self.plotSettings["saveFigs"]: self.PlotNiceAndSave("Iteration", "Infected", "timeLine" + str(self.timelineIndex))
 
         return
 
@@ -110,7 +131,7 @@ class MalariaStatistics():
         for strain in range(self.NStrains):
             plt.plot(self.timelineRuns, self.strainCounter[:, strain])
 
-        self.PlotNiceAndSave("Iteration", "Infected", "strainCounter")
+        if self.plotSettings["saveFigs"]: self.PlotNiceAndSave("Iteration", "Infected", "strainCounter")
 
         return
 
@@ -119,12 +140,9 @@ class MalariaStatistics():
         plt.ylabel(ylabel, fontsize=self.plotSettings["fontSize"])
         plt.tick_params(labelsize=self.plotSettings["tickSize"])
         plt.tight_layout()
-        if self.plotSettings["saveFigs"] == True:
-            figName = self.plotSettings["savePath"] + fileName + ".pdf"
-            plt.savefig(figName, format="pdf")
-        return
 
-
+        figName = self.plotSettings["savePath"] + fileName + ".pdf"
+        plt.savefig(figName, format="pdf")
 
 def LinearFit(x, y):
 
@@ -143,17 +161,19 @@ def LinearFit(x, y):
     
     return linearFitResults
 
-    
-
-
 def Loglike2D(param, X, Y, Y_err, fitFunc):
     #loglike = -1* ( np.sum( np.log(1/(np.sqrt(2*np.pi)*Y_err)) ) + np.sum( (Y - fitFunc(X, param))**2 / (Y_err**2) ) )
-    loglike = -1* np.sum( (Y - fitFunc(X, param))**2 / (Y_err**2) )
+    loglike = 1* np.sum( (Y - fitFunc(X, param))**2 / (Y_err**2) )
     return loglike
 
-def FitFunc_Power(X, param):
+def Func_Power(X, param):
     return param[1]*X**param[0] + param[2]
 
+def Func_Parabolar(X, param):
+    return param[0]*X**2 + param[1]*X + param[2]
+
+def Func_PowerPlusLinear(X, param):
+    return param[1]*X**param[0] + param[2] * X + param[3]
 
 def CalcChi2():
     return

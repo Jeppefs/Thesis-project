@@ -102,13 +102,35 @@ def PlotSimple(func, initial, param, legend, runs = 50000, xlabel = "", ylabel =
     plt.show()
     return
 
+def ReplacementParameterRasta():
+    q = RK.RungeKutta(initialConditions = [0.99, 0.01, 0.0, 0.0], param = [0.80, 1.0, 0.00], equation = Replacement, dt = 0.01)
+    paramList = np.arange(0, 1+0.00001, 0.01)
+    alphaList = np.array([0.6, 0.8, 0.9, 0.95])
+    plt.figure()
+    for alpha in alphaList:
+        q.param[0] = alpha
+        endingValues = q.ParameterSearch(paramIndex = 2, paramList = paramList, runs = 5000) 
+        plt.plot(paramList, endingValues[1,:] + endingValues[2,:])
+    plt.legend([r"$\alpha=0.60$", r"$\alpha=0.80$", r"$\alpha=0.9$", r"$\alpha=0.95$"])
+    plt.xlabel(r"$\gamma$", fontsize=16)
+    plt.ylabel("Proportion infected", fontsize=16)
+    plt.tick_params(labelsize=14)
+    plt.tight_layout()
+    plt.savefig("runge_kutta/temp.pdf", format="pdf")
+    plt.show()
+
+    return
+
+#ReplacementParameterRasta()
 
 #PlotSimple(func = SimpleInfection, initial = [0.99, 0.01, 0.0, 0.0], param = [0.9, 1.0], legend = ["S", "I", "I_R", "S_R"], runs=10000, xlabel="Iteration", ylabel="Proportion")
 #PlotSimple(func = SimpleInfectionSteadyState, initial = [0.99, 0.01], param = [1.1, 1.0], legend = ["$I_R$", "$S_R$"], runs=10000, xlabel="Iteration", ylabel="Proportion")
-
-PlotSimple(Replacement, initial = [0.99, 0.01, 0.0, 0.0], param = [0.99, 1.0, 0.1], legend = ["S","I","$I_R$", "$S_R$"], runs=10000, xlabel="Iteration", ylabel="Proportion")
-
+PlotSimple(Replacement, initial = [0.99, 0.01, 0.0, 0.0], param = [0.95, 1.0, 0.1], legend = ["S","I","$I_R$", "$S_R$"], runs=10000, xlabel="Iteration", ylabel="Proportion")
 #PlotSimple(func = Ross, initial = [0.1, 0.1], param = [0.09, 0.2, 2.0, 0.01, 0.5, 0.1], legend = ["$I_h$","$I_m$"], runs=100000, xlabel="Iterations", ylabel="Proportion infected")
+
+
+
+
 
 
 #RK.TestRungeKutta()

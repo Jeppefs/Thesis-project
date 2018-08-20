@@ -5,6 +5,7 @@ class RungeKutta():
 
     def __init__(self, initialConditions, equation, param, dt = 0.001):
         self.NValues = len(initialConditions)
+        self.initialConditions = initialConditions
         self.values = initialConditions
         self.valuesRate = np.zeros(self.NValues)
         self.equation = equation
@@ -37,6 +38,19 @@ class RungeKutta():
         
         return
     
+    def ParameterSearch(self, paramIndex = 0, paramList = [1], runs=10000):
+        endingValues = np.zeros((self.NValues, len(paramList)))
+        i = 0
+        for paramVal in paramList:
+            self.param[paramIndex] = paramVal
+            self.Run(runs)
+            endingValues[:,i] = self.values
+            self.values = self.initialConditions
+            self.valuesRate = np.zeros(self.NValues)
+            i += 1
+
+        return endingValues
+
     def PlotTimePlot(self):
         plt.figure()
         for i in range(self.NValues):

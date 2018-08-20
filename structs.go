@@ -82,7 +82,6 @@ func MakeHost(infected bool, NAntigens int, MaxAntigenValue int) Host {
 		h.IsInfected = true
 		h.Infections = make([]int8, NAntigens)
 		h.InsertRandomInfection(NAntigens, MaxAntigenValue)
-
 	} else {
 		h.IsInfected = false
 	}
@@ -92,6 +91,7 @@ func MakeHost(infected bool, NAntigens int, MaxAntigenValue int) Host {
 
 // InsertRandomInfection : A host becomes infected by a random strain.
 func (h *Host) InsertRandomInfection(NAntigens int, MaxAntigenValue int) {
+
 	for antigen := 0; antigen < NAntigens; antigen++ {
 		h.ExpressedStrain[antigen] = int8(rand.Intn(MaxAntigenValue)) + 1
 		h.Infections[antigen] = h.ExpressedStrain[antigen]

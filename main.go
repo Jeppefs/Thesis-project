@@ -10,7 +10,7 @@ import (
 )
 
 // We define a set of global constant - mostly
-const path = "data/" + "replacement2/"
+const path = "data/" + "complexFeatures/"
 
 // main
 func main() {
@@ -99,6 +99,7 @@ func GetReadyToStartModelSaveAndCreateDataFiles(param Parameters, settings Model
 func StartModel(param Parameters, settings ModelSettings, dataFileName string) int {
 	modelTime := 0
 	startTime := time.Now()
+
 	m := ConstructMalariaStruct(param)
 
 	m.RunBurnIn(param, settings.BurnIn)
