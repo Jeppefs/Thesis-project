@@ -2,7 +2,7 @@ import numpy as np
 from collections import OrderedDict
 import make_parameters as mp 
 
-func = "complexFeatures"
+func = "replacement2D"
 name = ""
 notes = ""
 
@@ -69,7 +69,8 @@ def replacement2D(name = "replacement2D", notes = "Loops over infection speed an
     parameters["InfectionSpeed"] = np.arange(0, 1.10+0.000001, 0.05)
     parameters["ReplacementSpeed"] = np.arange(0, 0.5+0.000001, 0.002)
     
-    settings["ShouldSaveDataWhileRunning"] = "false"
+    settings["Repeat"] = [10]
+    settings["ShouldSaveDataWhileRunning"] = ["false"]
     
     return folder, name, parameters, settings, notes
 

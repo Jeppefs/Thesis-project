@@ -10,7 +10,7 @@ import (
 )
 
 // We define a set of global constant - mostly
-const path = "data/" + "complexFeatures/"
+const path = "data/" + "replacement2D/"
 
 // main
 func main() {
@@ -105,11 +105,7 @@ func StartModel(param Parameters, settings ModelSettings, dataFileName string) i
 	m.RunBurnIn(param, settings.BurnIn)
 	var run int
 	if m.NInfectedHosts != 0 {
-		if settings.ShouldSaveDataWhileRunning == true {
-			run = m.RunModel(param, settings, dataFileName)
-		} else {
-			run = m.RunModelWithoutTimeline(param, settings, dataFileName)
-		}
+		run = m.RunModel(param, settings, dataFileName)
 	} else {
 		fmt.Println("Malaria died in burnin")
 	}
@@ -159,25 +155,6 @@ func (m *Malaria) RunModel(param Parameters, setting ModelSettings, dataFileName
 		}
 	}
 	file.Close()
-	time.Sleep(time.Second) // Wait a bit for the system to follow up.
-	return run
-}
-
-// RunModelWithoutTimeline : Like RunModel except without creating timeline.
-func (m *Malaria) RunModelWithoutTimeline(param Parameters, setting ModelSettings, dataFileName string) int {
-
-	run := 0
-
-	for run = 0; run < setting.Runs; run++ {
-		m.EventHappens(param)
-		if run%2000000 == 0 {
-			fmt.Println(run)
-		}
-		if m.NInfectedHosts == 0 {
-			fmt.Println("Malaria is dead in", run, "runs")
-			break
-		}
-	}
 	time.Sleep(time.Second) // Wait a bit for the system to follow up.
 	return run
 }
