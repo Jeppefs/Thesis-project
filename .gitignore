@@ -2,3 +2,5 @@ data/
 .vscode/
 malaria.exe
 debug.test
+runge_kutta/plots
+__pycache__

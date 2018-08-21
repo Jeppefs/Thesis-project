@@ -63,6 +63,16 @@ def replacement2(name = "replacement2", notes = "Replacement increases large"):
 
     return folder, name, parameters, settings, notes 
 
+def replacement2D(name = "replacement2D", notes = "Loops over infection speed and replacement"):
+    folder, name, parameters, settings, notes = standard(name = name, notes = notes)
+
+    parameters["InfectionSpeed"] = np.arange(0, 1.10+0.000001, 0.05)
+    parameters["ReplacementSpeed"] = np.arange(0, 0.5+0.000001, 0.002)
+    
+    settings["ShouldSaveDataWhileRunning"] = "false"
+    
+    return folder, name, parameters, settings, notes
+
 def features(name = "features", notes = "Adjusts number of surface features"):
     folder, name, parameters, settings, notes = standard(name = name, notes = notes)
     

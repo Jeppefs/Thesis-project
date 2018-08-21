@@ -104,7 +104,7 @@ def features():
     
     q.PlotNiceAndSave(xlabel="Surface features" , ylabel="Proportion infected", fileName = "mean")
 
-    timelineMask = ((q.parameters["InfectionSpeed"] == 0.6) & (q.parameters["ReplacementSpeed"] == 0.005) & (q.parameters["MaxAntigenValue"] == 4.0))
+    timelineMask = ((q.parameters["InfectionSpeed"] == 0.6) & (q.parameters["ReplacementSpeed"] == 0.02) & (q.parameters["MaxAntigenValue"] == 5.0))
     timelineIndex = q.parameters[timelineMask].index.values[0]
     q.saveFigs = False
     q.timelineIndex = [timelineIndex,1]
@@ -115,7 +115,7 @@ def features():
     q.PlotStrainCounter(newFigure=False)
     q.PlotNiceAndSave(xlabel="Iteration" , ylabel="Infected", fileName = "strainCounter")
 
-    timelineMask = ((q.parameters["InfectionSpeed"] == 0.6) & (q.parameters["ReplacementSpeed"] == 0.005) & (q.parameters["MaxAntigenValue"] == 4.0))
+    timelineMask = ((q.parameters["InfectionSpeed"] == 0.8) & (q.parameters["ReplacementSpeed"] == 0.005) & (q.parameters["MaxAntigenValue"] == 5.0))
     timelineIndex = q.parameters[timelineMask].index.values[0]
     q.timelineIndex = [timelineIndex,1]
     print(q.parameters.iloc[timelineIndex])

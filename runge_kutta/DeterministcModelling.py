@@ -1,9 +1,7 @@
 import numpy as np 
 import matplotlib.pyplot as plt
+import matplotlib 
 import RungeKutta as RK
-
-from matplotlib import rc
-from matplotlib import rcParams
 
 def SIRPlus(param, values, t):
     valuesRate = np.zeros(len(values))
@@ -92,7 +90,7 @@ def PlotSimple(func, initial, param, legend, runs = 50000, xlabel = "", ylabel =
     q.Run(runs)
     print(q.values, np.sum(q.values))
     q.PlotTimePlot()
-    rcParams.update({'font.size': 16})
+    matplotlib.rcParams.update({'font.size': 16})
     plt.legend(legend)
     plt.xlabel(xlabel, fontsize=16)
     plt.ylabel(ylabel, fontsize=16)
@@ -121,13 +119,73 @@ def ReplacementParameterRasta():
 
     return
 
+def ReplacementRastaScan():
+    
+    alphaStep = 0.02
+    gammaStep = 0.005
+    alphas = np.arange(0.5, 1.10+0.000001, alphaStep)
+    gammas = np.arange(0, 0.6+0.000001, gammaStep)
+    #alphas = np.array([0.5, 1.0])
+    #gammas = np.array([0.1, 0.2])
+    gridSurvival = np.zeros((len(alphas), len(gammas)))
+    gridInfected = np.zeros((len(alphas), len(gammas)))
+    gridResistant = np.zeros((len(alphas), len(gammas)))
+
+    i = 0
+    for alpha in alphas:
+        j = 0
+        for gamma in gammas:
+            q = RK.RungeKutta(initialConditions = [0.99, 0.01, 0.0, 0.0], param = [alpha, 1.0, gamma], equation = Replacement, dt = 0.01)
+            q.Run(10000)
+            gridInfected[i,j] = q.values[1] + q.values[2] 
+            gridResistant[i,j] = q.values[2] + q.values[3]
+            j += 1
+            print(i, j)
+        i += 1
+
+    gridSurvival = np.ceil(gridInfected-/(10**3))
+
+    ## Survival
+    plt.figure()
+    plt.imshow(gridSurvival, origin='lower', extent=(np.min(gammas)-gammaStep/2,np.max(gammas)+gammaStep/2,np.min(alphas)-alphaStep/2,np.max(alphas)+alphaStep/2), aspect='auto' )    
+    plt.xlabel(r"$\gamma$", fontsize=16)
+    plt.ylabel(r"$\alpha$", fontsize=16)
+    plt.tick_params(labelsize=14)
+    plt.tight_layout()
+    plt.savefig("runge_kutta/gridSurvival.pdf", format="pdf")
+
+    ## Infected
+    plt.figure()
+    plt.imshow(gridInfected, origin='lower', extent=(np.min(gammas)-gammaStep/2,np.max(gammas)+gammaStep/2,np.min(alphas)-alphaStep/2,np.max(alphas)+alphaStep/2), aspect='auto' )    
+    plt.xlabel(r"$\gamma$", fontsize=16)
+    plt.ylabel(r"$\alpha$", fontsize=16)
+    plt.colorbar()
+    plt.tick_params(labelsize=14)
+    plt.tight_layout()
+    plt.savefig("runge_kutta/gridInfected.pdf", format="pdf")
+
+    ## Infected
+    plt.figure()
+    plt.imshow(gridResistant, origin='lower', extent=(np.min(gammas)-gammaStep/2,np.max(gammas)+gammaStep/2,np.min(alphas)-alphaStep/2,np.max(alphas)+alphaStep/2), aspect='auto' )    
+    plt.xlabel(r"$\gamma$", fontsize=16)
+    plt.ylabel(r"$\alpha$", fontsize=16)
+    plt.colorbar()
+    plt.tick_params(labelsize=14)
+    plt.tight_layout()
+    plt.savefig("runge_kutta/gridResistant.pdf", format="pdf")
+
+    plt.show()
+
+    return
+
+matplotlib.rcParams.update({'font.size': 14}) 
+ReplacementRastaScan()
 #ReplacementParameterRasta()
 
 #PlotSimple(func = SimpleInfection, initial = [0.99, 0.01, 0.0, 0.0], param = [0.9, 1.0], legend = ["S", "I", "I_R", "S_R"], runs=10000, xlabel="Iteration", ylabel="Proportion")
 #PlotSimple(func = SimpleInfectionSteadyState, initial = [0.99, 0.01], param = [1.1, 1.0], legend = ["$I_R$", "$S_R$"], runs=10000, xlabel="Iteration", ylabel="Proportion")
-PlotSimple(Replacement, initial = [0.99, 0.01, 0.0, 0.0], param = [0.95, 1.0, 0.1], legend = ["S","I","$I_R$", "$S_R$"], runs=10000, xlabel="Iteration", ylabel="Proportion")
+#PlotSimple(Replacement, initial = [0.99, 0.01, 0.0, 0.0], param = [0.95, 1.0, 0.1], legend = ["S","I","$I_R$", "$S_R$"], runs=10000, xlabel="Iteration", ylabel="Proportion")
 #PlotSimple(func = Ross, initial = [0.1, 0.1], param = [0.09, 0.2, 2.0, 0.01, 0.5, 0.1], legend = ["$I_h$","$I_m$"], runs=100000, xlabel="Iterations", ylabel="Proportion infected")
-
 
 
 
