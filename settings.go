@@ -22,6 +22,9 @@ type Parameters struct {
 	MaxAntigenValue    int // The maximum value a single antigen can take. In other words it decides the number of different antigens.
 	InitialInfected    int // How many infected there is at start of simulation.
 	MaxSuperInfections int // The maximum number of infections a single host can have
+
+	// String parameters
+
 }
 
 // ModelSettings : A structure that contains information ab	out model settings such as
@@ -35,7 +38,8 @@ type ModelSettings struct {
 	ShouldSaveDataWhileRunning bool // Should the program run with saving date after some number of steps
 	ShouldCreateNewDataFile    bool // Should the program create a new data file og append to the data file that already exists.
 
-	DataFileName string // The name of the files that belong to this run.
+	SpecificStrains string
+	DataFileName    string // The name of the files that belong to this run.
 }
 
 // InsertParameters : Insert parameters into the parameters struct given a string slice.

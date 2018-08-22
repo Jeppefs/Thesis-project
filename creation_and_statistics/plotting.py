@@ -47,8 +47,11 @@ def replacement():
 
     return
 
-def features():
-    q = MS.MalariaStatistics("features", saveFigs=False)
+def features(complex=False):
+    if complex == True:
+        q = MS.MalariaStatistics("complexFeatures", saveFigs=False)
+    else:
+        q = MS.MalariaStatistics("features", saveFigs=False)
 
     maxRuns = np.max(q.dataEnd["run"])
     maxFeatures = np.max(q.parameters["MaxAntigenValue"])
@@ -119,85 +122,6 @@ def features():
     timelineIndex = q.parameters[timelineMask].index.values[0]
     q.timelineIndex = [timelineIndex,1]
     print(q.parameters.iloc[timelineIndex])
-    q.ImportTimeline()
-    q.PlotTimeline()
-    q.ImportStrainCounter()
-    q.PlotStrainCounter(newFigure=False)
-    q.PlotNiceAndSave(xlabel="Iteration" , ylabel="Infected", fileName = "strainCounter2")
-
-    return
-
-def complexFeatures():
-    q = MS.MalariaStatistics("complexFeatures", saveFigs=False)
-
-    maxRuns = np.max(q.dataEnd["run"])
-    maxFeatures = np.max(q.parameters["MaxAntigenValue"])
-
-    masks = []
-    legendString = []
-    uniqueAlphas = np.unique(q.parameters["InfectionSpeed"])
-    uniqueGammas = np.unique(q.parameters["ReplacementSpeed"])
-    for alpha in uniqueAlphas:
-        for gamma in uniqueGammas:
-            print(alpha, gamma)
-            masks.append((q.parameters["InfectionSpeed"] == alpha) & (q.parameters["ReplacementSpeed"] == gamma))
-            legendString.append(r"$\alpha=" + str(alpha) + "$ " + r"$\gamma=" + str(gamma) + "$")
-
-    plt.figure()
-    for mask in masks:
-        q.ApplyMask(mask)
-        q.PlotExtinctionTime("MaxAntigenValue", newFigure=False, xlabel="Surface features")
-        q.RemoveMask()
-    plt.legend(legendString)
-
-    for mask in masks:
-        q.ApplyMask(mask)
-        LinearFitResults = MS.LinearFit(q.parameters["MaxAntigenValue"], q.dataEnd["run"])
-        print("slope:", LinearFitResults["slope"], "intersection:", LinearFitResults["intersect"])
-        print(np.max(np.arange(0,24,1)*LinearFitResults["slope"] + q.dataEnd["run"][mask].iloc[0]) )
-        if np.max(np.arange(0,24,1)*LinearFitResults["slope"] + q.dataEnd["run"][mask].iloc[0]) < maxRuns + 100:
-            plt.plot(np.arange(0,24,1)+2, np.arange(0,24,1)*LinearFitResults["slope"] + q.dataEnd["run"][mask].iloc[0], color="k", alpha=0.3)
-        q.RemoveMask()
-
-    q.PlotNiceAndSave(xlabel="Surface features" , ylabel="Extinction time", fileName = "extinctionTime")
-
-    
-    plt.figure()
-    legendStringNew = []
-    for mask in masks:
-        q.ApplyMask(mask)
-        if q.dataEnd["run"].iloc[-1] == maxRuns:
-            q.PlotMeanInfection("MaxAntigenValue", newFigure=False, xlabel="Surface features")
-            legendStringNew.append(r"$\alpha=" + str(q.parameters["InfectionSpeed"][mask].iloc[0]) + "$ " + r"$\gamma=" + str(q.parameters["ReplacementSpeed"][mask].iloc[0]) + "$")
-        q.RemoveMask()
-    
-    plt.legend(legendStringNew)
-    ## Fit
-    
-    for mask in masks:
-        q.ApplyMask(mask)
-        if q.dataEnd["run"].iloc[-1] == maxRuns:
-            res = op.minimize(fun=MS.Loglike2D, x0=np.array([1,1, 1000]),
-            args=(q.parameters["MaxAntigenValue"][mask].values-1, q.dataEnd["halfMean"][mask].values, np.sqrt(q.dataEnd["halfVariance"][mask].values), MS.Func_Parabolar),
-            method='Nelder-Mead')
-            print(res)
-            plt.plot(q.parameters["MaxAntigenValue"][mask], (MS.Func_Parabolar(q.parameters["MaxAntigenValue"][mask].values-1, res.x))/q.parameters["NHosts"], color="k", alpha=0.3)
-        q.RemoveMask()
-    
-    q.PlotNiceAndSave(xlabel="Surface features" , ylabel="Proportion infected", fileName = "mean")
-
-
-    q.saveFigs = False
-    q.timelineIndex = [4,1]
-    print(q.parameters.iloc[4])
-    q.ImportTimeline()
-    q.ImportStrainCounter()
-    q.PlotTimeline()
-    q.PlotStrainCounter(newFigure=False)
-    q.PlotNiceAndSave(xlabel="Iteration" , ylabel="Infected", fileName = "strainCounter")
-
-    q.timelineIndex = [100,1]
-    print(q.parameters.iloc[100])
     q.ImportTimeline()
     q.PlotTimeline()
     q.ImportStrainCounter()

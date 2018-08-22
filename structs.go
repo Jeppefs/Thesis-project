@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"math/rand"
 	"sort"
 )
@@ -35,7 +36,7 @@ type Host struct {
 }
 
 // ConstructMalariaStruct : Initiates a malaria struct and starts initial conditions.
-func ConstructMalariaStruct(param Parameters) Malaria {
+func ConstructMalariaStruct(param Parameters, settings ModelSettings) Malaria {
 	var m Malaria
 
 	// Sets initial values.
@@ -62,8 +63,15 @@ func ConstructMalariaStruct(param Parameters) Malaria {
 	m.SuperInfectionCounter[0] = m.NHosts - m.NInfectedHosts
 	m.SuperInfectionCounter[1] = m.NInfectedHosts
 
-	_, m.StrainKeys, m.StrainCounter = FindAllStrainCombinations(param.NAntigens, param.MaxAntigenValue)
+	if settings.SpecificStrains == "All" {
+		_, m.StrainKeys, m.StrainCounter = FindAllStrainCombinations(param.NAntigens, param.MaxAntigenValue)
+	} else {
+		m.StrainKeys = []string{"1,2", "3,4", "5,6", "7,8"}
+		m.StrainCounter = map[string]int{"1,2": 0, "3,4": 0, "5,6": 0, "7,8": 0}
+	}
 	m.CountStrains()
+
+	fmt.Println(m.StrainCounter)
 
 	//fmt.Println(m.Antigens, "\n", m.Infections, "\n", m.Antibodies, "\n")
 	return m
