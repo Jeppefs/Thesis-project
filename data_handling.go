@@ -17,6 +17,7 @@ import (
 func SaveToEndFile(loadFileName string, saveFileName string, run int) {
 	csvFile, errTemp := os.Open(loadFileName)
 	check(errTemp)
+	defer csvFile.Close()
 	reader := csv.NewReader(bufio.NewReader(csvFile))
 	var d []float64
 

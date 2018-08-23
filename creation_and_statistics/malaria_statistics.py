@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib
 import pandas as pandas
 
 class MalariaStatistics():
@@ -117,24 +118,50 @@ class MalariaStatistics():
         return
 
     # Makes a plot of the development of the number of infected over time. 
-    def PlotTimeline(self, newFigure = True):
+    def PlotTimeline(self, newFigure = True, axis = []):
         if newFigure: plt.figure()
-        plt.plot(self.timelineRuns, self.timelineNInfected)
+        if len(axis) == 0:
+            plt.plot(self.timelineRuns, self.timelineNInfected/self.parameters["NHosts"][self.timelineIndex[0]-1])
 
         if self.plotSettings["saveFigs"]: self.PlotNiceAndSave("Iteration", "Infected", "timeLine" + str(self.timelineIndex))
 
         return
 
     # Plots strain counter 
-    def PlotStrainCounter(self, newFigure = True):
+    def PlotStrainCounter(self, newFigure = True, axis = []):
         if newFigure: plt.figure()
         for strain in range(self.NStrains):
-            plt.plot(self.timelineRuns, self.strainCounter[:, strain])
+            if len(axis) == 0:
+                plt.plot(self.timelineRuns, self.strainCounter[:, strain]/self.parameters["NHosts"][self.timelineIndex[0]-1])
 
         if self.plotSettings["saveFigs"]: self.PlotNiceAndSave("Iteration", "Infected", "strainCounter")
 
-        return
+        return 
 
+    # vary1 is x-axis and vary2 is y 
+    def Plot2D(self, vary1, vary2, newFigure = True):
+        if newFigure: plt.figure()
+
+        x = np.unique(self.parameters[vary1])
+        y = np.unique(self.parameters[vary2])
+        
+        Z = np.zeros((len(x),len(y)))
+
+        i = 0
+        for x1 in x:
+            j = 0
+            for y1 in y:
+                Z[i,j] = self.dataEnd["run"][(x1 == self.parameters[vary1]) & (y1 == self.parameters[vary2])]
+                j += 1
+            i += 1
+
+        plt.imshow(Z, origin='lower', extent=(np.min(x), np.max(x),np.min(y),np.max(y)), aspect='auto',vmin=0, vmax=2*10**7 )    
+        matplotlib.rcParams.update({'font.size': 14}) 
+        plt.colorbar(format='%.1e')
+        
+            
+        return
+    
     def PlotNiceAndSave(self, xlabel, ylabel, fileName):
         plt.xlabel(xlabel, fontsize=self.plotSettings["fontSize"])
         plt.ylabel(ylabel, fontsize=self.plotSettings["fontSize"])

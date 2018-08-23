@@ -143,7 +143,7 @@ def ReplacementRastaScan():
             print(i, j)
         i += 1
 
-    gridSurvival = np.ceil(gridInfected-/(10**3))
+    gridSurvival = np.ceil(gridInfected-1/(10**3))
 
     ## Survival
     plt.figure()

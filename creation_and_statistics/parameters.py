@@ -2,7 +2,7 @@ import numpy as np
 from collections import OrderedDict
 import make_parameters as mp 
 
-func = "complexDifference"
+func = "complexDifference2D"
 name = ""
 notes = ""
 
@@ -21,6 +21,7 @@ def standard(name = "standard", notes = "Standard data for non-systematic tests"
     parameters["MaxAntigenValue"] = np.array([1])
     parameters["MaxSuperInfections"] = np.array([5])
     parameters["InitialInfected"] = np.array([500])
+    parameters["SpecificStrains"] = ["all"]
 
     settings = OrderedDict()
     settings["Runs"] = [20000000] 
@@ -30,7 +31,7 @@ def standard(name = "standard", notes = "Standard data for non-systematic tests"
     settings["ShouldSaveData"] = ["true"]
     settings["ShouldSaveDataWhileRunning"] = ["true"]
     settings["ShouldCreateNewDataFile"] = ["true"]
-    settings["SpecificStrains"] = ["All"]
+    
     settings["DataFileName"] = ["dataEnd.csv"]
 
     return folder, name, parameters, settings, notes
@@ -87,6 +88,19 @@ def features(name = "features", notes = "Adjusts number of surface features"):
 
     return folder, name, parameters, settings, notes
 
+def features2D(name = "features2D", notes = "Adjusts number of surface features and infection rate, to see at what limit it becomes extinct"):
+    folder, name, parameters, settings, notes = standard(name = name, notes = notes)
+
+    parameters["InfectionSpeed"] = np.arange(0.5,0.7+0.01,0.01)
+    parameters["ReplacementSpeed"] = np.array([0.005,0.01])
+    parameters["MaxAntigenValue"] = np.arange(1, 25+1, 1, dtype=int)
+
+    settings["Repeat"] = [1]
+    settings["SkipSaving"] = [2000]
+    settings["ShouldSaveDataWhileRunning"] = ["false"] 
+
+    return folder, name, parameters, settings, notes
+
 def complexFeatures(name = "complexFeatures", notes = "Over the same parameters as features, except antigen size is 2"):
     folder, name, parameters, settings, notes = features(name = name, notes = notes)
     
@@ -105,15 +119,27 @@ def complexFeatures2(name = "complexFeatures2", notes = "Over the same parameter
 
     return folder, name, parameters, settings, notes
 
-def complexDifference(name = "complexDifference", notes = "Over the same parameters as features, except antigen size is 3"):
-    folder, name, parameters, settings, notes = features(name = name, notes=notes)
+def complexDifference(name = "complexDifference", notes = "Trying with cross immunity and not"):
+    folder, name, parameters, settings, notes = standard(name = name, notes=notes)
 
     parameters["InfectionSpeed"] = np.array([0.6])
-    parameters["ReplacementSpeed"] = np.array([0.01])
-    parameters["MaxAntigenValue"] = np.arange([8])
-    parameters["NAntigens"] = np.array([2]) 
+    parameters["ReplacementSpeed"] = np.array([0.005])
+    parameters["SpecificStrains"] = ["nonCross", "cross"] 
+    
+    settings["Repeat"] = [10]
+    settings["SkipSaving"] = np.array([2000], dtype=int)
+    
+    return folder, name, parameters, settings, notes
 
-    settings["SpecificStrains"] = ["other"]
+def complexDifference2D(name = "complexDifference2D", notes = "Trying with cross immunity and not for different alphas and replacement"):
+    folder, name, parameters, settings, notes = standard(name = name, notes=notes)
+
+    parameters["InfectionSpeed"] = np.arange(0.5,0.7+0.01,0.01)
+    parameters["ReplacementSpeed"] = np.array([0.001,0.002,0.005,0.01,0.015,0.02])
+    parameters["SpecificStrains"] = ["nonCross", "cross"] 
+    
+    settings["Repeat"] = [1]
+    settings["ShouldSaveDataWhileRunning"] = ["false"] 
     settings["SkipSaving"] = np.array([2000], dtype=int)
     
     return folder, name, parameters, settings, notes
@@ -126,8 +152,14 @@ def featuresMutation(name = "featuresMutation", notes = "Over the same parameter
     parameters["ReplacementSpeed"] = np.array([0.005])
     parameters["MutationSpeed"] = np.array([0.005])
 
+    settings["SkipSaving"] = np.array([2000], dtype=int)
 
     return folder, name, parameters, settings, notes
+
+def complexDifferenceMutation():
+    return
+
+
 
 ##-------------------------------------------------------------------------------##
 mp.CreateParametersAndSettings(eval(func), name, notes)

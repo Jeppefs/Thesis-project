@@ -57,7 +57,7 @@ func init() {
 //
 func CreateMalariaStructsInSlice() [3]Malaria {
 
-	malariaStructs := [3]Malaria{ConstructMalariaStruct(p1, "All"), ConstructMalariaStruct(p2, "All"), ConstructMalariaStruct(p3, "All")}
+	malariaStructs := [3]Malaria{ConstructMalariaStruct(p1), ConstructMalariaStruct(p2), ConstructMalariaStruct(p3)}
 
 	// Make the expressed strains and infection definitive.
 	malariaStructs[1].Hosts[0].ExpressedStrain[0] = 3

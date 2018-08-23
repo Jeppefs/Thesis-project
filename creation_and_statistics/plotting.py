@@ -130,43 +130,54 @@ def features(complex=False):
 
     return
 
-def complexFun():
-    q = MS.MalariaStatistics("complexFun", timelineIndex = [4,1])
-    
-    plt.figure()
-    q.PlotExtinctionTime(vary = "MaxAntigenValue", newFigure=False)
-    linearFitResults = MS.LinearFit(q.parameters["MaxAntigenValue"], q.dataEnd["run"])
-    plt.plot(np.arange(2,21), linearFitResults["slope"]*np.arange(2,21)+linearFitResults["intersect"])
+def features2D():
+    q = MS.MalariaStatistics("features2D", saveFigs=False)
+    mask = (q.parameters["ReplacementSpeed"] == 0.005)
+    q.ApplyMask(mask)
+    q.Plot2D("MaxAntigenValue", "InfectionSpeed", newFigure=True)
+    q.PlotNiceAndSave(xlabel="Strains" , ylabel=r"$\alpha$", fileName = "features2D_lowReplacement")
+    q.RemoveMask
 
-    q.PlotMeanInfection(vary = "MaxAntigenValue")
+    q = MS.MalariaStatistics("features2D", saveFigs=False)
+    mask = (q.parameters["ReplacementSpeed"] == 0.01)
+    q.ApplyMask(mask)
+    q.Plot2D("MaxAntigenValue", "InfectionSpeed", newFigure=True)
+    q.PlotNiceAndSave(xlabel="Strains", ylabel=r"$\alpha$", fileName = "highReplacement")
+    return
+
+def complexDifference():
+    q = MS.MalariaStatistics("complexDifference", saveFigs=False)
     
+    q.timelineIndex = [1,8]
+    q.ImportTimeline()
+    q.ImportStrainCounter()
     q.PlotTimeline()
-    q.ImportStrainCounter
     q.PlotStrainCounter(newFigure=False)
-    
-    #for i in np.arange(19)+1:
-    #    q.timelineIndex = [i,1]
-    #    q.ImportTimeline()
-    #    q.ImportStrainCounter()
-    #    q.PlotTimeline(newFigure = True)
-    #    q.PlotStrainCounter(newFigure=False)
+    q.PlotNiceAndSave(xlabel="Iteration", ylabel="Proportion infected", fileName="timeline1")
+
+    q.timelineIndex = [2,5]
+    q.ImportTimeline()
+    q.ImportStrainCounter()
+    q.PlotTimeline()
+    q.PlotStrainCounter(newFigure=False)
+    q.PlotNiceAndSave(xlabel="Iteration", ylabel="Proportion infected", fileName="timeline2")
     
     return
 
-def complexFunReplacement():
-    q = MS.MalariaStatistics("complexFunReplacement", timelineIndex = [4,1])
-    
-    plt.figure()
-    q.PlotExtinctionTime(vary = "MaxAntigenValue", newFigure=False)
-    #linearFitResults = MS.LinearFit(q.parameters["MaxAntigenValue"], q.dataEnd["run"])
-    #plt.plot(np.arange(2,21), linearFitResults["slope"]*np.arange(2,21)+linearFitResults["intersect"])
+def complexDifference2D():
+    q = MS.MalariaStatistics("complexDifference2D", saveFigs=False)
+    mask = (q.parameters["SpecificStrains"] == "nonCross")
+    q.ApplyMask(mask)
+    q.Plot2D("InfectionSpeed", "ReplacementSpeed", newFigure=True)
+    q.PlotNiceAndSave(ylabel=r"$\gamma$" , xlabel=r"$\alpha$", fileName = "nonCross")
+    q.RemoveMask()
 
-    q.PlotMeanInfection(vary = "MaxAntigenValue")
+    q = MS.MalariaStatistics("complexDifference2D", saveFigs=False)
+    mask = (q.parameters["SpecificStrains"] == "cross")
+    q.ApplyMask(mask)
+    q.Plot2D("InfectionSpeed", "ReplacementSpeed", newFigure=True)
+    q.PlotNiceAndSave(ylabel=r"$\gamma$", xlabel=r"$\alpha$", fileName = "cross")
+    return
 
-    q.PlotTimeline()
-    q.ImportStrainCounter()
-    q.PlotStrainCounter(newFigure=False)
-   
-    
-
-
+complexDifference2D()
+plt.show()

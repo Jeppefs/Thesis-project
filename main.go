@@ -10,7 +10,7 @@ import (
 )
 
 // We define a set of global constant - mostly
-const path = "data/" + "complexDifference/"
+const path = "data/" + "complexDifference2D/"
 
 // main
 func main() {
@@ -89,7 +89,11 @@ func GetReadyToStartModelSaveAndCreateDataFiles(param Parameters, settings Model
 		if settings.ShouldSaveData == true {
 			SaveToEndFile(dataFileName+".csv", settings.DataFileName, run)
 			if settings.ShouldSaveDataWhileRunning == false {
-				os.Remove(dataFileName + ".csv")
+				time.Sleep(time.Second)
+				err := os.Remove(dataFileName + ".csv")
+				check(err)
+				err = os.Remove(dataFileName + "strainCounter" + ".csv")
+				check(err)
 			}
 		}
 	}
@@ -100,7 +104,7 @@ func StartModel(param Parameters, settings ModelSettings, dataFileName string) i
 	modelTime := 0
 	startTime := time.Now()
 
-	m := ConstructMalariaStruct(param, settings.SpecificStrains)
+	m := ConstructMalariaStruct(param)
 
 	m.RunBurnIn(param, settings.BurnIn)
 	var run int
@@ -154,7 +158,9 @@ func (m *Malaria) RunModel(param Parameters, setting ModelSettings, dataFileName
 			break
 		}
 	}
+
 	file.Close()
+	file_strainCounter.Close()
 	time.Sleep(time.Second) // Wait a bit for the system to follow up.
 	return run
 }
