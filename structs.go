@@ -3,6 +3,7 @@ package main
 import (
 	"math/rand"
 	"sort"
+	"strconv"
 )
 
 // Malaria : Contains all information that is needed to run the simulation.
@@ -62,9 +63,9 @@ func ConstructMalariaStruct(param Parameters, specificStrains string) Malaria {
 	m.Hosts = make([]Host, m.NHosts)
 	for host := 0; host < m.NHosts; host++ {
 		if host < m.NInfectedHosts {
-			m.Hosts[host] = MakeHost(true, m.NAntigens, m.MaxAntigenValue)
+			m.Hosts[host] = MakeHost(true, m.NAntigens, m.MaxAntigenValue, m.StrainKeys, m.MaxStrains)
 		} else {
-			m.Hosts[host] = MakeHost(false, m.NAntigens, m.MaxAntigenValue)
+			m.Hosts[host] = MakeHost(false, m.NAntigens, m.MaxAntigenValue, m.StrainKeys, m.MaxStrains)
 		}
 	}
 
@@ -84,6 +85,45 @@ func ConstructMalariaStruct(param Parameters, specificStrains string) Malaria {
 }
 
 // MakeHost : Make a host in the hoststruct
+func MakeHost(infected bool, NAntigens int, MaxAntigenValue int, strainKeys []string, maxStrains int) Host {
+	var h Host
+
+	h.IsAlive = true
+	h.ExpressedStrain = make([]int8, NAntigens)
+	h.Antibodies = make([]bool, MaxAntigenValue)
+
+	if infected {
+		h.IsInfected = true
+		randomStrain := strainKeys[rand.Intn(maxStrains)]
+		h.Infections = InsertStrain(randomStrain, NAntigens)
+		for i := 0; i < NAntigens; i++ {
+			h.ExpressedStrain[i] = h.Infections[i]
+		}
+	} else {
+		h.IsInfected = false
+	}
+
+	return h
+}
+
+// InsertStrain : Instert given strain string into an array.
+func InsertStrain(strainKey string, NAntigens int) []int8 {
+	infections := make([]int8, NAntigens)
+	i := 0
+	for _, s := range strainKey {
+		if string(s) != "," {
+			sInt, _ := strconv.Atoi(string(s))
+			infections[i] = int8(sInt)
+			i++
+		}
+	}
+	return infections
+}
+
+/*
+// MakeHost : Make a host in the hoststruct
+
+
 func MakeHost(infected bool, NAntigens int, MaxAntigenValue int) Host {
 	var h Host
 
@@ -102,6 +142,7 @@ func MakeHost(infected bool, NAntigens int, MaxAntigenValue int) Host {
 
 	return h
 }
+*/
 
 // InsertRandomInfection : A host becomes infected by a random strain.
 func (h *Host) InsertRandomInfection(NAntigens int, MaxAntigenValue int) {
