@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"math/rand"
 	"sort"
 )
@@ -20,7 +19,8 @@ type Malaria struct {
 
 	Hosts []Host // An array which contains the host struct. Each index in the array is a single host.
 
-	SuperInfectionCounter []int          // An array that keeps count of the number of infections in all hosts. 0 is the how no infected there is.
+	SuperInfectionCounter []int // An array that keeps count of the number of infections in all hosts. 0 index is no infections.
+	MaxStrains            int
 	StrainCounter         map[string]int // Keeps count of all strains. Key is the specific strain (anitgens seperated by comma), and int is how many is infected by that particular strain. NOTE, it keeps count of the expressed strain, not the number of infected.
 	StrainKeys            []string       // An ordered set of keys for StrainCounter. Used when saving.
 }
@@ -36,7 +36,7 @@ type Host struct {
 }
 
 // ConstructMalariaStruct : Initiates a malaria struct and starts initial conditions.
-func ConstructMalariaStruct(param Parameters, settings ModelSettings) Malaria {
+func ConstructMalariaStruct(param Parameters, specificStrains string) Malaria {
 	var m Malaria
 
 	// Sets initial values.
@@ -44,6 +44,20 @@ func ConstructMalariaStruct(param Parameters, settings ModelSettings) Malaria {
 	m.NInfectedHosts = param.InitialInfected
 	m.NAntigens = param.NAntigens
 	m.MaxAntigenValue = param.MaxAntigenValue
+
+	if specificStrains == "All" {
+		m.MaxStrains, m.StrainKeys, m.StrainCounter = FindAllStrainCombinations(param.NAntigens, param.MaxAntigenValue)
+	} else if specificStrains == "nonCross" {
+		m.MaxStrains = 4
+		m.StrainKeys = []string{"1,2", "3,4", "5,6", "7,8"}
+		m.StrainCounter = map[string]int{"1,2": 0, "3,4": 0, "5,6": 0, "7,8": 0}
+	} else if specificStrains == "cross" {
+		m.MaxStrains = 4
+		m.StrainKeys = []string{"1,2", "2,3", "3,4", "4,1"}
+		m.StrainCounter = map[string]int{"1,2": 0, "2,3": 0, "3,4": 0, "4,1": 0}
+	} else {
+		panic("No specific strain option was selected")
+	}
 
 	m.Hosts = make([]Host, m.NHosts)
 	for host := 0; host < m.NHosts; host++ {
@@ -63,15 +77,7 @@ func ConstructMalariaStruct(param Parameters, settings ModelSettings) Malaria {
 	m.SuperInfectionCounter[0] = m.NHosts - m.NInfectedHosts
 	m.SuperInfectionCounter[1] = m.NInfectedHosts
 
-	if settings.SpecificStrains == "All" {
-		_, m.StrainKeys, m.StrainCounter = FindAllStrainCombinations(param.NAntigens, param.MaxAntigenValue)
-	} else {
-		m.StrainKeys = []string{"1,2", "3,4", "5,6", "7,8"}
-		m.StrainCounter = map[string]int{"1,2": 0, "3,4": 0, "5,6": 0, "7,8": 0}
-	}
 	m.CountStrains()
-
-	fmt.Println(m.StrainCounter)
 
 	//fmt.Println(m.Antigens, "\n", m.Infections, "\n", m.Antibodies, "\n")
 	return m

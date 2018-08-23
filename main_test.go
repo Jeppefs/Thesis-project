@@ -52,13 +52,12 @@ func init() {
 		}
 		i++
 	}
-
 }
 
 //
 func CreateMalariaStructsInSlice() [3]Malaria {
 
-	malariaStructs := [3]Malaria{ConstructMalariaStruct(p1), ConstructMalariaStruct(p2), ConstructMalariaStruct(p3)}
+	malariaStructs := [3]Malaria{ConstructMalariaStruct(p1, "All"), ConstructMalariaStruct(p2, "All"), ConstructMalariaStruct(p3, "All")}
 
 	// Make the expressed strains and infection definitive.
 	malariaStructs[1].Hosts[0].ExpressedStrain[0] = 3
@@ -276,6 +275,7 @@ func TestCountStrains(t *testing.T) {
 }
 
 func TestFindAllStrainCombinations(t *testing.T) {
+	fmt.Println("Testing strain combinations")
 	strainLen := 1
 	antigenMax := 5
 	maxStrains, keys, strainCount := FindAllStrainCombinations(strainLen, antigenMax)

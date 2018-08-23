@@ -100,7 +100,7 @@ func StartModel(param Parameters, settings ModelSettings, dataFileName string) i
 	modelTime := 0
 	startTime := time.Now()
 
-	m := ConstructMalariaStruct(param, settings)
+	m := ConstructMalariaStruct(param, settings.SpecificStrains)
 
 	m.RunBurnIn(param, settings.BurnIn)
 	var run int

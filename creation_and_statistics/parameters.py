@@ -110,8 +110,10 @@ def complexDifference(name = "complexDifference", notes = "Over the same paramet
 
     parameters["InfectionSpeed"] = np.array([0.6])
     parameters["ReplacementSpeed"] = np.array([0.01])
-    parameters["MaxAntigenValue"] = np.arange(2, 25+1, 1, dtype=int)
+    parameters["MaxAntigenValue"] = np.arange([8])
     parameters["NAntigens"] = np.array([2]) 
+
+    settings["SpecificStrains"] = ["other"]
     settings["SkipSaving"] = np.array([2000], dtype=int)
     
     return folder, name, parameters, settings, notes
@@ -123,6 +125,7 @@ def featuresMutation(name = "featuresMutation", notes = "Over the same parameter
     parameters["InfectionSpeed"] = np.array([0.6])
     parameters["ReplacementSpeed"] = np.array([0.005])
     parameters["MutationSpeed"] = np.array([0.005])
+
 
     return folder, name, parameters, settings, notes
 
