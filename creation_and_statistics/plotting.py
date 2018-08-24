@@ -48,6 +48,7 @@ def replacement():
     return
 
 def features(complex=False):
+    # If True, remember to change from -1 to -2
     if complex == True:
         q = MS.MalariaStatistics("complexFeatures", saveFigs=False)
     else:
@@ -98,35 +99,35 @@ def features(complex=False):
     for mask in masks:
         q.ApplyMask(mask)
         if q.dataEnd["run"].iloc[-1] == maxRuns:
-            res = op.minimize(fun=MS.Loglike2D, x0=np.array([1,1, 1000]),
-            args=(q.parameters["MaxAntigenValue"][mask].values-1, q.dataEnd["halfMean"][mask].values, np.sqrt(q.dataEnd["halfVariance"][mask].values), MS.Func_Parabolar),
+            res = op.minimize(fun=MS.Loglike2D, x0=np.array([1, 1, 1]),
+            args=(q.parameters["MaxAntigenValue"][mask].values-2, q.dataEnd["halfMean"][mask].values/q.parameters["NHosts"].iloc[0], np.sqrt(q.dataEnd["halfVariance"][mask].values)/10000, MS.Func_XOverPlusOne),
             method='Nelder-Mead')
             print(res)
-            plt.plot(q.parameters["MaxAntigenValue"][mask], (MS.Func_Parabolar(q.parameters["MaxAntigenValue"][mask].values-1, res.x))/q.parameters["NHosts"], color="k", alpha=0.3)
+            plt.plot(q.parameters["MaxAntigenValue"][mask], (MS.Func_XOverPlusOne(q.parameters["MaxAntigenValue"][mask].values-2, q.dataEnd["halfMean"][mask].values/10000, res.x)), color="k", alpha=0.3)
         q.RemoveMask()
-    
+
     q.PlotNiceAndSave(xlabel="Surface features" , ylabel="Proportion infected", fileName = "mean")
 
-    timelineMask = ((q.parameters["InfectionSpeed"] == 0.6) & (q.parameters["ReplacementSpeed"] == 0.02) & (q.parameters["MaxAntigenValue"] == 5.0))
-    timelineIndex = q.parameters[timelineMask].index.values[0]
-    q.saveFigs = False
-    q.timelineIndex = [timelineIndex,1]
-    print(q.parameters.iloc[timelineIndex])
-    q.ImportTimeline()
-    q.ImportStrainCounter()
-    q.PlotTimeline()
-    q.PlotStrainCounter(newFigure=False)
-    q.PlotNiceAndSave(xlabel="Iteration" , ylabel="Infected", fileName = "strainCounter")
-
-    timelineMask = ((q.parameters["InfectionSpeed"] == 0.8) & (q.parameters["ReplacementSpeed"] == 0.005) & (q.parameters["MaxAntigenValue"] == 5.0))
-    timelineIndex = q.parameters[timelineMask].index.values[0]
-    q.timelineIndex = [timelineIndex,1]
-    print(q.parameters.iloc[timelineIndex])
-    q.ImportTimeline()
-    q.PlotTimeline()
-    q.ImportStrainCounter()
-    q.PlotStrainCounter(newFigure=False)
-    q.PlotNiceAndSave(xlabel="Iteration" , ylabel="Infected", fileName = "strainCounter2")
+    #timelineMask = ((q.parameters["InfectionSpeed"] == 0.6) & (q.parameters["ReplacementSpeed"] == 0.02) & (q.parameters["MaxAntigenValue"] == 5.0))
+    #timelineIndex = q.parameters[timelineMask].index.values[0]
+    #q.saveFigs = False
+    #q.timelineIndex = [timelineIndex,1]
+    #print(q.parameters.iloc[timelineIndex])
+    #q.ImportTimeline()
+    #q.ImportStrainCounter()
+    #q.PlotTimeline()
+    #q.PlotStrainCounter(newFigure=False)
+    #q.PlotNiceAndSave(xlabel="Iteration" , ylabel="Infected", fileName = "strainCounter")
+#
+    #timelineMask = ((q.parameters["InfectionSpeed"] == 0.8) & (q.parameters["ReplacementSpeed"] == 0.005) & (q.parameters["MaxAntigenValue"] == 5.0))
+    #timelineIndex = q.parameters[timelineMask].index.values[0]
+    #q.timelineIndex = [timelineIndex,1]
+    #print(q.parameters.iloc[timelineIndex])
+    #q.ImportTimeline()
+    #q.PlotTimeline()
+    #q.ImportStrainCounter()
+    #q.PlotStrainCounter(newFigure=False)
+    #q.PlotNiceAndSave(xlabel="Iteration" , ylabel="Infected", fileName = "strainCounter2")
 
     return
 
@@ -135,7 +136,7 @@ def features2D():
     mask = (q.parameters["ReplacementSpeed"] == 0.005)
     q.ApplyMask(mask)
     q.Plot2D("MaxAntigenValue", "InfectionSpeed", newFigure=True)
-    q.PlotNiceAndSave(xlabel="Strains" , ylabel=r"$\alpha$", fileName = "features2D_lowReplacement")
+    q.PlotNiceAndSave(xlabel="Strains" , ylabel=r"$\alpha$", fileName = "lowReplacement")
     q.RemoveMask
 
     q = MS.MalariaStatistics("features2D", saveFigs=False)
@@ -168,15 +169,16 @@ def complexDifference2D():
     q = MS.MalariaStatistics("complexDifference2D", saveFigs=False)
     mask = (q.parameters["SpecificStrains"] == "nonCross")
     q.ApplyMask(mask)
-    q.Plot2D("InfectionSpeed", "ReplacementSpeed", newFigure=True)
-    q.PlotNiceAndSave(ylabel=r"$\gamma$" , xlabel=r"$\alpha$", fileName = "nonCross")
+    q.Plot2D("ReplacementSpeed", "InfectionSpeed", newFigure=True)
+    q.PlotNiceAndSave(xlabel=r"$\gamma$" , ylabel=r"$\alpha$", fileName = "nonCross")
     q.RemoveMask()
 
     q = MS.MalariaStatistics("complexDifference2D", saveFigs=False)
     mask = (q.parameters["SpecificStrains"] == "cross")
     q.ApplyMask(mask)
-    q.Plot2D("InfectionSpeed", "ReplacementSpeed", newFigure=True)
-    q.PlotNiceAndSave(ylabel=r"$\gamma$", xlabel=r"$\alpha$", fileName = "cross")
+    q.Plot2D("ReplacementSpeed","InfectionSpeed", newFigure=True)
+    q.PlotNiceAndSave(xlabel=r"$\gamma$", ylabel=r"$\alpha$", fileName = "cross")
+    
     return
 
 complexDifference2D()

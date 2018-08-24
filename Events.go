@@ -146,7 +146,7 @@ func (h *Host) Die(NAntigens int, MaxAntigenValue int, strainCounter *map[string
 
 // MutateParasite : Changes a single antigen in a host to a new random one.
 func (m *Malaria) MutateParasite(host int) {
-	randomAntigen := rand.Intn(m.NAntigens)
+	randomAntigen := rand.Intn(m.NAntigens) + 1
 	m.Hosts[host].ExpressedStrain[randomAntigen] = int8(rand.Intn(m.MaxAntigenValue))
 	return
 }

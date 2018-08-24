@@ -91,7 +91,7 @@ def features(name = "features", notes = "Adjusts number of surface features"):
 def features2D(name = "features2D", notes = "Adjusts number of surface features and infection rate, to see at what limit it becomes extinct"):
     folder, name, parameters, settings, notes = standard(name = name, notes = notes)
 
-    parameters["InfectionSpeed"] = np.arange(0.5,0.7+0.01,0.01)
+    parameters["InfectionSpeed"] = np.arange(0.5,0.8+0.01,0.01)
     parameters["ReplacementSpeed"] = np.array([0.005,0.01])
     parameters["MaxAntigenValue"] = np.arange(1, 25+1, 1, dtype=int)
 
@@ -134,8 +134,8 @@ def complexDifference(name = "complexDifference", notes = "Trying with cross imm
 def complexDifference2D(name = "complexDifference2D", notes = "Trying with cross immunity and not for different alphas and replacement"):
     folder, name, parameters, settings, notes = standard(name = name, notes=notes)
 
-    parameters["InfectionSpeed"] = np.arange(0.5,0.7+0.01,0.01)
-    parameters["ReplacementSpeed"] = np.array([0.001,0.002,0.005,0.01,0.015,0.02])
+    parameters["InfectionSpeed"] = np.arange(0.5,0.8+0.01,0.01)
+    parameters["ReplacementSpeed"] = np.arange(0.0,0.02+0.001, 0.001)
     parameters["SpecificStrains"] = ["nonCross", "cross"] 
     
     settings["Repeat"] = [1]

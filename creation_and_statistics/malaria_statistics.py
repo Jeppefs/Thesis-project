@@ -145,6 +145,9 @@ class MalariaStatistics():
         x = np.unique(self.parameters[vary1])
         y = np.unique(self.parameters[vary2])
         
+        xStep = x[1] - x[0]
+        yStep = y[1] - y[0]
+
         Z = np.zeros((len(x),len(y)))
 
         i = 0
@@ -155,13 +158,15 @@ class MalariaStatistics():
                 j += 1
             i += 1
 
-        plt.imshow(Z, origin='lower', extent=(np.min(x), np.max(x),np.min(y),np.max(y)), aspect='auto',vmin=0, vmax=2*10**7 )    
+        # 
+        plt.imshow(np.transpose(Z), origin='lower', aspect='auto', extent=(np.min(x)-xStep/2, np.max(x)+xStep/2, np.min(y)-yStep/2, np.max(y)+yStep/2), vmin=0, vmax=2*10**7 )    
         matplotlib.rcParams.update({'font.size': 14}) 
         plt.colorbar(format='%.1e')
-        
-            
-        return
+        return Z
     
+    def Plot2DResidual(self, vary1, vary2, newFigure = True):
+        return
+
     def PlotNiceAndSave(self, xlabel, ylabel, fileName):
         plt.xlabel(xlabel, fontsize=self.plotSettings["fontSize"])
         plt.ylabel(ylabel, fontsize=self.plotSettings["fontSize"])
@@ -190,17 +195,20 @@ def LinearFit(x, y):
 
 def Loglike2D(param, X, Y, Y_err, fitFunc):
     #loglike = -1* ( np.sum( np.log(1/(np.sqrt(2*np.pi)*Y_err)) ) + np.sum( (Y - fitFunc(X, param))**2 / (Y_err**2) ) )
-    loglike = 1* np.sum( (Y - fitFunc(X, param))**2 / (Y_err**2) )
+    loglike = 1* np.sum( (Y - fitFunc(X, Y, param))**2 / (Y_err**2) )
     return loglike
 
-def Func_Power(X, param):
+def Func_Power(X, Y, param):
     return param[1]*X**param[0] + param[2]
 
-def Func_Parabolar(X, param):
+def Func_Parabolar(X, Y, param):
     return param[0]*X**2 + param[1]*X + param[2]
 
-def Func_PowerPlusLinear(X, param):
+def Func_PowerPlusLinear(X, Y, param):
     return param[1]*X**param[0] + param[2] * X + param[3]
+
+def Func_XOverPlusOne(X, Y, param):
+    return (param[1]*X**param[2])/(param[0]+param[1]*X**param[2])/(1+Y[0]) + Y[0]
 
 def CalcChi2():
     return
