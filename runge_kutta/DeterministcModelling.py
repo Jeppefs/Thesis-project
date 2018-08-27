@@ -119,6 +119,7 @@ def ReplacementParameterRasta():
 
     return
 
+
 def ReplacementRastaScan():
     
     alphaStep = 0.02
@@ -148,29 +149,29 @@ def ReplacementRastaScan():
     ## Survival
     plt.figure()
     plt.imshow(gridSurvival, origin='lower', extent=(np.min(gammas)-gammaStep/2,np.max(gammas)+gammaStep/2,np.min(alphas)-alphaStep/2,np.max(alphas)+alphaStep/2), aspect='auto' )    
-    plt.xlabel(r"$\gamma$", fontsize=16)
-    plt.ylabel(r"$\alpha$", fontsize=16)
-    plt.tick_params(labelsize=14)
+    plt.xlabel(r"$\gamma$", fontsize=18)
+    plt.ylabel(r"$\alpha$", fontsize=18)
+    plt.tick_params(labelsize=16)
     plt.tight_layout()
     plt.savefig("runge_kutta/gridSurvival.pdf", format="pdf")
 
     ## Infected
     plt.figure()
     plt.imshow(gridInfected, origin='lower', extent=(np.min(gammas)-gammaStep/2,np.max(gammas)+gammaStep/2,np.min(alphas)-alphaStep/2,np.max(alphas)+alphaStep/2), aspect='auto' )    
-    plt.xlabel(r"$\gamma$", fontsize=16)
-    plt.ylabel(r"$\alpha$", fontsize=16)
+    plt.xlabel(r"$\gamma$", fontsize=18)
+    plt.ylabel(r"$\alpha$", fontsize=18)
     plt.colorbar()
-    plt.tick_params(labelsize=14)
+    plt.tick_params(labelsize=16)
     plt.tight_layout()
     plt.savefig("runge_kutta/gridInfected.pdf", format="pdf")
 
     ## Infected
     plt.figure()
     plt.imshow(gridResistant, origin='lower', extent=(np.min(gammas)-gammaStep/2,np.max(gammas)+gammaStep/2,np.min(alphas)-alphaStep/2,np.max(alphas)+alphaStep/2), aspect='auto' )    
-    plt.xlabel(r"$\gamma$", fontsize=16)
-    plt.ylabel(r"$\alpha$", fontsize=16)
+    plt.xlabel(r"$\gamma$", fontsize=18)
+    plt.ylabel(r"$\alpha$", fontsize=18)
     plt.colorbar()
-    plt.tick_params(labelsize=14)
+    plt.tick_params(labelsize=16)
     plt.tight_layout()
     plt.savefig("runge_kutta/gridResistant.pdf", format="pdf")
 

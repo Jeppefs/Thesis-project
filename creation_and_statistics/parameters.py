@@ -2,7 +2,7 @@ import numpy as np
 from collections import OrderedDict
 import make_parameters as mp 
 
-func = "complexDifference2D"
+func = "mutation2D"
 name = ""
 notes = ""
 
@@ -144,20 +144,48 @@ def complexDifference2D(name = "complexDifference2D", notes = "Trying with cross
     
     return folder, name, parameters, settings, notes
 
-def featuresMutation(name = "featuresMutation", notes = "Over the same parameters as features, except mutation exist"):
-    folder, name, parameters, settings, notes = features(name = name, notes = notes)
-    
-    parameters["NAntigens"] = np.array([1])
-    parameters["InfectionSpeed"] = np.array([0.6])
-    parameters["ReplacementSpeed"] = np.array([0.005])
-    parameters["MutationSpeed"] = np.array([0.005])
+def mutation2D(name = "mutation2D", notes = "Search over muation and infection speed"):
+    folder, name, parameters, settings, notes = standard(name = name, notes = notes)
 
+    parameters["InfectionSpeed"] = parameters["InfectionSpeed"] = np.arange(0.5,0.8+0.01,0.01)
+    parameters["ReplacementSpeed"] = np.array([0.005])
+    parameters["MutationSpeed"] = np.arange(0.0,0.01+0.0001, 0.0002)
+    parameters["NAntigens"] = np.array([2])
+    parameters["MaxAntigenValue"] = np.array([4])
+
+    settings["Repeat"] = [1]
+    settings["ShouldSaveDataWhileRunning"] = ["false"] 
     settings["SkipSaving"] = np.array([2000], dtype=int)
 
     return folder, name, parameters, settings, notes
 
-def complexDifferenceMutation():
-    return
+def featuresMutation(name = "featuresMutation", notes = "Over the same parameters as features, except mutation exist"):
+    folder, name, parameters, settings, notes = features(name = name, notes = notes)
+    
+    parameters["MutationSpeed"] = np.array([0.005])
+
+    return folder, name, parameters, settings, notes
+
+def featuresMutationLow(name = "featuresMutationLow", notes = "Over the same parameters as features, except mutation exist with 0.0005"):
+    folder, name, parameters, settings, notes = features(name = name, notes = notes)
+    
+    parameters["MutationSpeed"] = np.array([0.0005])
+
+    return folder, name, parameters, settings, notes
+
+def featuresMutationVeryLow(name = "featuresMutationVeryLow", notes = "Over the same parameters as features, except mutation exist with 0.0005"):
+    folder, name, parameters, settings, notes = features(name = name, notes = notes)
+    
+    parameters["MutationSpeed"] = np.array([0.0001])
+
+    return folder, name, parameters, settings, notes
+
+def complexDifferenceMutation2D(name = "complexDifferenceMutation2D", notes = "Same as complexDifference2D but with mutation."):
+    folder, name, parameters, settings, notes = complexDifference2D(name = name, notes = notes)
+
+    parameters["MutationSpeed"] = np.array([0.0005])
+
+    return folder, name, parameters, settings, notes
 
 
 

@@ -20,8 +20,8 @@ class MalariaStatistics():
 
         self.plotSettings = plotSettings
         if self.plotSettings == {}:
-            self.plotSettings["fontSize"] = 16
-            self.plotSettings["tickSize"] = 14
+            self.plotSettings["fontSize"] = 18
+            self.plotSettings["tickSize"] = 16
             self.plotSettings["saveFigs"] = saveFigs
             self.plotSettings["savePath"] = self.pathName + "plots" + "/" + self.simulationName + "_"
 
@@ -132,7 +132,7 @@ class MalariaStatistics():
         if newFigure: plt.figure()
         for strain in range(self.NStrains):
             if len(axis) == 0:
-                plt.plot(self.timelineRuns, self.strainCounter[:, strain]/self.parameters["NHosts"][self.timelineIndex[0]-1])
+                plt.plot(self.timelineRuns, self.strainCounter[:, strain]/self.parameters["NHosts"][self.timelineIndex[0]-1], alpha=0.6)
 
         if self.plotSettings["saveFigs"]: self.PlotNiceAndSave("Iteration", "Infected", "strainCounter")
 

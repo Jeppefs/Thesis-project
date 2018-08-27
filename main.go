@@ -10,7 +10,7 @@ import (
 )
 
 // We define a set of global constant - mostly
-const path = "data/" + "complexDifference2D/"
+const path = "data/" + "mutation2D/"
 
 // main
 func main() {
