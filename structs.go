@@ -30,9 +30,11 @@ type Host struct {
 	IsAlive    bool
 	IsInfected bool
 
-	ExpressedStrain []int8 // The strain which another person will be infected with.
-	Infections      []int8 // The strains that are currently infecting a host.
-	Antibodies      []bool // An array of the antigens that a host is immune to.
+	NInfections int8 // The number of infection a host has.
+
+	//ExpressedStrain []int8   // The strain which another person will be infected with.
+	Infections [][]int8 // The strains that are currently infecting a host. Each strain is a slice.
+	Antibodies []bool   // An array of the antigens that a host is immune to.
 }
 
 // ConstructMalariaStruct : Initiates a malaria struct and starts initial conditions.
@@ -88,22 +90,25 @@ func ConstructMalariaStruct(param Parameters) Malaria {
 }
 
 // MakeHost : Make a host in the hoststruct
-func MakeHost(infected bool, NAntigens int, MaxAntigenValue int, strainKeys []string, maxStrains int) Host {
+func MakeHost(param Parameters, infected bool, strainKeys []string, maxStrains int) Host {
 	var h Host
 
 	h.IsAlive = true
-	h.ExpressedStrain = make([]int8, NAntigens)
-	h.Antibodies = make([]bool, MaxAntigenValue)
+	//h.ExpressedStrain = make([]int8, param.NAntigens)
+	h.Infections = make([][]int8, param.MaxSuperInfections)
+	h.Antibodies = make([]bool, param.MaxAntigenValue)
 
 	if infected {
+		h.NInfections = 1
 		h.IsInfected = true
 		randomStrain := strainKeys[rand.Intn(maxStrains)]
-		h.Infections = InsertStrain(randomStrain, NAntigens)
+		h.Infections[0] = InsertStrain(randomStrain, param.NAntigens)
 		for i := 0; i < NAntigens; i++ {
 			h.ExpressedStrain[i] = h.Infections[i]
 		}
 	} else {
 		h.IsInfected = false
+		h.NInfections = 0
 	}
 
 	return h

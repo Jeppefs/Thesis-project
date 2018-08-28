@@ -5,28 +5,27 @@ import (
 )
 
 // Spread : Another person gets infected.
-func (m *Malaria) Spread(spreadTo int, spreadFrom int) {
+func (m *Malaria) Spread(spreadTo int, MaxSuperInfections int, originStrain []int8) {
 
-	// If spread to is equal to spread from, do not spread.
-	if spreadTo == spreadFrom {
+	// If the host can't contain more strain, do nothing.
+	if m.Hosts[spreadTo].NInfections >= int8(MaxSuperInfections) {
 		return
 	}
 
-	// If the host already is infected by the same strain, then don't infect.
 	if m.Hosts[spreadTo].IsInfected {
-		if m.Hosts[spreadTo].HasStrain(&m.Hosts[spreadFrom], m.NAntigens) == true {
+		// Checks if the new host already has the strain in question. This also makes sure that a host cannot infect itself.
+		if m.Hosts[spreadTo].HasStrain(originStrain, m.NAntigens) == true {
 			return
 		}
-		m.Hosts[spreadTo].InfectHost(&m.Hosts[spreadFrom], m.NAntigens)
+		m.Hosts[spreadTo].InfectHost(originStrain, m.NAntigens)
 	} else {
 		// If the target is not currently infected put him on the infected list, add to the number of incfected and append the disease to him.
 		m.NInfectedHosts++
 		m.InfectedHosts = append(m.InfectedHosts, spreadTo)
-		m.Hosts[spreadTo].InfectHost(&m.Hosts[spreadFrom], m.NAntigens)
-
+		m.Hosts[spreadTo].InfectHost(originStrain, m.NAntigens)
 	}
 
-	m.StrainCounter[ListToString(m.Hosts[spreadFrom].ExpressedStrain)]++
+	m.StrainCounter[ListToString(originStrain)]++
 
 	return
 }
@@ -39,7 +38,7 @@ func (m *Malaria) GetSpreadToAndSpreadFrom() (int, int) {
 }
 
 // InfectHost :
-func (h *Host) InfectHost(fromHost *Host, NAntigens int) {
+func (h *Host) InfectHost(originStrain []int8, NAntigens int) {
 	// Check if the person spreading to has any infections. If false make him sick. If true append the parasite.
 	if h.IsInfected {
 		for antigen := 0; antigen < NAntigens; antigen++ {
