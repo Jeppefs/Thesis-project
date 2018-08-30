@@ -14,7 +14,7 @@ func (m *Malaria) Spread(spreadTo int, MaxSuperInfections int, originStrain []in
 
 	if m.Hosts[spreadTo].IsInfected {
 		// Checks if the new host already has the strain in question. This also makes sure that a host cannot infect itself.
-		if m.Hosts[spreadTo].HasStrain(originStrain, m.NAntigens) == true {
+		if m.Hosts[spreadTo].HasStrain(originStrain, m.NAntigens, MaxSuperInfections) == true {
 			return
 		}
 		m.Hosts[spreadTo].InfectHost(originStrain, m.NAntigens)
