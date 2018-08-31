@@ -1,4 +1,5 @@
 import malaria_statistics as MS 
+import Latexify as Latexify
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -200,6 +201,7 @@ def complexDifferenceMutation2D():
     q.Plot2D("ReplacementSpeed","InfectionSpeed", newFigure=True)
     q.PlotNiceAndSave(xlabel=r"$\gamma$", ylabel=r"$\alpha$", fileName = "cross")
 
-#features("mutation")
-complexDifferenceMutation2D()
+Latexify.Latexify(          )
+features("mutation")
+simple()
 plt.show()
