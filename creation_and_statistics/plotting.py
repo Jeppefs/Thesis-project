@@ -201,7 +201,7 @@ def complexDifferenceMutation2D():
     q.Plot2D("ReplacementSpeed","InfectionSpeed", newFigure=True)
     q.PlotNiceAndSave(xlabel=r"$\gamma$", ylabel=r"$\alpha$", fileName = "cross")
 
-Latexify.Latexify(          )
-features("mutation")
+Latexify.Latexify()
+#features("mutation")
 simple()
 plt.show()
