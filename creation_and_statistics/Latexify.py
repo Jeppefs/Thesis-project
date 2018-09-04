@@ -20,11 +20,12 @@ def Latexify(fig_width=None, fig_height=None, columns=1):
     if fig_width is None:
         fig_width = cmToInch(12.65076) # width in inches. The standard is report with 11pt font
     
-    if columns == 2:
+    if columns == 1:
+        fig_width = fig_width * 0.99
+    elif  columns == 2:
         fig_width = fig_width * 0.49
-    
-    if columns == 3:
-        fig_width = fig_width * 0.32
+    elif columns == 3:
+        fig_width = fig_width * 0.32 
 
     if fig_height is None:
         golden_mean = (np.sqrt(5)-1.0)/2.0 # Aesthetic ratio
