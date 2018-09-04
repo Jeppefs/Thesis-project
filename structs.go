@@ -2,6 +2,7 @@ package main
 
 import (
 	"math/rand"
+	"sort"
 	"strconv"
 )
 
@@ -132,7 +133,6 @@ func InsertStrain(strainKey string, NAntigens int) []int8 {
 	return infections
 }
 
-/*
 // InsertRandomInfection : A host becomes infected by a random strain.
 func (h *Host) InsertRandomInfection(NAntigens int, MaxAntigenValue int) {
 
@@ -169,4 +169,3 @@ func MakeHost(infected bool, NAntigens int, MaxAntigenValue int) Host {
 
 	return h
 }
-*/

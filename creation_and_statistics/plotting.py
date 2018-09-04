@@ -14,13 +14,14 @@ def simple():
     plt.plot(np.arange(1.0, 1.05, 0.0001), 10000*(np.arange(1.0, 1.05, 0.0001)-1), color="r")
     q.PlotMeanInfection("InfectionSpeed", xlabel = r"$\alpha$", newFigure=False)
     
-
+    Latexify.Latexify()
     q.timelineIndex = [1, 1]
     print("InfectionSpeed", q.parameters["InfectionSpeed"][q.timelineIndex[0]])
     q.ImportTimeline()
     q.PlotTimeline()
 
-    q.timelineIndex = [40, 5]
+    Latexify.Latexify()
+    q.timelineIndex = [10, 5]
     print("InfectionSpeed", q.parameters["InfectionSpeed"][q.timelineIndex[0]])
     q.ImportTimeline()
     q.PlotTimeline()
@@ -201,7 +202,7 @@ def complexDifferenceMutation2D():
     q.Plot2D("ReplacementSpeed","InfectionSpeed", newFigure=True)
     q.PlotNiceAndSave(xlabel=r"$\gamma$", ylabel=r"$\alpha$", fileName = "cross")
 
-Latexify.Latexify(          )
-features("mutation")
+Latexify.Latexify()
+#features("mutation")
 simple()
 plt.show()

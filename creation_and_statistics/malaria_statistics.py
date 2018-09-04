@@ -20,8 +20,8 @@ class MalariaStatistics():
 
         self.plotSettings = plotSettings
         if self.plotSettings == {}:
-            self.plotSettings["fontSize"] = 18
-            self.plotSettings["tickSize"] = 16
+            #self.plotSettings["fontSize"] = 18
+            #self.plotSettings["tickSize"] = 16
             self.plotSettings["saveFigs"] = saveFigs
             self.plotSettings["savePath"] = self.pathName + "plots" + "/" + self.simulationName + "_"
 
@@ -168,9 +168,8 @@ class MalariaStatistics():
         return
 
     def PlotNiceAndSave(self, xlabel, ylabel, fileName):
-        plt.xlabel(xlabel, fontsize=self.plotSettings["fontSize"])
-        plt.ylabel(ylabel, fontsize=self.plotSettings["fontSize"])
-        plt.tick_params(labelsize=self.plotSettings["tickSize"])
+        plt.xlabel(xlabel)
+        plt.ylabel(ylabel)
         plt.tight_layout()
 
         figName = self.plotSettings["savePath"] + fileName + ".pdf"
