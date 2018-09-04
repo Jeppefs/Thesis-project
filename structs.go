@@ -3,7 +3,6 @@ package main
 import (
 	"math/rand"
 	"sort"
-	"strconv"
 )
 
 // Malaria : Contains all information that is needed to run the simulation.
@@ -67,9 +66,9 @@ func ConstructMalariaStruct(param Parameters) Malaria {
 	m.Hosts = make([]Host, m.NHosts)
 	for host := 0; host < m.NHosts; host++ {
 		if host < m.NInfectedHosts {
-			m.Hosts[host] = MakeHost(true, m.NAntigens, m.MaxAntigenValue, m.StrainKeys, m.MaxStrains)
+			m.Hosts[host] = MakeHost(true, m.NAntigens, m.MaxAntigenValue)
 		} else {
-			m.Hosts[host] = MakeHost(false, m.NAntigens, m.MaxAntigenValue, m.StrainKeys, m.MaxStrains)
+			m.Hosts[host] = MakeHost(false, m.NAntigens, m.MaxAntigenValue)
 		}
 	}
 
@@ -86,51 +85,6 @@ func ConstructMalariaStruct(param Parameters) Malaria {
 
 	//fmt.Println(m.Antigens, "\n", m.Infections, "\n", m.Antibodies, "\n")
 	return m
-}
-
-// MakeHost : Make a host in the hoststruct
-func MakeHost(infected bool, NAntigens int, MaxAntigenValue int, strainKeys []string, maxStrains int) Host {
-	var h Host
-
-	h.IsAlive = true
-	h.ExpressedStrain = make([]int8, NAntigens)
-	h.Antibodies = make([]bool, MaxAntigenValue)
-
-	if infected {
-		h.IsInfected = true
-		randomStrain := strainKeys[rand.Intn(maxStrains)]
-		h.Infections = InsertStrain(randomStrain, NAntigens)
-		for i := 0; i < NAntigens; i++ {
-			h.ExpressedStrain[i] = h.Infections[i]
-		}
-	} else {
-		h.IsInfected = false
-	}
-
-	return h
-}
-
-// InsertStrain : Instert given strain string into an array.
-func InsertStrain(strainKey string, NAntigens int) []int8 {
-	infections := make([]int8, NAntigens)
-	strainKey += ","
-	i := 0
-	for j := 0; j < len(strainKey); j++ {
-		if string(strainKey[j]) != "," {
-			if string(strainKey[j+1]) != "," { // WAUW! This is shitty code!
-				sInt, _ := strconv.Atoi(string(strainKey[j]) + string(strainKey[j+1]))
-				infections[i] = int8(sInt)
-				i++
-				j++
-			} else {
-				sInt, _ := strconv.Atoi(string(strainKey[j]))
-				infections[i] = int8(sInt)
-				i++
-			}
-		}
-		j++
-	}
-	return infections
 }
 
 // InsertRandomInfection : A host becomes infected by a random strain.
