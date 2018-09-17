@@ -28,7 +28,6 @@ type Malaria struct {
 // Host : Contains information about a host/person
 type Host struct {
 	NInfections int   // The number of infection a host has.
-	IsInfected bool 
 	Infections  []int // The strain indices that are currently infecting a host.
 	Antibodies  []bool // An array of the antigens that a host is immune to.
 }
@@ -89,7 +88,6 @@ func ConstructMalariaStruct(param Parameters) Malaria {
 func MakeHost(param Parameters, infected bool, strainKeys []string, maxStrains int) Host {
 	var h Host
 
-	h.IsInfected = infected
 	h.Infections = make([]int)
 	h.Antibodies = make([]bool, param.MaxAntigenValue)
 
@@ -97,7 +95,6 @@ func MakeHost(param Parameters, infected bool, strainKeys []string, maxStrains i
 		h.NInfections = 1
 		h.Infections = append(h.Infections, rand.Intn(maxStrains))
 	} else {
-		h.IsInfected = false
 		h.NInfections = 0
 	}
 
