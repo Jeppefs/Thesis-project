@@ -115,19 +115,16 @@ func FindAllStrainCombinations(strainLen int, antigenMax int) (int, []string, ma
 		panic("Strain length is greater than the maximum possible antigen value")
 	}
 
-	var strainCount map[string]int
-	strainCount = make(map[string]int)
-
-	var strainKeys []string
-
+	var Strains [][]int8
+	var strainCounter []int
 	maxStrains := 0
 
 	if strainLen == 1 {
 		for i := 1; i < antigenMax+1; i++ {
 			strainCount[strconv.Itoa(i)] = 0
 			strainKeys = append(strainKeys, strconv.Itoa(i))
+			maxStrains++
 		}
-		maxStrains = antigenMax
 
 	} else if strainLen == 2 {
 

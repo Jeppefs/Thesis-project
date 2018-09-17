@@ -12,23 +12,24 @@ type Malaria struct {
 	NInfectedHosts  int // The number of infected hosts
 	NAntigens       int // The number of antigens a single parasite consists of
 	MaxAntigenValue int // The maximum number an antigen can have
+	MaxStrains      int // The maximum number of possible strains in the system
 
 	NDifferentAntigens int // The current amount of different antigens in the system.
 
 	InfectedHosts []int // A list of hosts that are infected by one or more malaria strains
 
-	Hosts []Host // An array which contains the host struct. Each index in the array is a single host.
+	InfectionCounter []int    // An array that keeps count of the number of infections in all hosts. 0 index is no infections.
+	StrainCounter    []int    // Keeps count of all strains. Key is the specific strain (anitgens seperated by comma), and int is how many is infected by that particular strain. NOTE, it keeps count of the expressed strain, not the number of infected.
+	Strains          [][]int8 // The values of the strains. Each index has the antigens of that strains.
 
-	MaxStrains            int
-	SuperInfectionCounter []int    // An array that keeps count of the number of infections in all hosts. 0 index is no infections.
-	StrainCounter         []int    // Keeps count of all strains. Key is the specific strain (anitgens seperated by comma), and int is how many is infected by that particular strain. NOTE, it keeps count of the expressed strain, not the number of infected.
-	Strains               [][]int8 // The values of the strains. Each index has the antigens of that strains.
+	Hosts []Host // An array which contains the host struct. Each index in the array is a single host.
 }
 
 // Host : Contains information about a host/person
 type Host struct {
-	NInfections int8   // The number of infection a host has.
-	Infections  []int8 // The strain indices that are currently infecting a host.
+	NInfections int   // The number of infection a host has.
+	IsInfected bool 
+	Infections  []int // The strain indices that are currently infecting a host.
 	Antibodies  []bool // An array of the antigens that a host is immune to.
 }
 
@@ -43,23 +44,24 @@ func ConstructMalariaStruct(param Parameters) Malaria {
 	m.MaxAntigenValue = param.MaxAntigenValue
 
 	if param.SpecificStrains == "all" {
-		m.MaxStrains, m.StrainKeys, m.StrainCounter = FindAllStrainCombinations(param.NAntigens, param.MaxAntigenValue)
+		m.MaxStrains, m.Strains, m.StrainCounter = FindAllStrainCombinations(param.NAntigens, param.MaxAntigenValue)
 	} else if param.SpecificStrains == "nonCross" {
 		m.NAntigens = 2
 		m.MaxAntigenValue = 8
 		m.MaxStrains = 4
-		m.StrainKeys = []string{"1,2", "3,4", "5,6", "7,8"}
-		m.StrainCounter = map[string]int{"1,2": 0, "3,4": 0, "5,6": 0, "7,8": 0}
+		m.Strains := [][]int8{{1, 2},{3, 4},{5, 6},{7,8},}
+		m.StrainCounter = make([]int8, m.MaxStrains)
 	} else if param.SpecificStrains == "cross" {
 		m.NAntigens = 2
 		m.MaxAntigenValue = 4
 		m.MaxStrains = 4
-		m.StrainKeys = []string{"1,2", "2,3", "3,4", "4,1"}
-		m.StrainCounter = map[string]int{"1,2": 0, "2,3": 0, "3,4": 0, "4,1": 0}
+		m.Strains := [][]int8{{1, 2},{2, 3},{3, 4},{4, 1},}
+		m.StrainCounter = make([]int8, m.MaxStrains)
 	} else {
 		panic("No specific strain option was selected")
 	}
 
+	// Create hosts - infected and nonInfected
 	m.Hosts = make([]Host, m.NHosts)
 	for host := 0; host < m.NHosts; host++ {
 		if host < m.NInfectedHosts {
@@ -80,7 +82,6 @@ func ConstructMalariaStruct(param Parameters) Malaria {
 
 	m.CountStrains()
 
-	//fmt.Println(m.Antigens, "\n", m.Infections, "\n", m.Antibodies, "\n")
 	return m
 }
 
@@ -88,19 +89,13 @@ func ConstructMalariaStruct(param Parameters) Malaria {
 func MakeHost(param Parameters, infected bool, strainKeys []string, maxStrains int) Host {
 	var h Host
 
-	h.IsAlive = true
-	//h.ExpressedStrain = make([]int8, param.NAntigens)
-	h.Infections = make([][]int8, param.MaxSuperInfections)
+	h.IsInfected = infected
+	h.Infections = make([]int)
 	h.Antibodies = make([]bool, param.MaxAntigenValue)
 
 	if infected {
 		h.NInfections = 1
-		h.IsInfected = true
-		randomStrain := strainKeys[rand.Intn(maxStrains)]
-		h.Infections[0] = InsertStrain(randomStrain, param.NAntigens)
-		for i := 0; i < NAntigens; i++ {
-			h.ExpressedStrain[i] = h.Infections[i]
-		}
+		h.Infections = append(h.Infections, rand.Intn(maxStrains))
 	} else {
 		h.IsInfected = false
 		h.NInfections = 0
