@@ -19,22 +19,17 @@ type Malaria struct {
 
 	Hosts []Host // An array which contains the host struct. Each index in the array is a single host.
 
-	SuperInfectionCounter []int // An array that keeps count of the number of infections in all hosts. 0 index is no infections.
 	MaxStrains            int
-	StrainCounter         map[string]int // Keeps count of all strains. Key is the specific strain (anitgens seperated by comma), and int is how many is infected by that particular strain. NOTE, it keeps count of the expressed strain, not the number of infected.
-	StrainKeys            []string       // An ordered set of keys for StrainCounter. Used when saving.
+	SuperInfectionCounter []int    // An array that keeps count of the number of infections in all hosts. 0 index is no infections.
+	StrainCounter         []int    // Keeps count of all strains. Key is the specific strain (anitgens seperated by comma), and int is how many is infected by that particular strain. NOTE, it keeps count of the expressed strain, not the number of infected.
+	Strains               [][]int8 // The values of the strains. Each index has the antigens of that strains.
 }
 
 // Host : Contains information about a host/person
 type Host struct {
-	IsAlive    bool
-	IsInfected bool
-
-	NInfections int8 // The number of infection a host has.
-
-	//ExpressedStrain []int8   // The strain which another person will be infected with.
-	Infections [][]int8 // The strains that are currently infecting a host. Each strain is a slice.
-	Antibodies []bool   // An array of the antigens that a host is immune to.
+	NInfections int8   // The number of infection a host has.
+	Infections  []int8 // The strain indices that are currently infecting a host.
+	Antibodies  []bool // An array of the antigens that a host is immune to.
 }
 
 // ConstructMalariaStruct : Initiates a malaria struct and starts initial conditions.

@@ -52,11 +52,11 @@ class RungeKutta():
         return endingValues
 
     def PlotTimePlot(self):
-        plt.figure()
+        fig, ax = plt.subplots() 
         for i in range(self.NValues):
-            plt.plot(self.savedValues[i,:]) 
+            plt.plot(self.savedValues[i,:], linewidth = 0.5) 
         
-        return
+        return ax 
 
 def TestRungeKutta():
     q = RungeKutta(np.array([0.99, 0.01, 0.0]), SIR, np.array([1.0,1.0]), dt = 0.001)
