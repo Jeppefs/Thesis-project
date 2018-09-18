@@ -25,7 +25,10 @@ func (m *Malaria) Spread(spreadTo int, strainIndex int) {
 		m.Hosts[spreadTo].InfectHost(originStrain, m.NAntigens)
 	}
 
-	m.StrainCounter[]++
+	// Change the counters accordingly.
+	m.StrainCounter[strainIndex]++
+	m.InfectionCounter[m.Hosts[spreadTo].NInfections-1]--
+	m.InfectionCounter[m.Hosts[spreadTo].NInfections]++
 
 	return
 }
@@ -139,8 +142,9 @@ func (m *Malaria) MutateParasite(host int) {
 }
 
 // GetRandomInfectedHost :
-func (m *Malaria) GetRandomInfectedHost() (int, int) {
+func (m *Malaria) GetRandomInfectedHost() (Host, int, int) {
 	infectedHostIndex := rand.Intn(m.NInfectedHosts)
-	host := m.InfectedHosts[infectedHostIndex]
-	return host, infectedHostIndex
+	hostIndex := m.InfectedHosts[infectedHostIndex]
+	host := m.Hosts[hostIndex]
+	return host, hostIndex, infectedHostIndex
 }
