@@ -7,7 +7,7 @@ func (m *Malaria) EventHappens(param Parameters) {
 	event := ChooseEvent(m, param)
 	switch event {
 	case 0:
-		m.Spread(m.GetSpreadToAndSpreadFrom())
+		m.Spread(rand.Intn(m.NHosts))
 	case 1:
 		m.ImmunityGained(rand.Intn(m.NInfectedHosts))
 	case 2:

@@ -5,6 +5,7 @@ import (
 	"log"
 	"sort"
 	"strconv"
+	"math/rand"
 )
 
 // SumSlice : Returns the sum a float64 slice.
@@ -159,12 +160,17 @@ func (m *Malaria) CountStrains() {
 	}
 
 	for _, host := range m.Hosts {
-		for _, infectionIndex := range host.Infections {
-				m.StrainCounter[infectionIndex]++
+		for _, strainIndex := range host.Infections {
+				m.StrainCounter[strainIndex]++
 			}
 		}
 	}
 	return
+}
+
+// GetRandomStrain : Retrieve a random strain index from an infected host
+func (h *Host) GetRandomStrainIndex() int {
+	return h.Infections[rand.Intn(h.NInfections)]
 }
 
 // ListToString : Converts a list of intergers to a string with komma seperation

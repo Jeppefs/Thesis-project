@@ -5,18 +5,16 @@ import (
 )
 
 // Spread : Another person gets infected.
-func (m *Malaria) Spread(spreadTo int, MaxSuperInfections int, originStrain []int8) {
+func (m *Malaria) Spread(spreadTo int, strainIndex int) {
 
 	// If the host can't contain more strain, do nothing.
 	if m.Hosts[spreadTo].NInfections >= int8(MaxSuperInfections) {
 		return
 	}
 
-	strainIndex := getRandomStrain()
-
-	if m.Hosts[spreadTo].IsInfected {
+	if m.Hosts[spreadTo].NInfections == 0 {
 		// Checks if the new host already has the strain in question. This also makes sure that a host cannot infect itself.
-		if m.Hosts[spreadTo].HasStrain(originStrain, m.NAntigens, MaxSuperInfections) == true {
+		if m.Hosts[spreadTo].HasStrain(strainIndex) == true {
 			return
 		}
 		m.Hosts[spreadTo].InfectHost(originStrain, m.NAntigens)
@@ -39,21 +37,9 @@ func (m *Malaria) GetSpreadToAndSpreadFrom() (int, int) {
 	return spreadTo, spreadFrom
 }
 
-// InfectHost :
-func (h *Host) InfectHost(originStrain []int8, NAntigens int) {
-	// Check if the person spreading to has any infections. If false make him sick. If true append the parasite.
-	if h.IsInfected {
-		for antigen := 0; antigen < NAntigens; antigen++ {
-			h.Infections = append(h.Infections, fromHost.ExpressedStrain[antigen])
-		}
-		//h.CombineParasites(NAntigens)
-	} else {
-		for antigen := 0; antigen < NAntigens; antigen++ {
-			h.Infections = append(h.Infections, fromHost.ExpressedStrain[antigen])
-			h.ExpressedStrain[antigen] = fromHost.ExpressedStrain[antigen]
-			h.IsInfected = true
-		}
-	}
+func (h *Host) InfectHost(strainIndex) {
+	h.NInfections++
+	h.Infections = append(h.Infections, strainIndex)
 	return
 }
 
