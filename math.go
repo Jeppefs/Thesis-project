@@ -44,7 +44,7 @@ func CalcMeanAndVar(data []float64) (float64, float64) {
 func (m *Malaria) CheckIfAllInfectedHasInfection(q int) {
 	for _, host := range m.InfectedHosts {
 		if len(m.Hosts[host].Infections) == 0 {
-			fmt.Println("Warning", m.Hosts[host].Infections, host, m.Hosts[host].IsInfected, len(m.InfectedHosts), m.NInfectedHosts)
+			fmt.Println("Warning", m.Hosts[host].Infections, host, m.Hosts[host].NInfections, len(m.InfectedHosts), m.NInfectedHosts)
 			if q == 2 {
 				panic(strconv.Itoa(q))
 			}
@@ -88,6 +88,7 @@ func (h *Host) HasStrain(strainIndex int) bool {
 }
 
 // CountNumberOfUniqueAntigens : Counts the number of unique antigens an all hosts. s
+/*
 func (m *Malaria) CountNumberOfUniqueAntigens() {
 	AntigenExistence := make([]bool, m.MaxAntigenValue)
 	for _, host := range m.Hosts {
@@ -98,9 +99,10 @@ func (m *Malaria) CountNumberOfUniqueAntigens() {
 	m.NDifferentAntigens = CountBolleanArray(AntigenExistence)
 	return
 }
+*/
 
 // FindAllStrainCombinations :
-func FindAllStrainCombinations(strainLen int, antigenMax int) (int, []string, map[string]int) {
+func FindAllStrainCombinations(strainLen int, antigenMax int) (int, [][]int8, []int) {
 
 	if strainLen > antigenMax {
 		panic("Strain length is greater than the maximum possible antigen value")
@@ -112,7 +114,7 @@ func FindAllStrainCombinations(strainLen int, antigenMax int) (int, []string, ma
 
 	if strainLen == 1 {
 		for i := 1; i < antigenMax+1; i++ {
-			strains = append(strains, []int8{i})
+			strains = append(strains, []int8{int8(i)})
 			strainCounter = append(strainCounter, 0)
 			maxStrains++
 		}
@@ -121,7 +123,7 @@ func FindAllStrainCombinations(strainLen int, antigenMax int) (int, []string, ma
 
 		for i := 1; i < antigenMax; i++ {
 			for j := i + 1; j < antigenMax+1; j++ {
-				strains = append(strains, [][]int8{i, j})
+				strains = append(strains, []int8{int8(i), int8(j)})
 				strainCounter = append(strainCounter, 0)
 				maxStrains++
 			}
@@ -131,7 +133,7 @@ func FindAllStrainCombinations(strainLen int, antigenMax int) (int, []string, ma
 		for i := 1; i < antigenMax-1; i++ {
 			for j := i + 1; j < antigenMax; j++ {
 				for k := j + 1; k < antigenMax+1; k++ {
-					strains = append(strains, [][]int8{i, j, k})
+					strains = append(strains, []int8{int8(i), int8(j), int8(k)})
 					strainCounter = append(strainCounter, 0)
 					maxStrains++
 				}
@@ -139,7 +141,7 @@ func FindAllStrainCombinations(strainLen int, antigenMax int) (int, []string, ma
 		}
 	}
 
-	return maxStrains, strainKeys, strainCount
+	return maxStrains, strains, strainCounter
 }
 
 // CountStrains : Count the strains and change StrainCounter variable in malaria struct.
