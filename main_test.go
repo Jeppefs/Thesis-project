@@ -59,22 +59,14 @@ func CreateMalariaStructsInSlice() [3]Malaria {
 
 	malariaStructs := [3]Malaria{ConstructMalariaStruct(p1), ConstructMalariaStruct(p2), ConstructMalariaStruct(p3)}
 
-	// Make the expressed strains and infection definitive.
-	//malariaStructs[1].Hosts[0].ExpressedStrain[0] = 3
-	//malariaStructs[1].Hosts[0].ExpressedStrain[1] = 4
-	//malariaStructs[1].Hosts[1].ExpressedStrain[0] = 1
-	//malariaStructs[1].Hosts[1].ExpressedStrain[1] = 2
-	//malariaStructs[1].Hosts[2].ExpressedStrain[0] = 1
-	//malariaStructs[1].Hosts[2].ExpressedStrain[1] = 2
-
 	malariaStructs[1].Hosts[0].Infections[0] = 3
-	malariaStructs[1].Hosts[0].Infections[1] = 4
-	malariaStructs[1].Hosts[1].Infections[0] = 1
-	malariaStructs[1].Hosts[1].Infections[1] = 2
-	malariaStructs[1].Hosts[2].Infections[0] = 1
-	malariaStructs[1].Hosts[2].Infections[1] = 2
+	malariaStructs[1].Hosts[1].Infections[0] = 0
+	malariaStructs[1].Hosts[2].Infections[0] = 0
 
 	malariaStructs[1].CountStrains()
+
+	fmt.Println(malariaStructs[1].Strains)
+	fmt.Println(malariaStructs[1].StrainCounter)
 
 	return malariaStructs
 }
@@ -100,19 +92,18 @@ func TestStructCreation(t *testing.T) {
 	CheckIfEqual(t, "NInfectedHosts", malariaStructs[1].NInfectedHosts, 3)
 	CheckIfEqual(t, "NInfectedHosts", malariaStructs[2].NInfectedHosts, 1)
 
-	CheckIfEqual(t, "IsInfected", malariaStructs[0].Hosts[0].IsInfected, true)
-	CheckIfEqual(t, "IsInfected", malariaStructs[1].Hosts[2].IsInfected, true)
-	CheckIfEqual(t, "IsInfected", malariaStructs[0].Hosts[5].IsInfected, false)
-	CheckIfEqual(t, "IsInfected", malariaStructs[0].Hosts[1].IsInfected, false)
+	CheckIfEqual(t, "IsInfected", malariaStructs[0].Hosts[0].NInfections, 1)
+	CheckIfEqual(t, "IsInfected", malariaStructs[1].Hosts[2].NInfections, 1)
+	CheckIfEqual(t, "IsInfected", malariaStructs[0].Hosts[5].NInfections, 0)
+	CheckIfEqual(t, "IsInfected", malariaStructs[0].Hosts[1].NInfections, 0)
 
 	CheckIfEqual(t, "Antigens", malariaStructs[0].Hosts[0].Infections, []int8{1})
 	CheckIfEqual(t, "AntigenLen", len(malariaStructs[1].Hosts[0].Infections), 2)
 
 	CheckIfEqual(t, "Is healthy host empty", len(malariaStructs[0].Hosts[4].Infections), 0)
-	CheckIfEqual(t, "Is healthy host empty", len(malariaStructs[0].Hosts[4].ExpressedStrain), 1)
-	CheckIfEqual(t, "Is healthy host empty", len(malariaStructs[1].Hosts[4].ExpressedStrain), 2)
+	CheckIfEqual(t, "Is healthy host empty", len(malariaStructs[0].Hosts[0].Infections), 1)
+	CheckIfEqual(t, "Is healthy host empty", len(malariaStructs[1].Hosts[4].Infections), 2)
 
-	fmt.Println("\n")
 	return
 }
 
@@ -146,19 +137,19 @@ func TestEventChoosing(t *testing.T) {
 func TestSpread(t *testing.T) {
 	m := CreateMalariaStructsInSlice()
 
-	m[1].Spread(3, 0)
+	m[1].Spread(3, m[1].Hosts[0].Infections[0], 5)
 
 	CheckIfEqual(t, "NInfected after infection", m[1].NInfectedHosts, 4)
 	CheckIfEqual(t, "NInfected after infection", m[1].NInfectedHosts, 4)
-	CheckIfEqual(t, "StrainCounter after infections", m[1].StrainCounter[ListToString([]int8{3, 4})], 2)
-	CheckIfEqual(t, "StrainCounter after infections", m[1].StrainCounter[ListToString([]int8{1, 2})], 2)
-	CheckIfEqual(t, "StrainCounter after infections", m[1].StrainCounter[ListToString([]int8{1, 3})], 0)
+	CheckIfEqual(t, "StrainCounter after infections", m[1].StrainCounter[m[1].Hosts[0].Infections[0]], 2) //TODO: Remake guess
+	CheckIfEqual(t, "StrainCounter after infections", m[1].StrainCounter[0], 2)
+	CheckIfEqual(t, "StrainCounter after infections", m[1].StrainCounter[1], 0)
 
-	m[1].Spread(3, 1)
+	m[1].Spread(3, m[1].Hosts[0].Infections[1], 5)
 	CheckIfEqual(t, "NInfected after infection", m[1].NInfectedHosts, 4)
-	CheckIfEqual(t, "StrainCounter after infections", m[1].StrainCounter[ListToString([]int8{3, 4})], 2)
-	CheckIfEqual(t, "StrainCounter after infections", m[1].StrainCounter[ListToString([]int8{1, 2})], 3)
-	CheckIfEqual(t, "StrainCounter after infections", m[1].StrainCounter[ListToString([]int8{1, 3})], 0)
+	CheckIfEqual(t, "StrainCounter after infections", m[1].StrainCounter[m[1].Hosts[0].Infections[0]], 2)
+	CheckIfEqual(t, "StrainCounter after infections", m[1].StrainCounter[0], 3)
+	CheckIfEqual(t, "StrainCounter after infections", m[1].StrainCounter[1], 0)
 
 	return
 }
