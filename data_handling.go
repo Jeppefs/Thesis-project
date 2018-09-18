@@ -130,12 +130,9 @@ func SaveTimeline(file *os.File, run *int, NInfected *int) {
 }
 
 // SaveStrainCounter : Save strainCounter
-func SaveStrainCounter(file *os.File, strainCounter *[]int, strains *[][]int8) {
-	for i, key := range *keys {
-		fmt.Fprintf(file, "%v", (*strainCounter)[key])
-		if i != len(*keys)-1 {
-			fmt.Fprintf(file, ",")
-		}
+func SaveStrainCounter(file *os.File, strainCounter *[]int) {
+	for _, count := range *strainCounter {
+		fmt.Fprintf(file, "%v", count)
 	}
 	fmt.Fprintf(file, "\n")
 	return

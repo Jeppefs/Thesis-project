@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib 
 import RungeKutta as RK
-from Latexify import Latexify
+from AnotherPyplotLatexifyer import Latexify
 
 def SIRPlus(param, values, t):
     valuesRate = np.zeros(len(values))

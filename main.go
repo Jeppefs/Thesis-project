@@ -146,7 +146,7 @@ func (m *Malaria) RunModel(param Parameters, setting ModelSettings, dataFileName
 		m.EventHappens(param)
 		if run%setting.SkipSaving == 0 {
 			SaveTimeline(file, &run, &m.NInfectedHosts)
-			SaveStrainCounter(file_strainCounter, &m.StrainCounter, &m.Strains)
+			SaveStrainCounter(file_strainCounter, &m.StrainCounter)
 			if run%2000000 == 0 {
 				fmt.Println(run)
 			}
@@ -154,7 +154,7 @@ func (m *Malaria) RunModel(param Parameters, setting ModelSettings, dataFileName
 		if m.NInfectedHosts == 0 {
 			fmt.Println("Malaria is dead in", run, "runs")
 			SaveTimeline(file, &run, &m.NInfectedHosts)
-			SaveStrainCounter(file_strainCounter, &m.StrainCounter, &m.Strains)
+			SaveStrainCounter(file_strainCounter, &m.StrainCounter)
 			break
 		}
 	}
