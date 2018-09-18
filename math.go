@@ -3,9 +3,9 @@ package main
 import (
 	"fmt"
 	"log"
+	"math/rand"
 	"sort"
 	"strconv"
-	"math/rand"
 )
 
 // SumSlice : Returns the sum a float64 slice.
@@ -77,7 +77,7 @@ func CountBolleanArray(b []bool) int {
 
 // HasStrain : Checks if the host has the expressed strain of the input host.
 func (h *Host) HasStrain(strainIndex) bool {
-	
+
 	for _, infection := range h.Infections {
 		if infection == strainIndex {
 			return true
@@ -151,8 +151,7 @@ func (m *Malaria) CountStrains() {
 
 	for _, host := range m.Hosts {
 		for _, strainIndex := range host.Infections {
-				m.StrainCounter[strainIndex]++
-			}
+			m.StrainCounter[strainIndex]++
 		}
 	}
 	return
@@ -188,4 +187,3 @@ func CheckUniqueInt8(s []int8, v int8) bool {
 
 	return true
 }
-

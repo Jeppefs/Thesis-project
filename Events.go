@@ -5,30 +5,30 @@ import (
 )
 
 // Spread : Another person gets infected.
-func (m *Malaria) Spread(spreadTo int, strainIndex int) {
+func (m *Malaria) Spread(recieverHostIndex int, strainIndex int, maxSuperInfections int) {
 
 	// If the host can't contain more strain, do nothing.
-	if m.Hosts[spreadTo].NInfections >= int8(MaxSuperInfections) {
+	if m.Hosts[recieverHostIndex].NInfections >= maxSuperInfections {
 		return
 	}
 
-	if m.Hosts[spreadTo].NInfections == 0 {
+	if m.Hosts[recieverHostIndex].NInfections != 0 {
 		// Checks if the new host already has the strain in question. This also makes sure that a host cannot infect itself.
-		if m.Hosts[spreadTo].HasStrain(strainIndex) == true {
+		if m.Hosts[recieverHostIndex].HasStrain(strainIndex) == true {
 			return
 		}
-		m.Hosts[spreadTo].InfectHost(originStrain, m.NAntigens)
+		m.Hosts[recieverHostIndex].InfectHost(strainIndex)
 	} else {
 		// If the target is not currently infected put him on the infected list, add to the number of incfected and append the disease to him.
 		m.NInfectedHosts++
-		m.InfectedHosts = append(m.InfectedHosts, spreadTo)
-		m.Hosts[spreadTo].InfectHost(originStrain, m.NAntigens)
+		m.InfectedHosts = append(m.InfectedHosts, recieverHostIndex)
+		m.Hosts[recieverHostIndex].InfectHost(strainIndex)
 	}
 
 	// Change the counters accordingly.
 	m.StrainCounter[strainIndex]++
-	m.InfectionCounter[m.Hosts[spreadTo].NInfections-1]--
-	m.InfectionCounter[m.Hosts[spreadTo].NInfections]++
+	m.InfectionCounter[m.Hosts[recieverHostIndex].NInfections-1]--
+	m.InfectionCounter[m.Hosts[recieverHostIndex].NInfections]++
 
 	return
 }
