@@ -8,14 +8,15 @@ func (m *Malaria) EventHappens(param Parameters) {
 	switch event {
 	case 0:
 		transmitter, _, _ := m.GetRandomInfectedHost()
-		m.Spread(rand.Intn(m.NHosts), transmitter.GetRandomStrainIndex(), param.MaxSuperInfections)
+		_, strainIndex := transmitter.GetRandomStrainIndex()
+		m.Spread(rand.Intn(m.NHosts), strainIndex, param.MaxSuperInfections)
 	case 1:
 		m.ImmunityGained(rand.Intn(m.NInfectedHosts))
 	case 2:
 		m.Replace(rand.Intn(m.NHosts))
 	case 3:
-		host, _ := m.GetRandomInfectedHost()
-		m.MutateParasite(host)
+		_, hostIndex, _ := m.GetRandomInfectedHost()
+		m.MutateParasite(hostIndex)
 	}
 
 	return
