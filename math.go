@@ -76,7 +76,7 @@ func CountBolleanArray(b []bool) int {
 }
 
 // HasStrain : Checks if the host has the expressed strain of the input host.
-func (h *Host) HasStrain(strainIndex) bool {
+func (h *Host) HasStrain(strainIndex int) bool {
 
 	for _, infection := range h.Infections {
 		if infection == strainIndex {

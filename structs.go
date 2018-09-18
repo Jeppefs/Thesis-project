@@ -27,8 +27,8 @@ type Malaria struct {
 
 // Host : Contains information about a host/person
 type Host struct {
-	NInfections int   // The number of infection a host has.
-	Infections  []int // The strain indices that are currently infecting a host.
+	NInfections int    // The number of infection a host has.
+	Infections  []int  // The strain indices that are currently infecting a host.
 	Antibodies  []bool // An array of the antigens that a host is immune to.
 }
 
@@ -48,13 +48,13 @@ func ConstructMalariaStruct(param Parameters) Malaria {
 		m.NAntigens = 2
 		m.MaxAntigenValue = 8
 		m.MaxStrains = 4
-		m.Strains := [][]int8{{1, 2},{3, 4},{5, 6},{7,8},}
+		m.Strains = [][]int8{{1, 2}, {3, 4}, {5, 6}, {7, 8}}
 		m.StrainCounter = make([]int8, m.MaxStrains)
 	} else if param.SpecificStrains == "cross" {
 		m.NAntigens = 2
 		m.MaxAntigenValue = 4
 		m.MaxStrains = 4
-		m.Strains := [][]int8{{1, 2},{2, 3},{3, 4},{4, 1},}
+		m.Strains = [][]int8{{1, 2}, {2, 3}, {3, 4}, {4, 1}}
 		m.StrainCounter = make([]int8, m.MaxStrains)
 	} else {
 		panic("No specific strain option was selected")

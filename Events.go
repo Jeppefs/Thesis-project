@@ -46,17 +46,6 @@ func (h *Host) InfectHost(strainIndex) {
 	return
 }
 
-// CombineParasites : When a host becomes infected with another parasite (so it is inficted buy mulitple parasites), it has a combination
-func (h *Host) CombineParasites(NAntigens int) {
-	for antigen := 0; antigen < NAntigens; antigen++ {
-		antigenOrNewParasiteChoice := rand.Float32()
-		if antigenOrNewParasiteChoice > 0.5 { // Pick randomly new antigens in the infected host.
-			h.ExpressedStrain[antigen] = h.Infections[rand.Intn(len(h.Infections))]
-		}
-	}
-	return
-}
-
 // ImmunityGained : An infected person get immunity from one strain. If that one already exist, the parasite dies.
 func (m *Malaria) ImmunityGained(infectedHostIndex int) {
 
