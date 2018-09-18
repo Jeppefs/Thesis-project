@@ -49,13 +49,13 @@ func ConstructMalariaStruct(param Parameters) Malaria {
 		m.MaxAntigenValue = 8
 		m.MaxStrains = 4
 		m.Strains = [][]int8{{1, 2}, {3, 4}, {5, 6}, {7, 8}}
-		m.StrainCounter = make([]int8, m.MaxStrains)
+		m.StrainCounter = make([]int, m.MaxStrains)
 	} else if param.SpecificStrains == "cross" {
 		m.NAntigens = 2
 		m.MaxAntigenValue = 4
 		m.MaxStrains = 4
 		m.Strains = [][]int8{{1, 2}, {2, 3}, {3, 4}, {4, 1}}
-		m.StrainCounter = make([]int8, m.MaxStrains)
+		m.StrainCounter = make([]int, m.MaxStrains)
 	} else {
 		panic("No specific strain option was selected")
 	}
@@ -64,9 +64,9 @@ func ConstructMalariaStruct(param Parameters) Malaria {
 	m.Hosts = make([]Host, m.NHosts)
 	for host := 0; host < m.NHosts; host++ {
 		if host < m.NInfectedHosts {
-			m.Hosts[host] = MakeHost(true, m.NAntigens, m.MaxAntigenValue, m.StrainKeys, m.MaxStrains)
+			m.Hosts[host] = MakeHost(param, true, m.MaxStrains)
 		} else {
-			m.Hosts[host] = MakeHost(false, m.NAntigens, m.MaxAntigenValue, m.StrainKeys, m.MaxStrains)
+			m.Hosts[host] = MakeHost(param, false, m.MaxStrains)
 		}
 	}
 
@@ -75,9 +75,9 @@ func ConstructMalariaStruct(param Parameters) Malaria {
 		m.InfectedHosts[host] = host
 	}
 
-	m.SuperInfectionCounter = make([]int, param.MaxSuperInfections+1)
-	m.SuperInfectionCounter[0] = m.NHosts - m.NInfectedHosts
-	m.SuperInfectionCounter[1] = m.NInfectedHosts
+	m.InfectionCounter = make([]int, param.MaxSuperInfections+1)
+	m.InfectionCounter[0] = m.NHosts - m.NInfectedHosts
+	m.InfectionCounter[1] = m.NInfectedHosts
 
 	m.CountStrains()
 
@@ -85,11 +85,11 @@ func ConstructMalariaStruct(param Parameters) Malaria {
 }
 
 // MakeHost : Make a host in the hoststruct
-func MakeHost(param Parameters, infected bool, strainKeys []string, maxStrains int) Host {
+func MakeHost(param Parameters, infected bool, maxStrains int) Host {
 	var h Host
 
-	h.Infections = make([]int)
-	h.Antibodies = make([]bool, param.MaxAntigenValue)
+	h.Infections = make([]int, 0)                      // TODO: Find out the best way to construct an empty array.
+	h.Antibodies = make([]bool, param.MaxAntigenValue) // TODO: Make sure that a boolean array starts at false.
 
 	if infected {
 		h.NInfections = 1
