@@ -78,25 +78,52 @@ func (m *Malaria) ImmunityGained(infectedHostIndex int) {
 	return
 }
 
-// Replace : Kills a host removing it from the system and adding a new one.
+// Replace : Kill a host, removing it from the system and adding a new one.
 func (m *Malaria) Replace(hostIndex int) {
 
-	if m.Hosts[hostIndex].IsInfected == true {
+	host := &m.Hosts[hostIndex]
 
+	if host.NInfections == 0 {
+		host.LoseAntibodies(m.MaxAntigenValue) //TODO: CHECK IF MAXANTIGENVALUE INCLUDES OR EXCLUDES 0
+	} else {
+		// Remove host from the m.InfectedHost slice.
 		for i := 0; i < m.NInfectedHosts; i++ {
 			if hostIndex == m.InfectedHosts[i] {
 				m.InfectedHosts = append(m.InfectedHosts[:i], m.InfectedHosts[i+1:]...)
 				break
 			}
 		}
+		m.InfectionCounter[host.NInfections]--
+		m.InfectionCounter[0]++
 		m.NInfectedHosts--
+		for _, strain := range host.Infections {
+			m.StrainCounter[strain]--
+		}
+
+		host.LoseAntibodies(m.MaxAntigenValue)
+		host.RemoveInfections()
+		host.NInfections = 0
+
 	}
 
-	m.Hosts[hostIndex].Die(m.NAntigens, m.MaxAntigenValue, &m.StrainCounter)
 	return
 }
 
-// Die : A host dies
+// LoseAntibodies : Sets all antibodies of the host to false.
+func (h *Host) LoseAntibodies(MaxAntigenValue int) {
+	for i := 0; i < MaxAntigenValue; i++ {
+		h.Antibodies[i] = false
+	}
+	return
+}
+
+// RemoveInfections : Removes all infections a host might have.
+func (h *Host) RemoveInfections() {
+	h.Infections = make([]int, 0)
+	return
+}
+
+// Die : A host dies. It loses all its antigens and infections.
 func (h *Host) Die(NAntigens int, MaxAntigenValue int, strainCounter *map[string]int) {
 	if h.IsInfected == true {
 		nInfections := CountInfections(h.Infections, NAntigens)
