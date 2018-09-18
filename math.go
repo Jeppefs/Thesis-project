@@ -157,9 +157,11 @@ func (m *Malaria) CountStrains() {
 	return
 }
 
-// GetRandomStrain : Retrieve a random strain index from an infected host
-func (h *Host) GetRandomStrainIndex() int {
-	return h.Infections[rand.Intn(h.NInfections)]
+// GetRandomStrainIndex : Retrieve a random strain index from an infected host
+// Returns the index of the strain in the infection of the host and the strain index in m.Strains
+func (h *Host) GetRandomStrainIndex() (int, int) {
+	infectionIndexInHost := rand.Intn(h.NInfections)
+	return infectionIndexInHost, h.Infections[infectionIndexInHost]
 }
 
 // ListToString : Converts a list of intergers to a string with komma seperation

@@ -40,7 +40,8 @@ func (m *Malaria) GetSpreadToAndSpreadFrom() (int, int) {
 	return spreadTo, spreadFrom
 }
 
-func (h *Host) InfectHost(strainIndex) {
+// InfectHost : Applies the strainIndex to the given host.
+func (h *Host) InfectHost(strainIndex int) {
 	h.NInfections++
 	h.Infections = append(h.Infections, strainIndex)
 	return
@@ -49,42 +50,31 @@ func (h *Host) InfectHost(strainIndex) {
 // ImmunityGained : An infected person get immunity from one strain. If that one already exist, the parasite dies.
 func (m *Malaria) ImmunityGained(infectedHostIndex int) {
 
-	infectedHost := m.InfectedHosts[infectedHostIndex]
+	hostIndex := m.InfectedHosts[infectedHostIndex]
+	host := &m.Hosts[hostIndex]
+	infectionIndexInHost, strainIndex := host.GetRandomStrainIndex()
 
-	nInfections := CountInfections(m.Hosts[infectedHost].Infections, m.NAntigens)
-	strainTarget := rand.Intn(nInfections)
-	antigenTarget := rand.Intn(m.NAntigens) + strainTarget*m.NAntigens
-	m.Hosts[infectedHost].GiveHostAntibody(m.NAntigens, strainTarget, antigenTarget, &m.StrainCounter)
+	// Check if the host does not have every antibody for that strain. If the host doesn't, gain antibody and return.
+	for _, antigenTarget := range m.Strains[strainIndex] {
+		if host.Antibodies[antigenTarget-1] == false {
+			host.Antibodies[antigenTarget-1] = true
+			return
+		}
+	}
 
-	if m.Hosts[infectedHost].IsInfected == false {
+	// As the host has all antibodies, the host gets rid of the disease.
+	host.Infections = append(host.Infections[:infectionIndexInHost], host.Infections[infectionIndexInHost+1:]...)
+	host.NInfections--
+
+	// Change the systems counts.
+	m.InfectionCounter[host.NInfections]++
+	m.InfectionCounter[host.NInfections+1]--
+	m.StrainCounter[strainIndex]--
+	if host.NInfections == 0 {
 		m.NInfectedHosts--
 		m.InfectedHosts = append(m.InfectedHosts[:infectedHostIndex], m.InfectedHosts[infectedHostIndex+1:]...)
 	}
 
-	return
-}
-
-// GiveHostAntibody : Gives the host an antibody for its current lookout in the antigens. Also send to RemoveParaiste method if removal should happen
-func (h *Host) GiveHostAntibody(NAntigens int, strainTarget int, antigenTarget int, strainCounter *map[string]int) {
-
-	if h.Antibodies[h.Infections[antigenTarget]-1] {
-		(*strainCounter)[ListToString(h.Infections[strainTarget*NAntigens:NAntigens+strainTarget*NAntigens])]--
-		h.RemoveParasite(NAntigens, strainTarget)
-	} else {
-		h.Antibodies[h.Infections[antigenTarget]-1] = true
-	}
-	return
-}
-
-// RemoveParasite :  Removes a parasite from a host after immunization
-func (h *Host) RemoveParasite(NAntigens int, strainTarget int) {
-	h.Infections = append(h.Infections[:0+strainTarget*NAntigens], h.Infections[strainTarget*NAntigens+NAntigens:]...)
-	if len(h.Infections) == 0 { // If the last parasite of the host dies, then that host is not infected anymore.
-		h.IsInfected = false
-		for i := 0; i < NAntigens; i++ {
-			h.ExpressedStrain[i] = 0
-		}
-	}
 	return
 }
 
