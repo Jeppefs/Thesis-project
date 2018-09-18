@@ -123,27 +123,9 @@ func (h *Host) RemoveInfections() {
 	return
 }
 
-// Die : A host dies. It loses all its antigens and infections.
-func (h *Host) Die(NAntigens int, MaxAntigenValue int, strainCounter *map[string]int) {
-	if h.IsInfected == true {
-		nInfections := CountInfections(h.Infections, NAntigens)
-		for i := 0; i < nInfections; i++ {
-			(*strainCounter)[ListToString(h.Infections[i*NAntigens:NAntigens+i*NAntigens])]--
-		}
-		h.Infections = append(h.Infections[:0], h.Infections[len(h.Infections):]...)
-		h.IsInfected = false
-	}
-
-	for antibody := 1; antibody < MaxAntigenValue+1; antibody++ {
-		h.Antibodies[antibody-1] = false
-	}
-	return
-}
-
 // MutateParasite : Changes a single antigen in a host to a new random one.
 func (m *Malaria) MutateParasite(host int) {
-	randomAntigen := rand.Intn(m.NAntigens)
-	m.Hosts[host].ExpressedStrain[randomAntigen] = int8(rand.Intn(m.MaxAntigenValue)) + 1
+	m.Hosts[host].Infections[0]++
 	return
 }
 
