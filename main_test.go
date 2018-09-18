@@ -59,14 +59,11 @@ func CreateMalariaStructsInSlice() [3]Malaria {
 
 	malariaStructs := [3]Malaria{ConstructMalariaStruct(p1), ConstructMalariaStruct(p2), ConstructMalariaStruct(p3)}
 
-	malariaStructs[1].Hosts[0].Infections[0] = 3
-	malariaStructs[1].Hosts[1].Infections[0] = 0
+	malariaStructs[1].Hosts[0].Infections[0] = 7 // [3, 4]
+	malariaStructs[1].Hosts[1].Infections[0] = 0 // [1, 2]
 	malariaStructs[1].Hosts[2].Infections[0] = 0
 
 	malariaStructs[1].CountStrains()
-
-	fmt.Println(malariaStructs[1].Strains)
-	fmt.Println(malariaStructs[1].StrainCounter)
 
 	return malariaStructs
 }
@@ -97,13 +94,17 @@ func TestStructCreation(t *testing.T) {
 	CheckIfEqual(t, "IsInfected", malariaStructs[0].Hosts[5].NInfections, 0)
 	CheckIfEqual(t, "IsInfected", malariaStructs[0].Hosts[1].NInfections, 0)
 
-	CheckIfEqual(t, "Antigens", malariaStructs[0].Hosts[0].Infections, []int8{1})
-	CheckIfEqual(t, "AntigenLen", len(malariaStructs[1].Hosts[0].Infections), 2)
+	CheckIfEqual(t, "Infections", malariaStructs[0].Hosts[0].Infections, []int{0})
+	CheckIfEqual(t, "Number of infections", len(malariaStructs[1].Hosts[0].Infections), 1)
+	CheckIfEqual(t, "Number of antigens in a strains", len(malariaStructs[1].Strains[malariaStructs[1].Hosts[0].Infections[0]]), 2)
 
 	CheckIfEqual(t, "Is healthy host empty", len(malariaStructs[0].Hosts[4].Infections), 0)
 	CheckIfEqual(t, "Is healthy host empty", len(malariaStructs[0].Hosts[0].Infections), 1)
-	CheckIfEqual(t, "Is healthy host empty", len(malariaStructs[1].Hosts[4].Infections), 2)
+	CheckIfEqual(t, "Is healthy host empty", len(malariaStructs[1].Hosts[2].Infections), 1)
 
+	CheckIfEqual(t, "Has correct strain", malariaStructs[1].Strains[malariaStructs[1].Hosts[0].Infections[0]], []int8{3, 4})
+	CheckIfEqual(t, "Has correct strain", malariaStructs[1].Strains[malariaStructs[1].Hosts[1].Infections[0]], []int8{1, 2})
+	CheckIfEqual(t, "Has correct strain", malariaStructs[1].Strains[malariaStructs[1].Hosts[2].Infections[0]], []int8{1, 2})
 	return
 }
 
