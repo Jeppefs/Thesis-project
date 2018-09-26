@@ -139,18 +139,23 @@ func TestSpread(t *testing.T) {
 	m := CreateMalariaStructsInSlice()
 
 	m[1].Spread(3, m[1].Hosts[0].Infections[0], 5)
-
 	CheckIfEqual(t, "NInfected after infection", m[1].NInfectedHosts, 4)
 	CheckIfEqual(t, "NInfected after infection", m[1].NInfectedHosts, 4)
-	CheckIfEqual(t, "StrainCounter after infections", m[1].StrainCounter[m[1].Hosts[0].Infections[0]], 2) //TODO: Remake guess
+	CheckIfEqual(t, "StrainCounter after infections", m[1].StrainCounter[m[1].Hosts[0].Infections[0]], 2)
 	CheckIfEqual(t, "StrainCounter after infections", m[1].StrainCounter[0], 2)
 	CheckIfEqual(t, "StrainCounter after infections", m[1].StrainCounter[1], 0)
 
-	m[1].Spread(3, m[1].Hosts[0].Infections[1], 5)
+	m[1].Spread(3, m[1].Hosts[1].Infections[0], 5)
 	CheckIfEqual(t, "NInfected after infection", m[1].NInfectedHosts, 4)
 	CheckIfEqual(t, "StrainCounter after infections", m[1].StrainCounter[m[1].Hosts[0].Infections[0]], 2)
 	CheckIfEqual(t, "StrainCounter after infections", m[1].StrainCounter[0], 3)
 	CheckIfEqual(t, "StrainCounter after infections", m[1].StrainCounter[1], 0)
+
+	// Testing whether it denies another infection of the the same strain it already has.
+	m[1].Spread(3, m[1].Hosts[1].Infections[0], 5)
+	CheckIfEqual(t, "whether a host becomes infected by the same strain", m[1].NInfectedHosts, 4)
+	CheckIfEqual(t, "whether a host becomes infected by the same strain", m[1].Hosts[3].Infections, []int{7, 0})
+	CheckIfEqual(t, "whether a host becomes infected by the same strain", m[1].StrainCounter[m[1].Hosts[1].Infections[0]], 3)
 
 	return
 }
@@ -163,7 +168,7 @@ func TestInfectHost(t *testing.T) {
 
 	m[0].Hosts[1].InfectHost(m[0].Hosts[0].Infections[0])
 	m[0].Hosts[1].InfectHost(m[0].Hosts[0].Infections[0])
-	CheckIfEqual(t, "Newly infected has same infections", m[0].Hosts[1].Infections, []int{m[0].Hosts[0].Infections[0]})
+	CheckIfEqual(t, "Newly infected has same infections", m[0].Hosts[1].Infections, []int{m[0].Hosts[0].Infections[0], m[0].Hosts[0].Infections[0]}) // Is [0, 0]. This should happen when using the InfectHost method, but not the spread method.
 
 	m[1].Hosts[5].InfectHost(m[1].Hosts[0].Infections[0])
 	m[1].Hosts[5].InfectHost(m[1].Hosts[1].Infections[0])
@@ -173,7 +178,7 @@ func TestInfectHost(t *testing.T) {
 
 }
 
-func TestCombinerParasite(t *testing.T) {
+func TestCombineParasite(t *testing.T) {
 
 	return
 }
@@ -195,7 +200,7 @@ func TestImmunity(t *testing.T) {
 	m[1].ImmunityGained(0)
 	CheckIfEqual(t, "Is Infected", m[1].Hosts[0].NInfections, 0)
 	CheckIfEqual(t, "Infections", len(m[1].Hosts[0].Infections), 0)
-	CheckIfEqual(t, "StrainCounter after immunity", m[1].StrainCounter[m[1].Hosts[0].Infections[0]], 0)
+	CheckIfEqual(t, "StrainCounter after immunity", m[1].StrainCounter[7], 0)
 
 }
 
@@ -241,24 +246,24 @@ func TestFindAllStrainCombinations(t *testing.T) {
 	fmt.Println("Testing strain combinations")
 	strainLen := 1
 	antigenMax := 5
-	maxStrains, keys, strainCount := FindAllStrainCombinations(strainLen, antigenMax)
+	maxStrains, strainAntigens, strainCount := FindAllStrainCombinations(strainLen, antigenMax)
 	fmt.Println(maxStrains, strainCount)
 	CheckIfEqual(t, "Correct number of maximum strains for strainLen 1", maxStrains, 5)
-	CheckIfEqual(t, "Strain keys for strainLen 1", keys, []string{"1", "2", "3", "4", "5"})
+	CheckIfEqual(t, "Strain keys for strainLen 1", strainAntigens, [][]int8{{1}, {2}, {3}, {4}, {5}})
 
 	strainLen = 2
 	antigenMax = 5
-	maxStrains, keys, strainCount = FindAllStrainCombinations(strainLen, antigenMax)
+	maxStrains, strainAntigens, strainCount = FindAllStrainCombinations(strainLen, antigenMax)
 	fmt.Println(maxStrains, strainCount)
 	CheckIfEqual(t, "Correct number of maximum strains for strainLen 2", maxStrains, 10)
-	CheckIfEqual(t, "Strain keys for strainLen 2", keys, []string{"1,2", "1,3", "1,4", "1,5", "2,3", "2,4", "2,5", "3,4", "3,5", "4,5"})
+	CheckIfEqual(t, "Strain keys for strainLen 2", strainAntigens, [][]int8{{1, 2}, {1, 3}, {1, 4}, {1, 5}, {2, 3}, {2, 4}, {2, 5}, {3, 4}, {3, 5}, {4, 5}})
 
 	strainLen = 3
 	antigenMax = 5
-	maxStrains, keys, strainCount = FindAllStrainCombinations(strainLen, antigenMax)
+	maxStrains, strainAntigens, strainCount = FindAllStrainCombinations(strainLen, antigenMax)
 	fmt.Println(maxStrains, strainCount)
 	CheckIfEqual(t, "Correct number of maximum strains for strainLen 3", maxStrains, 10)
-	CheckIfEqual(t, "Strain keys for strainLen 1", keys, []string{"1,2,3", "1,2,4", "1,2,5", "1,3,4", "1,3,5", "1,4,5", "2,3,4", "2,3,5", "2,4,5", "3,4,5"})
+	CheckIfEqual(t, "Strain keys for strainLen 1", strainAntigens, [][]int8{{1, 2, 3}, {1, 2, 4}, {1, 2, 5}, {1, 3, 4}, {1, 3, 5}, {1, 4, 5}, {2, 3, 4}, {2, 3, 5}, {2, 4, 5}, {3, 4, 5}})
 
 	return
 }
