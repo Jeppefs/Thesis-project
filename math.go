@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"math/rand"
 	"sort"
 	"strconv"
 )
@@ -43,7 +44,7 @@ func CalcMeanAndVar(data []float64) (float64, float64) {
 func (m *Malaria) CheckIfAllInfectedHasInfection(q int) {
 	for _, host := range m.InfectedHosts {
 		if len(m.Hosts[host].Infections) == 0 {
-			fmt.Println("Warning", m.Hosts[host].Infections, host, m.Hosts[host].IsInfected, len(m.InfectedHosts), m.NInfectedHosts)
+			fmt.Println("Warning", m.Hosts[host].Infections, host, m.Hosts[host].NInfections, len(m.InfectedHosts), m.NInfectedHosts)
 			if q == 2 {
 				panic(strconv.Itoa(q))
 			}
@@ -75,18 +76,11 @@ func CountBolleanArray(b []bool) int {
 }
 
 // HasStrain : Checks if the host has the expressed strain of the input host.
-func (h *Host) HasStrain(h2 *Host, NAntigens int) bool {
-	NInfections := len(h.Infections) / NAntigens
+func (h *Host) HasStrain(strainIndex int) bool {
 
-	for strainNumber := 0; strainNumber < NInfections; strainNumber++ {
-		correctCount := 0
-		for antigen := 0; antigen < NAntigens; antigen++ {
-			if h.Infections[strainNumber*NAntigens+antigen] == h2.ExpressedStrain[antigen] {
-				correctCount++
-			}
-			if correctCount == NAntigens {
-				return true
-			}
+	for _, infection := range h.Infections {
+		if infection == strainIndex {
+			return true
 		}
 	}
 
@@ -94,6 +88,7 @@ func (h *Host) HasStrain(h2 *Host, NAntigens int) bool {
 }
 
 // CountNumberOfUniqueAntigens : Counts the number of unique antigens an all hosts. s
+/*
 func (m *Malaria) CountNumberOfUniqueAntigens() {
 	AntigenExistence := make([]bool, m.MaxAntigenValue)
 	for _, host := range m.Hosts {
@@ -104,34 +99,32 @@ func (m *Malaria) CountNumberOfUniqueAntigens() {
 	m.NDifferentAntigens = CountBolleanArray(AntigenExistence)
 	return
 }
+*/
 
 // FindAllStrainCombinations :
-func FindAllStrainCombinations(strainLen int, antigenMax int) (int, []string, map[string]int) {
+func FindAllStrainCombinations(strainLen int, antigenMax int) (int, [][]int8, []int) {
 
 	if strainLen > antigenMax {
 		panic("Strain length is greater than the maximum possible antigen value")
 	}
 
-	var strainCount map[string]int
-	strainCount = make(map[string]int)
-
-	var strainKeys []string
-
+	var strains [][]int8
+	var strainCounter []int
 	maxStrains := 0
 
 	if strainLen == 1 {
 		for i := 1; i < antigenMax+1; i++ {
-			strainCount[strconv.Itoa(i)] = 0
-			strainKeys = append(strainKeys, strconv.Itoa(i))
+			strains = append(strains, []int8{int8(i)})
+			strainCounter = append(strainCounter, 0)
+			maxStrains++
 		}
-		maxStrains = antigenMax
 
 	} else if strainLen == 2 {
 
 		for i := 1; i < antigenMax; i++ {
 			for j := i + 1; j < antigenMax+1; j++ {
-				strainCount[ListToString([]int8{int8(i), int8(j)})] = 0
-				strainKeys = append(strainKeys, ListToString([]int8{int8(i), int8(j)}))
+				strains = append(strains, []int8{int8(i), int8(j)})
+				strainCounter = append(strainCounter, 0)
 				maxStrains++
 			}
 		}
@@ -140,33 +133,37 @@ func FindAllStrainCombinations(strainLen int, antigenMax int) (int, []string, ma
 		for i := 1; i < antigenMax-1; i++ {
 			for j := i + 1; j < antigenMax; j++ {
 				for k := j + 1; k < antigenMax+1; k++ {
-					strainCount[ListToString([]int8{int8(i), int8(j), int8(k)})] = 0
-					strainKeys = append(strainKeys, ListToString([]int8{int8(i), int8(j), int8(k)}))
+					strains = append(strains, []int8{int8(i), int8(j), int8(k)})
+					strainCounter = append(strainCounter, 0)
 					maxStrains++
 				}
 			}
 		}
 	}
 
-	return maxStrains, strainKeys, strainCount
+	return maxStrains, strains, strainCounter
 }
 
 // CountStrains : Count the strains and change StrainCounter variable in malaria struct.
 func (m *Malaria) CountStrains() {
 
-	for key := range m.StrainCounter {
-		m.StrainCounter[key] = 0
+	for i, _ := range m.StrainCounter {
+		m.StrainCounter[i] = 0
 	}
 
-	for i := 0; i < m.NHosts; i++ {
-		if m.Hosts[i].IsInfected {
-			nInfections := CountInfections(m.Hosts[i].Infections, m.NAntigens)
-			for j := 0; j < nInfections; j++ {
-				m.StrainCounter[ListToString(m.Hosts[i].Infections[j*m.NAntigens:j*m.NAntigens+m.NAntigens])]++
-			}
+	for _, host := range m.Hosts {
+		for _, strainIndex := range host.Infections {
+			m.StrainCounter[strainIndex]++
 		}
 	}
 	return
+}
+
+// GetRandomStrainIndex : Retrieve a random strain index from an infected host
+// Returns the index of the strain in the infection of the host and the strain index in m.Strains
+func (h *Host) GetRandomStrainIndex() (int, int) {
+	infectionIndexInHost := rand.Intn(h.NInfections)
+	return infectionIndexInHost, h.Infections[infectionIndexInHost]
 }
 
 // ListToString : Converts a list of intergers to a string with komma seperation
@@ -194,10 +191,3 @@ func CheckUniqueInt8(s []int8, v int8) bool {
 
 	return true
 }
-
-// CountInfections : Counts the number of infection of a int8 slice
-func CountInfections(infections []int8, NAntigens int) int {
-	return int(len(infections) / NAntigens)
-}
-
-// 1, 4, 3+2+1 2+1 1, 20

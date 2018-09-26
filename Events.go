@@ -5,28 +5,30 @@ import (
 )
 
 // Spread : Another person gets infected.
-func (m *Malaria) Spread(spreadTo int, spreadFrom int) {
+func (m *Malaria) Spread(recieverHostIndex int, strainIndex int, maxSuperInfections int) {
 
-	// If spread to is equal to spread from, do not spread.
-	if spreadTo == spreadFrom {
+	// If the host can't contain more strain, do nothing.
+	if m.Hosts[recieverHostIndex].NInfections >= maxSuperInfections {
 		return
 	}
 
-	// If the host already is infected by the same strain, then don't infect.
-	if m.Hosts[spreadTo].IsInfected {
-		if m.Hosts[spreadTo].HasStrain(&m.Hosts[spreadFrom], m.NAntigens) == true {
+	if m.Hosts[recieverHostIndex].NInfections != 0 {
+		// Checks if the new host already has the strain in question. This also makes sure that a host cannot infect itself.
+		if m.Hosts[recieverHostIndex].HasStrain(strainIndex) == true {
 			return
 		}
-		m.Hosts[spreadTo].InfectHost(&m.Hosts[spreadFrom], m.NAntigens)
+		m.Hosts[recieverHostIndex].InfectHost(strainIndex)
 	} else {
 		// If the target is not currently infected put him on the infected list, add to the number of incfected and append the disease to him.
 		m.NInfectedHosts++
-		m.InfectedHosts = append(m.InfectedHosts, spreadTo)
-		m.Hosts[spreadTo].InfectHost(&m.Hosts[spreadFrom], m.NAntigens)
-
+		m.InfectedHosts = append(m.InfectedHosts, recieverHostIndex)
+		m.Hosts[recieverHostIndex].InfectHost(strainIndex)
 	}
 
-	m.StrainCounter[ListToString(m.Hosts[spreadFrom].ExpressedStrain)]++
+	// Change the counters accordingly.
+	m.StrainCounter[strainIndex]++
+	m.InfectionCounter[m.Hosts[recieverHostIndex].NInfections-1]--
+	m.InfectionCounter[m.Hosts[recieverHostIndex].NInfections]++
 
 	return
 }
@@ -38,46 +40,37 @@ func (m *Malaria) GetSpreadToAndSpreadFrom() (int, int) {
 	return spreadTo, spreadFrom
 }
 
-// InfectHost :
-func (h *Host) InfectHost(fromHost *Host, NAntigens int) {
-	// Check if the person spreading to has any infections. If false make him sick. If true append the parasite.
-	if h.IsInfected {
-		for antigen := 0; antigen < NAntigens; antigen++ {
-			h.Infections = append(h.Infections, fromHost.ExpressedStrain[antigen])
-		}
-		//h.CombineParasites(NAntigens)
-	} else {
-		for antigen := 0; antigen < NAntigens; antigen++ {
-			h.Infections = append(h.Infections, fromHost.ExpressedStrain[antigen])
-			h.ExpressedStrain[antigen] = fromHost.ExpressedStrain[antigen]
-			h.IsInfected = true
-		}
-	}
-	return
-}
-
-// CombineParasites : When a host becomes infected with another parasite (so it is inficted buy mulitple parasites), it has a combination
-func (h *Host) CombineParasites(NAntigens int) {
-	for antigen := 0; antigen < NAntigens; antigen++ {
-		antigenOrNewParasiteChoice := rand.Float32()
-		if antigenOrNewParasiteChoice > 0.5 { // Pick randomly new antigens in the infected host.
-			h.ExpressedStrain[antigen] = h.Infections[rand.Intn(len(h.Infections))]
-		}
-	}
+// InfectHost : Applies the strainIndex to the given host.
+func (h *Host) InfectHost(strainIndex int) {
+	h.NInfections++
+	h.Infections = append(h.Infections, strainIndex)
 	return
 }
 
 // ImmunityGained : An infected person get immunity from one strain. If that one already exist, the parasite dies.
 func (m *Malaria) ImmunityGained(infectedHostIndex int) {
 
-	infectedHost := m.InfectedHosts[infectedHostIndex]
+	hostIndex := m.InfectedHosts[infectedHostIndex]
+	host := &m.Hosts[hostIndex]
+	infectionIndexInHost, strainIndex := host.GetRandomStrainIndex()
 
-	nInfections := CountInfections(m.Hosts[infectedHost].Infections, m.NAntigens)
-	strainTarget := rand.Intn(nInfections)
-	antigenTarget := rand.Intn(m.NAntigens) + strainTarget*m.NAntigens
-	m.Hosts[infectedHost].GiveHostAntibody(m.NAntigens, strainTarget, antigenTarget, &m.StrainCounter)
+	// Check if the host does not have every antibody for that strain. If the host doesn't, gain antibody and return.
+	for _, antigenTarget := range m.Strains[strainIndex] {
+		if host.Antibodies[antigenTarget-1] == false {
+			host.Antibodies[antigenTarget-1] = true
+			return
+		}
+	}
 
-	if m.Hosts[infectedHost].IsInfected == false {
+	// As the host has all antibodies, the host gets rid of the disease.
+	host.Infections = append(host.Infections[:infectionIndexInHost], host.Infections[infectionIndexInHost+1:]...)
+	host.NInfections--
+
+	// Change the systems counts.
+	m.InfectionCounter[host.NInfections]++
+	m.InfectionCounter[host.NInfections+1]--
+	m.StrainCounter[strainIndex]--
+	if host.NInfections == 0 {
 		m.NInfectedHosts--
 		m.InfectedHosts = append(m.InfectedHosts[:infectedHostIndex], m.InfectedHosts[infectedHostIndex+1:]...)
 	}
@@ -85,75 +78,61 @@ func (m *Malaria) ImmunityGained(infectedHostIndex int) {
 	return
 }
 
-// GiveHostAntibody : Gives the host an antibody for its current lookout in the antigens. Also send to RemoveParaiste method if removal should happen
-func (h *Host) GiveHostAntibody(NAntigens int, strainTarget int, antigenTarget int, strainCounter *map[string]int) {
-
-	if h.Antibodies[h.Infections[antigenTarget]-1] {
-		(*strainCounter)[ListToString(h.Infections[strainTarget*NAntigens:NAntigens+strainTarget*NAntigens])]--
-		h.RemoveParasite(NAntigens, strainTarget)
-	} else {
-		h.Antibodies[h.Infections[antigenTarget]-1] = true
-	}
-	return
-}
-
-// RemoveParasite :  Removes a parasite from a host after immunization
-func (h *Host) RemoveParasite(NAntigens int, strainTarget int) {
-	h.Infections = append(h.Infections[:0+strainTarget*NAntigens], h.Infections[strainTarget*NAntigens+NAntigens:]...)
-	if len(h.Infections) == 0 { // If the last parasite of the host dies, then that host is not infected anymore.
-		h.IsInfected = false
-		for i := 0; i < NAntigens; i++ {
-			h.ExpressedStrain[i] = 0
-		}
-	}
-	return
-}
-
-// Replace : Kills a host removing it from the system and adding a new one.
+// Replace : Kill a host, removing it from the system and adding a new one.
 func (m *Malaria) Replace(hostIndex int) {
 
-	if m.Hosts[hostIndex].IsInfected == true {
+	host := &m.Hosts[hostIndex]
 
+	if host.NInfections == 0 {
+		host.LoseAntibodies(m.MaxAntigenValue) //TODO: CHECK IF MAXANTIGENVALUE INCLUDES OR EXCLUDES 0
+	} else {
+		// Remove host from the m.InfectedHost slice.
 		for i := 0; i < m.NInfectedHosts; i++ {
 			if hostIndex == m.InfectedHosts[i] {
 				m.InfectedHosts = append(m.InfectedHosts[:i], m.InfectedHosts[i+1:]...)
 				break
 			}
 		}
+		m.InfectionCounter[host.NInfections]--
+		m.InfectionCounter[0]++
 		m.NInfectedHosts--
+		for _, strain := range host.Infections {
+			m.StrainCounter[strain]--
+		}
+
+		host.LoseAntibodies(m.MaxAntigenValue)
+		host.RemoveInfections()
+		host.NInfections = 0
+
 	}
 
-	m.Hosts[hostIndex].Die(m.NAntigens, m.MaxAntigenValue, &m.StrainCounter)
 	return
 }
 
-// Die : A host dies
-func (h *Host) Die(NAntigens int, MaxAntigenValue int, strainCounter *map[string]int) {
-	if h.IsInfected == true {
-		nInfections := CountInfections(h.Infections, NAntigens)
-		for i := 0; i < nInfections; i++ {
-			(*strainCounter)[ListToString(h.Infections[i*NAntigens:NAntigens+i*NAntigens])]--
-		}
-		h.Infections = append(h.Infections[:0], h.Infections[len(h.Infections):]...)
-		h.IsInfected = false
+// LoseAntibodies : Sets all antibodies of the host to false.
+func (h *Host) LoseAntibodies(MaxAntigenValue int) {
+	for i := 0; i < MaxAntigenValue; i++ {
+		h.Antibodies[i] = false
 	}
+	return
+}
 
-	for antibody := 1; antibody < MaxAntigenValue+1; antibody++ {
-		h.Antibodies[antibody-1] = false
-	}
+// RemoveInfections : Removes all infections a host might have.
+func (h *Host) RemoveInfections() {
+	h.Infections = make([]int, 0)
 	return
 }
 
 // MutateParasite : Changes a single antigen in a host to a new random one.
 func (m *Malaria) MutateParasite(host int) {
-	randomAntigen := rand.Intn(m.NAntigens)
-	m.Hosts[host].ExpressedStrain[randomAntigen] = int8(rand.Intn(m.MaxAntigenValue)) + 1
+	m.Hosts[host].Infections[0]++
 	return
 }
 
 // GetRandomInfectedHost :
-func (m *Malaria) GetRandomInfectedHost() (int, int) {
+func (m *Malaria) GetRandomInfectedHost() (Host, int, int) {
 	infectedHostIndex := rand.Intn(m.NInfectedHosts)
-	host := m.InfectedHosts[infectedHostIndex]
-	return host, infectedHostIndex
+	hostIndex := m.InfectedHosts[infectedHostIndex]
+	host := m.Hosts[hostIndex]
+	return host, hostIndex, infectedHostIndex
 }

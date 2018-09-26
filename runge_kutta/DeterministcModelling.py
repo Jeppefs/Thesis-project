@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib 
 import RungeKutta as RK
+from AnotherPyplotLatexifyer import Latexify
 
 def SIRPlus(param, values, t):
     valuesRate = np.zeros(len(values))
@@ -89,15 +90,16 @@ def PlotSimple(func, initial, param, legend, runs = 50000, xlabel = "", ylabel =
     q = RK.RungeKutta(initialConditions = initial, equation = func, param = param, dt = 0.01)
     q.Run(runs)
     print(q.values, np.sum(q.values))
-    q.PlotTimePlot()
-    matplotlib.rcParams.update({'font.size': 16})
-    plt.legend(legend)
-    plt.xlabel(xlabel, fontsize=16)
-    plt.ylabel(ylabel, fontsize=16)
-    plt.tick_params(labelsize=14)
-    plt.tight_layout()
-    plt.savefig("runge_kutta/temp.pdf", format="pdf")
-    plt.show()
+
+    fig, ax = plt.subplots() 
+    for i in range(q.NValues):
+        ax.plot(q.savedValues[i,:], linewidth = 1.0) 
+    ax.legend(legend)
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel(ylabel)
+    Latexify.format_axes(ax)
+    fig.tight_layout(pad = 0.1)
+    fig.savefig("runge_kutta/temp.pdf", format="pdf")
     return
 
 def ReplacementParameterRasta():
@@ -115,7 +117,6 @@ def ReplacementParameterRasta():
     plt.tick_params(labelsize=14)
     plt.tight_layout()
     plt.savefig("runge_kutta/temp.pdf", format="pdf")
-    plt.show()
 
     return
 
@@ -172,19 +173,17 @@ def ReplacementRastaScan():
     plt.ylabel(r"$\alpha$", fontsize=18)
     plt.colorbar()
     plt.tick_params(labelsize=16)
-    plt.tight_layout()
+    plt.tight_layout() 
     plt.savefig("runge_kutta/gridResistant.pdf", format="pdf")
 
-    plt.show()
-
     return
-
-matplotlib.rcParams.update({'font.size': 14}) 
-ReplacementRastaScan()
+    
+Latexify.Latexify(fig_width = 12.65076*0.49, label_size = [1.05, 1.05])
+#ReplacementRastaScan()
 #ReplacementParameterRasta()
 
-#PlotSimple(func = SimpleInfection, initial = [0.99, 0.01, 0.0, 0.0], param = [0.9, 1.0], legend = ["S", "I", "I_R", "S_R"], runs=10000, xlabel="Iteration", ylabel="Proportion")
-#PlotSimple(func = SimpleInfectionSteadyState, initial = [0.99, 0.01], param = [1.1, 1.0], legend = ["$I_R$", "$S_R$"], runs=10000, xlabel="Iteration", ylabel="Proportion")
+PlotSimple(func = SimpleInfection, initial = [0.99, 0.01, 0.0, 0.0], param = [1.1, 1.0], legend = ["$S$", "$I$", "$I_R$", "$S_R$"], runs=10000, xlabel="Iteration", ylabel="Proportion")
+#PlotSimple(func = SimpleInfectionSteadyState, initial = [0.99, 0.01], param = [0.9, 1.0], legend = ["$I_R$", "$S_R$"], runs=10000, xlabel="Iteration", ylabel="Proportion")
 #PlotSimple(Replacement, initial = [0.99, 0.01, 0.0, 0.0], param = [0.95, 1.0, 0.1], legend = ["S","I","$I_R$", "$S_R$"], runs=10000, xlabel="Iteration", ylabel="Proportion")
 #PlotSimple(func = Ross, initial = [0.1, 0.1], param = [0.09, 0.2, 2.0, 0.01, 0.5, 0.1], legend = ["$I_h$","$I_m$"], runs=100000, xlabel="Iterations", ylabel="Proportion infected")
 
@@ -198,3 +197,5 @@ ReplacementRastaScan()
 #q.PlotTimePlot()
 #plt.legend(["S","I","R","R_I"])
 #plt.show()
+
+print("Congrats! All done!")

@@ -59,20 +59,9 @@ func CreateMalariaStructsInSlice() [3]Malaria {
 
 	malariaStructs := [3]Malaria{ConstructMalariaStruct(p1), ConstructMalariaStruct(p2), ConstructMalariaStruct(p3)}
 
-	// Make the expressed strains and infection definitive.
-	malariaStructs[1].Hosts[0].ExpressedStrain[0] = 3
-	malariaStructs[1].Hosts[0].ExpressedStrain[1] = 4
-	malariaStructs[1].Hosts[1].ExpressedStrain[0] = 1
-	malariaStructs[1].Hosts[1].ExpressedStrain[1] = 2
-	malariaStructs[1].Hosts[2].ExpressedStrain[0] = 1
-	malariaStructs[1].Hosts[2].ExpressedStrain[1] = 2
-
-	malariaStructs[1].Hosts[0].Infections[0] = 3
-	malariaStructs[1].Hosts[0].Infections[1] = 4
-	malariaStructs[1].Hosts[1].Infections[0] = 1
-	malariaStructs[1].Hosts[1].Infections[1] = 2
-	malariaStructs[1].Hosts[2].Infections[0] = 1
-	malariaStructs[1].Hosts[2].Infections[1] = 2
+	malariaStructs[1].Hosts[0].Infections[0] = 7 // [3, 4]
+	malariaStructs[1].Hosts[1].Infections[0] = 0 // [1, 2]
+	malariaStructs[1].Hosts[2].Infections[0] = 0
 
 	malariaStructs[1].CountStrains()
 
@@ -100,19 +89,22 @@ func TestStructCreation(t *testing.T) {
 	CheckIfEqual(t, "NInfectedHosts", malariaStructs[1].NInfectedHosts, 3)
 	CheckIfEqual(t, "NInfectedHosts", malariaStructs[2].NInfectedHosts, 1)
 
-	CheckIfEqual(t, "IsInfected", malariaStructs[0].Hosts[0].IsInfected, true)
-	CheckIfEqual(t, "IsInfected", malariaStructs[1].Hosts[2].IsInfected, true)
-	CheckIfEqual(t, "IsInfected", malariaStructs[0].Hosts[5].IsInfected, false)
-	CheckIfEqual(t, "IsInfected", malariaStructs[0].Hosts[1].IsInfected, false)
+	CheckIfEqual(t, "IsInfected", malariaStructs[0].Hosts[0].NInfections, 1)
+	CheckIfEqual(t, "IsInfected", malariaStructs[1].Hosts[2].NInfections, 1)
+	CheckIfEqual(t, "IsInfected", malariaStructs[0].Hosts[5].NInfections, 0)
+	CheckIfEqual(t, "IsInfected", malariaStructs[0].Hosts[1].NInfections, 0)
 
-	CheckIfEqual(t, "Antigens", malariaStructs[0].Hosts[0].Infections, []int8{1})
-	CheckIfEqual(t, "AntigenLen", len(malariaStructs[1].Hosts[0].Infections), 2)
+	CheckIfEqual(t, "Infections", malariaStructs[0].Hosts[0].Infections, []int{0})
+	CheckIfEqual(t, "Number of infections", len(malariaStructs[1].Hosts[0].Infections), 1)
+	CheckIfEqual(t, "Number of antigens in a strains", len(malariaStructs[1].Strains[malariaStructs[1].Hosts[0].Infections[0]]), 2)
 
 	CheckIfEqual(t, "Is healthy host empty", len(malariaStructs[0].Hosts[4].Infections), 0)
-	CheckIfEqual(t, "Is healthy host empty", len(malariaStructs[0].Hosts[4].ExpressedStrain), 1)
-	CheckIfEqual(t, "Is healthy host empty", len(malariaStructs[1].Hosts[4].ExpressedStrain), 2)
+	CheckIfEqual(t, "Is healthy host empty", len(malariaStructs[0].Hosts[0].Infections), 1)
+	CheckIfEqual(t, "Is healthy host empty", len(malariaStructs[1].Hosts[2].Infections), 1)
 
-	fmt.Println("\n")
+	CheckIfEqual(t, "Has correct strain", malariaStructs[1].Strains[malariaStructs[1].Hosts[0].Infections[0]], []int8{3, 4})
+	CheckIfEqual(t, "Has correct strain", malariaStructs[1].Strains[malariaStructs[1].Hosts[1].Infections[0]], []int8{1, 2})
+	CheckIfEqual(t, "Has correct strain", malariaStructs[1].Strains[malariaStructs[1].Hosts[2].Infections[0]], []int8{1, 2})
 	return
 }
 
@@ -146,19 +138,24 @@ func TestEventChoosing(t *testing.T) {
 func TestSpread(t *testing.T) {
 	m := CreateMalariaStructsInSlice()
 
-	m[1].Spread(3, 0)
+	m[1].Spread(3, m[1].Hosts[0].Infections[0], 5)
+	CheckIfEqual(t, "NInfected after infection", m[1].NInfectedHosts, 4)
+	CheckIfEqual(t, "NInfected after infection", m[1].NInfectedHosts, 4)
+	CheckIfEqual(t, "StrainCounter after infections", m[1].StrainCounter[m[1].Hosts[0].Infections[0]], 2)
+	CheckIfEqual(t, "StrainCounter after infections", m[1].StrainCounter[0], 2)
+	CheckIfEqual(t, "StrainCounter after infections", m[1].StrainCounter[1], 0)
 
+	m[1].Spread(3, m[1].Hosts[1].Infections[0], 5)
 	CheckIfEqual(t, "NInfected after infection", m[1].NInfectedHosts, 4)
-	CheckIfEqual(t, "NInfected after infection", m[1].NInfectedHosts, 4)
-	CheckIfEqual(t, "StrainCounter after infections", m[1].StrainCounter[ListToString([]int8{3, 4})], 2)
-	CheckIfEqual(t, "StrainCounter after infections", m[1].StrainCounter[ListToString([]int8{1, 2})], 2)
-	CheckIfEqual(t, "StrainCounter after infections", m[1].StrainCounter[ListToString([]int8{1, 3})], 0)
+	CheckIfEqual(t, "StrainCounter after infections", m[1].StrainCounter[m[1].Hosts[0].Infections[0]], 2)
+	CheckIfEqual(t, "StrainCounter after infections", m[1].StrainCounter[0], 3)
+	CheckIfEqual(t, "StrainCounter after infections", m[1].StrainCounter[1], 0)
 
-	m[1].Spread(3, 1)
-	CheckIfEqual(t, "NInfected after infection", m[1].NInfectedHosts, 4)
-	CheckIfEqual(t, "StrainCounter after infections", m[1].StrainCounter[ListToString([]int8{3, 4})], 2)
-	CheckIfEqual(t, "StrainCounter after infections", m[1].StrainCounter[ListToString([]int8{1, 2})], 3)
-	CheckIfEqual(t, "StrainCounter after infections", m[1].StrainCounter[ListToString([]int8{1, 3})], 0)
+	// Testing whether it denies another infection of the the same strain it already has.
+	m[1].Spread(3, m[1].Hosts[1].Infections[0], 5)
+	CheckIfEqual(t, "whether a host becomes infected by the same strain", m[1].NInfectedHosts, 4)
+	CheckIfEqual(t, "whether a host becomes infected by the same strain", m[1].Hosts[3].Infections, []int{7, 0})
+	CheckIfEqual(t, "whether a host becomes infected by the same strain", m[1].StrainCounter[m[1].Hosts[1].Infections[0]], 3)
 
 	return
 }
@@ -166,24 +163,22 @@ func TestSpread(t *testing.T) {
 func TestInfectHost(t *testing.T) {
 	m := CreateMalariaStructsInSlice()
 
-	m[0].Hosts[4].InfectHost(&m[0].Hosts[0], p1.NAntigens)
+	m[0].Hosts[4].InfectHost(m[0].Hosts[0].Infections[0])
 	CheckIfEqual(t, "Newly infected has same infections", m[0].Hosts[4].Infections, m[0].Hosts[0].Infections)
-	CheckIfEqual(t, "Newly infected has correct expressed strain", m[0].Hosts[4].ExpressedStrain, m[0].Hosts[0].ExpressedStrain)
 
-	m[0].Hosts[1].InfectHost(&m[0].Hosts[0], p1.NAntigens)
-	m[0].Hosts[1].InfectHost(&m[0].Hosts[0], p1.NAntigens)
-	CheckIfEqual(t, "Newly infected has same infections", m[0].Hosts[1].Infections, []int8{1, 1}) // it should not do this if goind through spread
-	CheckIfEqual(t, "Newly infected has correct expressed strain", m[0].Hosts[1].ExpressedStrain, []int8{1})
+	m[0].Hosts[1].InfectHost(m[0].Hosts[0].Infections[0])
+	m[0].Hosts[1].InfectHost(m[0].Hosts[0].Infections[0])
+	CheckIfEqual(t, "Newly infected has same infections", m[0].Hosts[1].Infections, []int{m[0].Hosts[0].Infections[0], m[0].Hosts[0].Infections[0]}) // Is [0, 0]. This should happen when using the InfectHost method, but not the spread method.
 
-	m[1].Hosts[5].InfectHost(&m[1].Hosts[0], p2.NAntigens)
-	m[1].Hosts[5].InfectHost(&m[1].Hosts[1], p2.NAntigens)
+	m[1].Hosts[5].InfectHost(m[1].Hosts[0].Infections[0])
+	m[1].Hosts[5].InfectHost(m[1].Hosts[1].Infections[0])
 
-	CheckIfEqual(t, "Super Infection with same strain", m[1].Hosts[5].Infections, []int8{3, 4, 1, 2})
+	CheckIfEqual(t, "Super Infection with same strain", m[1].Hosts[5].Infections, []int{m[1].Hosts[0].Infections[0], m[1].Hosts[1].Infections[0]})
 	return
 
 }
 
-func TestCombinerParasite(t *testing.T) {
+func TestCombineParasite(t *testing.T) {
 
 	return
 }
@@ -197,72 +192,45 @@ func TestImmunity(t *testing.T) {
 	m[0].ImmunityGained(0)
 	CheckIfEqual(t, "Antibodies", m[0].Hosts[0].Antibodies[0], true)
 	CheckIfEqual(t, "Number of infected", len(m[0].InfectedHosts), 0)
-	CheckIfEqual(t, "Is Infected", m[0].Hosts[0].IsInfected, false)
+	CheckIfEqual(t, "Is Infected", m[0].Hosts[0].NInfections, 0)
 	CheckIfEqual(t, "Infections", len(m[0].Hosts[0].Infections), 0)
 
 	m[1].ImmunityGained(0)
 	m[1].ImmunityGained(0)
 	m[1].ImmunityGained(0)
-	CheckIfEqual(t, "Is Infected", m[1].Hosts[0].IsInfected, false)
+	CheckIfEqual(t, "Is Infected", m[1].Hosts[0].NInfections, 0)
 	CheckIfEqual(t, "Infections", len(m[1].Hosts[0].Infections), 0)
-	CheckIfEqual(t, "StrainCounter after immunity", m[1].StrainCounter[ListToString([]int8{3, 4})], 0)
+	CheckIfEqual(t, "StrainCounter after immunity", m[1].StrainCounter[7], 0)
 
 }
 
 func TestHasStrain(t *testing.T) {
 	m := CreateMalariaStructsInSlice()
 
-	CheckIfEqual(t, "If infection strain is contained in target.", m[1].Hosts[0].HasStrain(&m[1].Hosts[1], 2), false)
-	CheckIfEqual(t, "If infection strain is contained in target.", m[1].Hosts[1].HasStrain(&m[1].Hosts[2], 2), true)
+	CheckIfEqual(t, "If infection strain is contained in target.", m[1].Hosts[0].HasStrain(m[1].Hosts[1].Infections[0]), false)
+	CheckIfEqual(t, "If infection strain is contained in target.", m[1].Hosts[1].HasStrain(m[1].Hosts[2].Infections[0]), true)
 
-	m[1].Hosts[0].InfectHost(&m[1].Hosts[1], 2)
-	m[1].Hosts[0].ExpressedStrain[0] = 3
-	m[1].Hosts[0].ExpressedStrain[1] = 4
-
-	CheckIfEqual(t, "If infection is correct", m[1].Hosts[0].Infections, []int8{3, 4, 1, 2})
-
-	CheckIfEqual(t, "If infection strain is contained in target.", m[1].Hosts[0].HasStrain(&m[1].Hosts[1], 2), true)
-	CheckIfEqual(t, "If infection strain is contained in target.", m[1].Hosts[0].HasStrain(&m[1].Hosts[2], 2), true)
-	CheckIfEqual(t, "If infection strain is contained in target.", m[1].Hosts[1].HasStrain(&m[1].Hosts[0], 2), false)
-
-	// m[1].Hosts[0].InfectHost(&m[1].Hosts[1], 2)
-
-	// CheckIfEqual(t, "If infection is correct. Infection to a strain already contained should not happen.", m[1].Hosts[0].Infections, []int8{3, 4, 1, 2})
-
-}
-
-func TestRemoveParasite(t *testing.T) {
-	m := CreateMalariaStructsInSlice()
-
-	m[1].Hosts[0].InfectHost(&m[1].Hosts[2], p2.NAntigens)
-	m[1].Hosts[1].InfectHost(&m[1].Hosts[2], p2.NAntigens)
-
-	m[1].Hosts[0].RemoveParasite(m[1].NAntigens, 1)
-	CheckIfEqual(t, "Removing the first parasite by a host infected by 2", m[1].Hosts[0].Infections, []int8{3, 4})
-	m[1].Hosts[0].RemoveParasite(m[1].NAntigens, 0)
-	CheckIfEqual(t, "Removing the first parasite by a host infected by 2", m[1].Hosts[0].Infections, []int8{})
-	m[1].Hosts[1].RemoveParasite(m[1].NAntigens, 0)
-	CheckIfEqual(t, "Removing the first parasite by a host infected by 2", m[1].Hosts[1].Infections, []int8{1, 2})
 }
 
 func TestReplace(t *testing.T) {
 	m := CreateMalariaStructsInSlice()
 
-	m[1].Spread(9, 1)
-	m[1].Spread(8, 1)
-	m[1].Spread(8, 0)
+	strain_1_2 := m[1].Hosts[1].Infections[0]
+	strain_3_4 := m[1].Hosts[0].Infections[0]
+
+	m[1].Spread(9, strain_1_2, 5)
+	m[1].Spread(8, strain_1_2, 5)
+	m[1].Spread(8, strain_3_4, 5)
 
 	m[1].Replace(0)
 	m[1].Replace(8)
 
 	CheckIfEqual(t, "Decreased number of infected after replacement", m[1].NInfectedHosts, 3)
 	CheckIfEqual(t, "The last index in infectedHosts", m[1].InfectedHosts[2], 9)
-	CheckIfEqual(t, "Should not be infected after replacement", m[1].Hosts[8].IsInfected, false)
-	CheckIfEqual(t, "Expressed strain, replacement", int(m[1].Hosts[8].ExpressedStrain[0]), 1)
+	CheckIfEqual(t, "Should not be infected after replacement", m[1].Hosts[8].NInfections, 0)
 	CheckIfEqual(t, "Infections, replacement", len(m[1].Hosts[8].Infections), 0)
-	CheckIfEqual(t, "StrainCounter replacement", m[1].StrainCounter["1,2"], 3)
-
-	CheckIfEqual(t, "StrainCounter replacement", m[1].StrainCounter["3,4"], 0)
+	CheckIfEqual(t, "StrainCounter replacement", m[1].StrainCounter[strain_1_2], 3)
+	CheckIfEqual(t, "StrainCounter replacement", m[1].StrainCounter[strain_3_4], 0)
 
 	return
 }
@@ -278,24 +246,24 @@ func TestFindAllStrainCombinations(t *testing.T) {
 	fmt.Println("Testing strain combinations")
 	strainLen := 1
 	antigenMax := 5
-	maxStrains, keys, strainCount := FindAllStrainCombinations(strainLen, antigenMax)
+	maxStrains, strainAntigens, strainCount := FindAllStrainCombinations(strainLen, antigenMax)
 	fmt.Println(maxStrains, strainCount)
 	CheckIfEqual(t, "Correct number of maximum strains for strainLen 1", maxStrains, 5)
-	CheckIfEqual(t, "Strain keys for strainLen 1", keys, []string{"1", "2", "3", "4", "5"})
+	CheckIfEqual(t, "Strain keys for strainLen 1", strainAntigens, [][]int8{{1}, {2}, {3}, {4}, {5}})
 
 	strainLen = 2
 	antigenMax = 5
-	maxStrains, keys, strainCount = FindAllStrainCombinations(strainLen, antigenMax)
+	maxStrains, strainAntigens, strainCount = FindAllStrainCombinations(strainLen, antigenMax)
 	fmt.Println(maxStrains, strainCount)
 	CheckIfEqual(t, "Correct number of maximum strains for strainLen 2", maxStrains, 10)
-	CheckIfEqual(t, "Strain keys for strainLen 2", keys, []string{"1,2", "1,3", "1,4", "1,5", "2,3", "2,4", "2,5", "3,4", "3,5", "4,5"})
+	CheckIfEqual(t, "Strain keys for strainLen 2", strainAntigens, [][]int8{{1, 2}, {1, 3}, {1, 4}, {1, 5}, {2, 3}, {2, 4}, {2, 5}, {3, 4}, {3, 5}, {4, 5}})
 
 	strainLen = 3
 	antigenMax = 5
-	maxStrains, keys, strainCount = FindAllStrainCombinations(strainLen, antigenMax)
+	maxStrains, strainAntigens, strainCount = FindAllStrainCombinations(strainLen, antigenMax)
 	fmt.Println(maxStrains, strainCount)
 	CheckIfEqual(t, "Correct number of maximum strains for strainLen 3", maxStrains, 10)
-	CheckIfEqual(t, "Strain keys for strainLen 1", keys, []string{"1,2,3", "1,2,4", "1,2,5", "1,3,4", "1,3,5", "1,4,5", "2,3,4", "2,3,5", "2,4,5", "3,4,5"})
+	CheckIfEqual(t, "Strain keys for strainLen 1", strainAntigens, [][]int8{{1, 2, 3}, {1, 2, 4}, {1, 2, 5}, {1, 3, 4}, {1, 3, 5}, {1, 4, 5}, {2, 3, 4}, {2, 3, 5}, {2, 4, 5}, {3, 4, 5}})
 
 	return
 }
@@ -325,29 +293,6 @@ func TestCheckUniqueInt8(t *testing.T) {
 
 }
 
-func TestInsertRandomInfection(t *testing.T) {
-	m := CreateMalariaStructsInSlice()
-
-	for hostIndex := 0; hostIndex < m[1].NHosts; hostIndex++ {
-		if len(m[1].Hosts[hostIndex].Infections) == 0 {
-			m[1].Hosts[hostIndex].Infections = append(m[1].Hosts[hostIndex].Infections, 0)
-			m[1].Hosts[hostIndex].Infections = append(m[1].Hosts[hostIndex].Infections, 0)
-		}
-		m[1].Hosts[hostIndex].InsertRandomInfection(2, 2)
-		CheckIfEqual(t, "Random infection all antigens unique in same strain", m[1].Hosts[hostIndex].ExpressedStrain, []int8{1, 2})
-		CheckIfEqual(t, "Random infection all antigens unique in same strain", m[1].Hosts[hostIndex].Infections, []int8{1, 2})
-	}
-
-}
-
-func TestCountInfections(t *testing.T) {
-	nInfections := CountInfections([]int8{1, 2, 3, 4}, 2)
-	CheckIfEqual(t, "Number of infections in a host", nInfections, 2)
-
-	nInfections2 := CountInfections([]int8{1, 2, 3, 4, 5, 8, 2, 5, 7, 1, 9, 16}, 3)
-	CheckIfEqual(t, "Number of infections in a host", nInfections2, 4)
-}
-
 func TestCalcMeanAndVar(t *testing.T) {
 	data := []float64{1.0, 2.0, 3.0, 4.0, 5.0}
 	mean, variance := CalcMeanAndVar(data)
@@ -357,5 +302,5 @@ func TestCalcMeanAndVar(t *testing.T) {
 	if variance != 2.0 {
 		t.Fatalf("variance incorrect. Is: %f. Should be: %f", variance, 2.0)
 	}
-
+	return
 }
