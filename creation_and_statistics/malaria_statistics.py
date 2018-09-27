@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib
 import pandas as pandas
+import Latexify as Latexify
 
 class MalariaStatistics():
 
@@ -84,9 +85,9 @@ class MalariaStatistics():
         return dataEndRepeat
 
     # Creates a plot with extinction time with whatever parameter given. 
-    def PlotExtinctionTime(self, vary, xlabel = "vary", newFigure = True, plotAllMeasurements = False):
-
-        if newFigure: plt.figure()
+    def PlotExtinctionTime(self, vary, ax = None, xlabel = "vary", plotAllMeasurements = False):
+        if ax == None:
+            _, ax = plt.subplots()
         
         if self.isRepeated:
             plt.errorbar(self.parameters[vary], self.dataEndRepeat["run"], self.dataEndRepeat["run_error"], fmt='o')
@@ -98,49 +99,53 @@ class MalariaStatistics():
             for i in range(self.settings["Repeat"][0]):
                 plt.plot(self.parameters[vary], self.dataEnd["run"][0+i::self.settings["Repeat"][0]],  color = "red", linestyle = "None",  marker='.', alpha=0.1)
 
-        if self.plotSettings["saveFigs"]: self.PlotNiceAndSave(xlabel, "Extinction time", "extinctionTime")
+        if self.plotSettings["saveFigs"]: self.PlotNiceAndSave(ax, xlabel, "Extinction time", "extinctionTime")
 
         return
 
     # Creates a plot of the mean and variance. 
-    def PlotMeanInfection(self, vary, xlabel = "vary", newFigure = True):
-        if newFigure: plt.figure()
+    def PlotMeanInfection(self, vary, ax = None, xlabel = "vary"):
+        if ax == None:
+            _, ax = plt.subplots()
         
         if self.isRepeated:
             print(len(self.parameters[vary]), len(self.dataEnd["halfMean"]), len(self.dataEndRepeat["halfMean_error"]))
-            plt.errorbar(self.parameters[vary], self.dataEndRepeat["halfMean"]/self.parameters["NHosts"], self.dataEndRepeat["halfMean_error"]/self.parameters["NHosts"], fmt='o')
+            ax.errorbar(self.parameters[vary], self.dataEndRepeat["halfMean"]/self.parameters["NHosts"], self.dataEndRepeat["halfMean_error"]/self.parameters["NHosts"], fmt='o')
         else: 
-            plt.errorbar(self.parameters[vary], self.dataEnd["halfMean"]/self.parameters["NHosts"], np.sqrt(self.dataEnd["halfVariance"])/self.parameters["NHosts"], fmt='o')
+            ax.errorbar(self.parameters[vary], self.dataEnd["halfMean"]/self.parameters["NHosts"], np.sqrt(self.dataEnd["halfVariance"])/self.parameters["NHosts"], fmt='o')
             
 
-        if self.plotSettings["saveFigs"]: self.PlotNiceAndSave(xlabel, "Mean infected", "mean")
+        if self.plotSettings["saveFigs"]: self.PlotNiceAndSave(ax, xlabel, "Mean infected", "mean")
 
         return
 
     # Makes a plot of the development of the number of infected over time. 
-    def PlotTimeline(self, newFigure = True, axis = []):
-        if newFigure: plt.figure()
+    def PlotTimeline(self, ax = None, axis = []):
+        if ax == None: 
+            _, ax = plt.subplots()
         if len(axis) == 0:
-            plt.plot(self.timelineRuns, self.timelineNInfected/self.parameters["NHosts"][self.timelineIndex[0]-1])
+            ax.plot(self.timelineRuns, self.timelineNInfected/self.parameters["NHosts"][self.timelineIndex[0]-1])
 
-        if self.plotSettings["saveFigs"]: self.PlotNiceAndSave("Iteration", "Infected", "timeLine" + str(self.timelineIndex))
+        if self.plotSettings["saveFigs"]: self.PlotNiceAndSave(ax, "Iteration", "Infected", "timeLine" + str(self.timelineIndex))
 
         return
 
     # Plots strain counter 
-    def PlotStrainCounter(self, newFigure = True, axis = []):
-        if newFigure: plt.figure()
+    def PlotStrainCounter(self, ax = None, axis = []):
+        if ax == None:
+            _, ax = plt.subplots()
         for strain in range(self.NStrains):
             if len(axis) == 0:
-                plt.plot(self.timelineRuns, self.strainCounter[:, strain]/self.parameters["NHosts"][self.timelineIndex[0]-1], alpha=0.6)
+                ax.plot(self.timelineRuns, self.strainCounter[:, strain]/self.parameters["NHosts"][self.timelineIndex[0]-1], alpha=0.6)
 
-        if self.plotSettings["saveFigs"]: self.PlotNiceAndSave("Iteration", "Infected", "strainCounter")
+        if self.plotSettings["saveFigs"]: self.PlotNiceAndSave(ax, "Iteration", "Infected", "strainCounter")
 
         return 
 
     # vary1 is x-axis and vary2 is y 
-    def Plot2D(self, vary1, vary2, newFigure = True):
-        if newFigure: plt.figure()
+    def Plot2D(self, vary1, vary2, ax = None):
+        if ax == None: 
+            _, ax = plt.subplots()
 
         x = np.unique(self.parameters[vary1])
         y = np.unique(self.parameters[vary2])
@@ -158,19 +163,18 @@ class MalariaStatistics():
                 j += 1
             i += 1
 
-        # 
-        plt.imshow(np.transpose(Z), origin='lower', aspect='auto', extent=(np.min(x)-xStep/2, np.max(x)+xStep/2, np.min(y)-yStep/2, np.max(y)+yStep/2), vmin=0, vmax=2*10**7 )    
-        matplotlib.rcParams.update({'font.size': 14}) 
+        ax.imshow(np.transpose(Z), origin='lower', aspect='auto', extent=(np.min(x)-xStep/2, np.max(x)+xStep/2, np.min(y)-yStep/2, np.max(y)+yStep/2), vmin=0, vmax=2*10**7 )    
         plt.colorbar(format='%.1e')
         return Z
     
     def Plot2DResidual(self, vary1, vary2, newFigure = True):
         return
 
-    def PlotNiceAndSave(self, xlabel, ylabel, fileName):
+    def PlotNiceAndSave(self, ax, xlabel, ylabel, fileName):
         plt.xlabel(xlabel)
         plt.ylabel(ylabel)
-        plt.tight_layout()
+        Latexify.format_axes(ax)
+        plt.tight_layout(pad=0.5)
 
         figName = self.plotSettings["savePath"] + fileName + ".pdf"
         plt.savefig(figName, format="pdf")

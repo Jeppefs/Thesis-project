@@ -7,26 +7,30 @@ import pandas as pandas
 import scipy.optimize as op
 
 def simple():
+    Latexify.Latexify(fig_width=6.19893)
     q = MS.MalariaStatistics("simple")
 
-    q.PlotExtinctionTime("InfectionSpeed", xlabel = r"$\alpha$")
-    plt.figure()
-    plt.plot(np.arange(1.0, 1.05, 0.0001), 10000*(np.arange(1.0, 1.05, 0.0001)-1), color="r")
-    q.PlotMeanInfection("InfectionSpeed", xlabel = r"$\alpha$", newFigure=False)
+    _, ax = plt.subplots()
+    q.PlotExtinctionTime("InfectionSpeed", ax=ax, xlabel = r"$\alpha$")
     
-    Latexify.Latexify()
+    _, ax = plt.subplots()
+    q.PlotMeanInfection("InfectionSpeed", ax=ax, xlabel = r"$\alpha$")
+    #plt.plot(np.arange(1.0, 1.05, 0.0001), 10000*(np.arange(1.0, 1.05, 0.0001)-1), color="r")
+
+    _, ax = plt.subplots()
     q.timelineIndex = [1, 1]
     print("InfectionSpeed", q.parameters["InfectionSpeed"][q.timelineIndex[0]])
     q.ImportTimeline()
-    q.PlotTimeline()
+    q.PlotTimeline(ax = ax)
 
-    Latexify.Latexify()
+    _, ax = plt.subplots()
     q.timelineIndex = [10, 5]
     print("InfectionSpeed", q.parameters["InfectionSpeed"][q.timelineIndex[0]])
     q.ImportTimeline()
-    q.PlotTimeline()
+    q.PlotTimeline(ax = ax)
     return
 
+"""
 def replacement(): 
     q = MS.MalariaStatistics("replacement")
 
@@ -201,8 +205,4 @@ def complexDifferenceMutation2D():
     q.ApplyMask(mask)
     q.Plot2D("ReplacementSpeed","InfectionSpeed", newFigure=True)
     q.PlotNiceAndSave(xlabel=r"$\gamma$", ylabel=r"$\alpha$", fileName = "cross")
-
-Latexify.Latexify()
-#features("mutation")
-simple()
-plt.show()
+"""

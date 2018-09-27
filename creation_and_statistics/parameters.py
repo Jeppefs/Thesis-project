@@ -2,7 +2,7 @@ import numpy as np
 from collections import OrderedDict
 import make_parameters as mp 
 
-func = "mutation2D"
+func = "simple"
 name = ""
 notes = ""
 
@@ -40,7 +40,7 @@ def simple(name = "simple", notes = "Infections speed adjusted with resistance a
 
     folder, name, parameters, settings, notes = standard(name = name, notes = notes)
 
-    parameters["InfectionSpeed"] = np.arange(1.0, 1.05+0.0000001, 0.001)
+    parameters["InfectionSpeed"] = np.arange(1.0, 1.05+0.0000001, 0.001) # skip with 0.001
     settings["Repeat"] = [10] 
 
 
