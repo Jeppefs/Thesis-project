@@ -2,11 +2,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib
 import pandas as pandas
-import Latexify as Latexify
+from Latexifier import LatexifierFunctions as LF 
 
 class MalariaStatistics():
 
-    def __init__(self, simulationName, timelineIndex = [0,0], saveFigs = True, plotSettings = {}):
+    def __init__(self, simulationName, timelineIndex = [0,0], saveFigs = True, timeConversion = None, plotSettings = {}):
         
         self.simulationName = simulationName
         self.pathName = "data/" + self.simulationName + "/"
@@ -20,9 +20,16 @@ class MalariaStatistics():
         self.NSimulations = len(self.dataEnd['run'])
 
         self.plotSettings = plotSettings
+
+        if timeConversion == None:
+            self.timeConversion = 1/self.parameters['NHosts'][0]
+        else:
+            self.timeConversion = timeConversion 
+        self.ApplyTimeConversion()
+
         if self.plotSettings == {}:
-            #self.plotSettings["fontSize"] = 18
-            #self.plotSettings["tickSize"] = 16
+            self.plotSettings["xTimeLabel"] = "Time (gen)"
+            self.plotSettings["yTimeLabel"] = "Extinction time (gen)"
             self.plotSettings["saveFigs"] = saveFigs
             self.plotSettings["savePath"] = self.pathName + "plots" + "/" + self.simulationName + "_"
 
@@ -35,6 +42,10 @@ class MalariaStatistics():
             self.dataEndRepeat = self.GetRepeatedMeanAndVariance()
         else: 
             self.isRepeated = False
+
+    def ApplyTimeConversion(self):
+        self.dataEnd['run'] = self.dataEnd['run']*self.timeConversion
+        return
 
     def ApplyMask(self, mask):
         self.dataEndCopy = self.dataEnd.copy()
@@ -59,7 +70,9 @@ class MalariaStatistics():
 
     def ImportTimeline(self): 
         temp = np.genfromtxt(self.pathName + "timeline/" + str(self.timelineIndex[0]) + "_" + str(self.timelineIndex[1]) + ".csv", delimiter=",", skip_header=1)
-        self.timelineRuns = temp[:,0]
+        self.timelineRuns = temp[:,0]*self.timeConversion
+        print(self.timelineRuns)
+        print(self.timeConversion)
         self.timelineNInfected = temp[:,1]
         return
 
@@ -90,16 +103,15 @@ class MalariaStatistics():
             _, ax = plt.subplots()
         
         if self.isRepeated:
-            plt.errorbar(self.parameters[vary], self.dataEndRepeat["run"], self.dataEndRepeat["run_error"], fmt='o')
+            ax.errorbar(self.parameters[vary], self.dataEndRepeat["run"], self.dataEndRepeat["run_error"], fmt='o')
         else:
-            plt.plot(self.parameters[vary], self.dataEnd["run"], 'o')
+            ax.plot(self.parameters[vary], self.dataEnd["run"], 'o')
             
-
         if plotAllMeasurements == True:
             for i in range(self.settings["Repeat"][0]):
-                plt.plot(self.parameters[vary], self.dataEnd["run"][0+i::self.settings["Repeat"][0]],  color = "red", linestyle = "None",  marker='.', alpha=0.1)
+                ax.plot(self.parameters[vary], self.dataEnd["run"][0+i::self.settings["Repeat"][0]],  color = "red", linestyle = "None",  marker='.', alpha=0.1)
 
-        if self.plotSettings["saveFigs"]: self.PlotNiceAndSave(ax, xlabel, "Extinction time", "extinctionTime")
+        if self.plotSettings["saveFigs"]: self.PlotNiceAndSave(ax, xlabel, self.plotSettings["yTimeLabel"], "extinctionTime")
 
         return
 
@@ -126,7 +138,7 @@ class MalariaStatistics():
         if len(axis) == 0:
             ax.plot(self.timelineRuns, self.timelineNInfected/self.parameters["NHosts"][self.timelineIndex[0]-1])
 
-        if self.plotSettings["saveFigs"]: self.PlotNiceAndSave(ax, "Iteration", "Infected", "timeLine" + str(self.timelineIndex))
+        if self.plotSettings["saveFigs"]: self.PlotNiceAndSave(ax, self.plotSettings["xTimeLabel"], "Infected", "timeLine" + str(self.timelineIndex))
 
         return
 
@@ -138,7 +150,7 @@ class MalariaStatistics():
             if len(axis) == 0:
                 ax.plot(self.timelineRuns, self.strainCounter[:, strain]/self.parameters["NHosts"][self.timelineIndex[0]-1], alpha=0.6)
 
-        if self.plotSettings["saveFigs"]: self.PlotNiceAndSave(ax, "Iteration", "Infected", "strainCounter")
+        if self.plotSettings["saveFigs"]: self.PlotNiceAndSave(ax, self.plotSettings['xTimeLabel'], "Infected", "strainCounter")
 
         return 
 
@@ -173,8 +185,8 @@ class MalariaStatistics():
     def PlotNiceAndSave(self, ax, xlabel, ylabel, fileName):
         plt.xlabel(xlabel)
         plt.ylabel(ylabel)
-        Latexify.format_axes(ax)
-        plt.tight_layout(pad=0.5)
+        LF.format_axes(ax)
+        plt.tight_layout(pad=0.1)
 
         figName = self.plotSettings["savePath"] + fileName + ".pdf"
         plt.savefig(figName, format="pdf")

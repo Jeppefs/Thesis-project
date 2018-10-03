@@ -1,5 +1,5 @@
 import malaria_statistics as MS 
-import Latexify as Latexify
+from Latexifier import LatexifierFunctions as LF
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -7,7 +7,7 @@ import pandas as pandas
 import scipy.optimize as op
 
 def simple():
-    Latexify.Latexify(fig_width=6.19893)
+    LF.Latexify(fig_width=6.19893, label_size=[1.0, 1.0])
     q = MS.MalariaStatistics("simple")
 
     _, ax = plt.subplots()
@@ -30,8 +30,9 @@ def simple():
     q.PlotTimeline(ax = ax)
     return
 
-"""
+
 def replacement(): 
+    LF.Latexify()
     q = MS.MalariaStatistics("replacement")
 
     q.PlotExtinctionTime("ReplacementSpeed", xlabel = r"$\gamma$")
@@ -52,7 +53,7 @@ def replacement():
     #q2.PlotMeanInfection("ReplacementSpeed", xlabel = r"$\gamma$")
 
     return
-
+"""
 def features(plotThis="..."):
     # If True, remember to change from -1 to -2
     if plotThis == "complex":

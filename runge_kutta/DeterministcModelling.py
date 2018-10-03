@@ -2,8 +2,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib 
 import RungeKutta as RK
-from AnotherPyplotLatexifyer import Latexify
+from Latexifier import LatexifierFunctions as LF 
 
+# What the fuck does the function do? 
 def SIRPlus(param, values, t):
     valuesRate = np.zeros(len(values))
     
@@ -14,6 +15,23 @@ def SIRPlus(param, values, t):
 
     return valuesRate
 
+def SI(param, values, t):
+    valuesRate = np.zeros(len(values))
+
+    valuesRate[0] = - param[0] * values[0] + param[1] * values[1]
+    valuesRate[1] = param[0] * values[0] - param[1] * values[1]
+
+    return valuesRate
+
+#def SIRS(param, values, t):
+#    valuesrate = np.zeros(len(values))
+#
+#    valuesRate[0] = - param[0] * values[0] + param[2] * values[2]
+#    valuesRate[1] = param[0] * values[0] - param[1] * values[1]
+#    valuesRate[2] = param[1] * values[2]  - param[2] * 
+#
+#    return valuesRate 
+    
 def UltraSIR(param, values, t):
     valuesRate = np.zeros(len(values))
 
@@ -97,7 +115,7 @@ def PlotSimple(func, initial, param, legend, runs = 50000, xlabel = "", ylabel =
     ax.legend(legend)
     ax.set_xlabel(xlabel)
     ax.set_ylabel(ylabel)
-    Latexify.format_axes(ax)
+    LF.format_axes(ax)
     fig.tight_layout(pad = 0.1)
     fig.savefig("runge_kutta/temp.pdf", format="pdf")
     return
@@ -115,7 +133,7 @@ def ReplacementParameterRasta():
     plt.xlabel(r"$\gamma$", fontsize=16)
     plt.ylabel("Proportion infected", fontsize=16)
     plt.tick_params(labelsize=14)
-    plt.tight_layout()
+    plt.tight_layout(pad=0.1)
     plt.savefig("runge_kutta/temp.pdf", format="pdf")
 
     return
@@ -178,11 +196,10 @@ def ReplacementRastaScan():
 
     return
     
-Latexify.Latexify(fig_width = 12.65076*0.49, label_size = [1.05, 1.05])
-#ReplacementRastaScan()
-#ReplacementParameterRasta()
+LF.Latexify(fig_width = 12.65076*0.49, label_size = [1.05, 1.05])
 
-PlotSimple(func = SimpleInfection, initial = [0.99, 0.01, 0.0, 0.0], param = [1.1, 1.0], legend = ["$S$", "$I$", "$I_R$", "$S_R$"], runs=10000, xlabel="Iteration", ylabel="Proportion")
+"""Simple function and plotting"""
+#PlotSimple(func = SimpleInfection, initial = [0.99, 0.01, 0.0, 0.0], param = [1.1, 1.0], legend = ["$S$", "$I$", "$I_R$", "$S_R$"], runs=10000, xlabel="Iteration", ylabel="Proportion")
 #PlotSimple(func = SimpleInfectionSteadyState, initial = [0.99, 0.01], param = [0.9, 1.0], legend = ["$I_R$", "$S_R$"], runs=10000, xlabel="Iteration", ylabel="Proportion")
 #PlotSimple(Replacement, initial = [0.99, 0.01, 0.0, 0.0], param = [0.95, 1.0, 0.1], legend = ["S","I","$I_R$", "$S_R$"], runs=10000, xlabel="Iteration", ylabel="Proportion")
 #PlotSimple(func = Ross, initial = [0.1, 0.1], param = [0.09, 0.2, 2.0, 0.01, 0.5, 0.1], legend = ["$I_h$","$I_m$"], runs=100000, xlabel="Iterations", ylabel="Proportion infected")
