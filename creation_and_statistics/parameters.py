@@ -26,7 +26,7 @@ def standard(name = "standard", notes = "Standard data for non-systematic tests"
     settings = OrderedDict()
     settings["Runs"] = [20000000] 
     settings["BurnIn"] = [0]
-    settings["SkipSaving"] = [500]
+    settings["SkipSaving"] = parameters["NHosts"] / 10 
     settings["Repeat"] = [1]
     settings["ShouldSaveData"] = ["true"]
     settings["ShouldSaveDataWhileRunning"] = ["true"]

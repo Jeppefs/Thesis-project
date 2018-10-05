@@ -104,14 +104,17 @@ def Replacement(p, v, t):
     valuesRate[3] = - p[0] * v[3] * (v[1] + v[2]) + p[1] * v[2]  - p[2] * v[3]
     return valuesRate
 
-def PlotSimple(func, initial, param, legend, runs = 50000, xlabel = "", ylabel = ""):
+def PlotSimple(func, initial, param, legend, runs = 50000, xlabel = "", ylabel = "", color = None):
     q = RK.RungeKutta(initialConditions = initial, equation = func, param = param, dt = 0.01)
     q.Run(runs)
     print(q.values, np.sum(q.values))
 
     fig, ax = plt.subplots() 
     for i in range(q.NValues):
-        ax.plot(q.savedValues[i,:], linewidth = 1.0) 
+        if color == None:
+            ax.plot(q.savedValues[i,:], linewidth = 1.0) 
+        else:
+            ax.plot(q.savedValues[i,:], linewidth = 1.0, color = color[i])
     ax.legend(legend)
     ax.set_xlabel(xlabel)
     ax.set_ylabel(ylabel)
@@ -199,8 +202,8 @@ def ReplacementRastaScan():
 LF.Latexify(fig_width = 12.65076*0.49, label_size = [1.05, 1.05])
 
 """Simple function and plotting"""
-#PlotSimple(func = SimpleInfection, initial = [0.99, 0.01, 0.0, 0.0], param = [1.1, 1.0], legend = ["$S$", "$I$", "$I_R$", "$S_R$"], runs=10000, xlabel="Iteration", ylabel="Proportion")
-#PlotSimple(func = SimpleInfectionSteadyState, initial = [0.99, 0.01], param = [0.9, 1.0], legend = ["$I_R$", "$S_R$"], runs=10000, xlabel="Iteration", ylabel="Proportion")
+PlotSimple(func = SimpleInfection, initial = [0.99, 0.01, 0.0, 0.0], param = [0.9, 1.0], legend = ["$S$", "$I$", "$I_R$", "$S_R$"], runs=10000, xlabel="Iteration", ylabel="Proportion")
+#PlotSimple(func = SimpleInfectionSteadyState, initial = [0.99, 0.01], param = [1.1, 1.0], legend = ["$I_R$", "$S_R$"], runs=10000, xlabel="Iteration", ylabel="Proportion", color = ['g','r'])
 #PlotSimple(Replacement, initial = [0.99, 0.01, 0.0, 0.0], param = [0.95, 1.0, 0.1], legend = ["S","I","$I_R$", "$S_R$"], runs=10000, xlabel="Iteration", ylabel="Proportion")
 #PlotSimple(func = Ross, initial = [0.1, 0.1], param = [0.09, 0.2, 2.0, 0.01, 0.5, 0.1], legend = ["$I_h$","$I_m$"], runs=100000, xlabel="Iterations", ylabel="Proportion infected")
 

@@ -191,6 +191,18 @@ class MalariaStatistics():
         figName = self.plotSettings["savePath"] + fileName + ".pdf"
         plt.savefig(figName, format="pdf")
 
+    def GetTestingMeans(self):
+
+        return 
+
+    def IsEndemic(self):
+        
+        return 
+
+def IsItConstant(x, y): 
+    
+    return 
+
 def LinearFit(x, y):
 
     mean_x = np.mean(x)

@@ -14,8 +14,8 @@ def simple():
     q.PlotExtinctionTime("InfectionSpeed", ax=ax, xlabel = r"$\alpha$")
     
     _, ax = plt.subplots()
+    ax.plot(np.arange(1.0,1.05+0.0001,0.001), -1/np.arange(1.0,1.05+0.0001,0.001)+1, color="r") 
     q.PlotMeanInfection("InfectionSpeed", ax=ax, xlabel = r"$\alpha$")
-    #plt.plot(np.arange(1.0, 1.05, 0.0001), 10000*(np.arange(1.0, 1.05, 0.0001)-1), color="r")
 
     _, ax = plt.subplots()
     q.timelineIndex = [1, 1]
