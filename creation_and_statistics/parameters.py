@@ -12,7 +12,7 @@ def standard(name = "standard", notes = "Standard data for non-systematic tests"
     folder = "data"
     
     parameters = OrderedDict()
-    parameters["NHosts"] = np.array([10000])
+    parameters["NHosts"] = np.array([10000], dtype=int)
     parameters["InfectionSpeed"] = np.array([1.0]) 
     parameters["ImmunitySpeed"] = np.array([1.0])
     parameters["ReplacementSpeed"] = np.array([0.0])
@@ -26,7 +26,7 @@ def standard(name = "standard", notes = "Standard data for non-systematic tests"
     settings = OrderedDict()
     settings["Runs"] = [20000000] 
     settings["BurnIn"] = [0]
-    settings["SkipSaving"] = parameters["NHosts"] / 10 
+    settings["SkipSaving"] =  np.array([int(parameters["NHosts"][0] / 10)])
     settings["Repeat"] = [1]
     settings["ShouldSaveData"] = ["true"]
     settings["ShouldSaveDataWhileRunning"] = ["true"]

@@ -4,9 +4,23 @@ import matplotlib
 import pandas as pandas
 from Latexifier import LatexifierFunctions as LF 
 
+
+class PlotSettings():
+    """ 
+    A container for plotsettings 
+    """
+
+    def __init__(self):
+        self.xTimeLabel = "Time (gen)"
+        self.yTimeLabel = "Extinction time (gen)"
+        self.saveFigs = True
+        self.savePath = None
+
+        return
+
 class MalariaStatistics():
 
-    def __init__(self, simulationName, timelineIndex = [0,0], saveFigs = True, timeConversion = None, plotSettings = {}):
+    def __init__(self, simulationName, timelineIndex = [0,0], timeConversion = None, plotSettings = None):
         
         self.simulationName = simulationName
         self.pathName = "data/" + self.simulationName + "/"
@@ -19,19 +33,17 @@ class MalariaStatistics():
         self.NUniqueSimulations = len(self.parameters['NHosts']) 
         self.NSimulations = len(self.dataEnd['run'])
 
-        self.plotSettings = plotSettings
-
         if timeConversion == None:
             self.timeConversion = 1/self.parameters['NHosts'][0]
         else:
             self.timeConversion = timeConversion 
         self.ApplyTimeConversion()
 
-        if self.plotSettings == {}:
-            self.plotSettings["xTimeLabel"] = "Time (gen)"
-            self.plotSettings["yTimeLabel"] = "Extinction time (gen)"
-            self.plotSettings["saveFigs"] = saveFigs
-            self.plotSettings["savePath"] = self.pathName + "plots" + "/" + self.simulationName + "_"
+        if plotSettings == None:
+            self.plotSettings = PlotSettings()
+            self.plotSettings.savePath = self.pathName + "plots" + "/" + self.simulationName + "_"
+        else:
+            self.plotSettings = plotSettings
 
         if timelineIndex[0] > 0:
             self.ImportTimeline()
@@ -71,8 +83,6 @@ class MalariaStatistics():
     def ImportTimeline(self): 
         temp = np.genfromtxt(self.pathName + "timeline/" + str(self.timelineIndex[0]) + "_" + str(self.timelineIndex[1]) + ".csv", delimiter=",", skip_header=1)
         self.timelineRuns = temp[:,0]*self.timeConversion
-        print(self.timelineRuns)
-        print(self.timeConversion)
         self.timelineNInfected = temp[:,1]
         return
 
@@ -103,15 +113,15 @@ class MalariaStatistics():
             _, ax = plt.subplots()
         
         if self.isRepeated:
-            ax.errorbar(self.parameters[vary], self.dataEndRepeat["run"], self.dataEndRepeat["run_error"], fmt='o')
+            ax.errorbar(self.parameters[vary], self.dataEndRepeat["run"], self.dataEndRepeat["run_error"], fmt='o', markersize=2, elinewidth = 0.5)
         else:
-            ax.plot(self.parameters[vary], self.dataEnd["run"], 'o')
+            ax.plot(self.parameters[vary], self.dataEnd["run"], 'o', markersize=2, elinewidth = 0.5)
             
         if plotAllMeasurements == True:
             for i in range(self.settings["Repeat"][0]):
                 ax.plot(self.parameters[vary], self.dataEnd["run"][0+i::self.settings["Repeat"][0]],  color = "red", linestyle = "None",  marker='.', alpha=0.1)
 
-        if self.plotSettings["saveFigs"]: self.PlotNiceAndSave(ax, xlabel, self.plotSettings["yTimeLabel"], "extinctionTime")
+        if self.plotSettings.saveFigs: self.PlotNiceAndSave(ax, xlabel, self.plotSettings.yTimeLabel, "extinctionTime")
 
         return
 
@@ -121,13 +131,14 @@ class MalariaStatistics():
             _, ax = plt.subplots()
         
         if self.isRepeated:
-            print(len(self.parameters[vary]), len(self.dataEnd["halfMean"]), len(self.dataEndRepeat["halfMean_error"]))
-            ax.errorbar(self.parameters[vary], self.dataEndRepeat["halfMean"]/self.parameters["NHosts"], self.dataEndRepeat["halfMean_error"]/self.parameters["NHosts"], fmt='o')
+            ax.errorbar(self.parameters[vary], self.dataEndRepeat["halfMean"]/self.parameters["NHosts"], self.dataEndRepeat["halfMean_error"]/self.parameters["NHosts"],
+            fmt='o', markersize=2, elinewidth=0.5, zorder=1)
         else: 
-            ax.errorbar(self.parameters[vary], self.dataEnd["halfMean"]/self.parameters["NHosts"], np.sqrt(self.dataEnd["halfVariance"])/self.parameters["NHosts"], fmt='o')
+            ax.errorbar(self.parameters[vary], self.dataEnd["halfMean"]/self.parameters["NHosts"], np.sqrt(self.dataEnd["halfVariance"])/self.parameters["NHosts"],
+            fmt='o', markersize=2, elinewidth=0.5, zorder=1)
             
 
-        if self.plotSettings["saveFigs"]: self.PlotNiceAndSave(ax, xlabel, "Mean infected", "mean")
+        if self.plotSettings.saveFigs: self.PlotNiceAndSave(ax, xlabel, "Mean infected", "mean")
 
         return
 
@@ -138,7 +149,7 @@ class MalariaStatistics():
         if len(axis) == 0:
             ax.plot(self.timelineRuns, self.timelineNInfected/self.parameters["NHosts"][self.timelineIndex[0]-1])
 
-        if self.plotSettings["saveFigs"]: self.PlotNiceAndSave(ax, self.plotSettings["xTimeLabel"], "Infected", "timeLine" + str(self.timelineIndex))
+        if self.plotSettings.saveFigs: self.PlotNiceAndSave(ax, self.plotSettings.xTimeLabel, "Infected", "timeLine" + str(self.timelineIndex))
 
         return
 
@@ -150,7 +161,7 @@ class MalariaStatistics():
             if len(axis) == 0:
                 ax.plot(self.timelineRuns, self.strainCounter[:, strain]/self.parameters["NHosts"][self.timelineIndex[0]-1], alpha=0.6)
 
-        if self.plotSettings["saveFigs"]: self.PlotNiceAndSave(ax, self.plotSettings['xTimeLabel'], "Infected", "strainCounter")
+        if self.plotSettings.saveFigs: self.PlotNiceAndSave(ax, self.plotSettings.xTimeLabel, "Infected", "strainCounter")
 
         return 
 
@@ -188,16 +199,23 @@ class MalariaStatistics():
         LF.format_axes(ax)
         plt.tight_layout(pad=0.1)
 
-        figName = self.plotSettings["savePath"] + fileName + ".pdf"
+        figName = self.plotSettings.savePath + fileName + ".pdf"
         plt.savefig(figName, format="pdf")
 
-    def GetTestingMeans(self):
-
-        return 
-
     def IsEndemic(self):
-        
+        repeat = 0
+        repeatMax = self.settings["Repeat"][0]
+        for i in range(self.NSimulations):
+            repeat += 1
+            if repeat >= repeatMax:
+                repeat = 0  
+            
+                
         return 
+
+def FindThreshold(self):
+    
+    return 
 
 def IsItConstant(x, y): 
     
