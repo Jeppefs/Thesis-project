@@ -213,9 +213,35 @@ class MalariaStatistics():
                 
         return 
 
-def FindThreshold(self):
-    
-    return 
+def FindThreshold(x, y, yExpectedValue):
+    """
+    This function finds in time series data, when it starts to .
+    Specifically, it simply checks when timeseries hits the expected value for the second time. If it never does, return 0 
+    """
+    length = len(x)
+    count = 0
+    side = None
+    skip = 0 # Start at 10 to avoid initial conditions 
+    if y[skip] < yExpectedValue:
+        side = "below"
+    else: 
+        side = "above"
+
+    for i in range(10, length): 
+
+        if side == "below":
+            if y[i] > yExpectedValue:
+                count += 1
+                side = "above"
+        elif side == "above":
+            if y[i] < yExpectedValue:
+                count += 1
+                side = "below"
+            
+        if count == 2:
+            return x[i], y[i], i
+
+    return None, None, None
 
 def IsItConstant(x, y): 
     
