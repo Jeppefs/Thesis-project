@@ -10,6 +10,7 @@ Is there a way to automate how big the margins are (the part used for labels and
 """
 
 PT.simple()
+print("Congrats! All done!")
 plt.show()
 
 """

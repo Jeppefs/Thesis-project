@@ -7,7 +7,7 @@ from Latexifier import LatexifierFunctions as LF
 
 
 
-def PlotSimple(func, initial, param, legend, runs = 50000, xlabel = "", ylabel = "", color = None):
+def PlotSimple(func, initial, param, legend, runs = 50000, xlabel = "", ylabel = "", color = None, filename="temp"):
     q = RK.RungeKutta(initialConditions = initial, equation = func, param = param, dt = 0.01)
     q.Run(runs)
     print(q.values, np.sum(q.values))
@@ -23,27 +23,25 @@ def PlotSimple(func, initial, param, legend, runs = 50000, xlabel = "", ylabel =
     ax.set_ylabel(ylabel)
     LF.format_axes(ax)
     fig.tight_layout(pad = 0.1)
-    fig.savefig("runge_kutta/temp.pdf", format="pdf")
+    fig.savefig("runge_kutta/temp"+filename+".pdf", format="pdf")
     return
 
-def ReplacementParameterRasta():
-    q = RK.RungeKutta(initialConditions = [0.99, 0.01, 0.0, 0.0], param = [0.80, 1.0, 0.00], equation = Replacement, dt = 0.01)
+def ReplacementParameterRasta(filename="temp"):
+    q = RK.RungeKutta(initialConditions = [0.99, 0.01, 0.0, 0.0], param = [0.80, 1.0, 0.00], equation = DS.Replacement, dt = 0.01)
     paramList = np.arange(0, 1+0.00001, 0.01)
     alphaList = np.array([0.6, 0.8, 0.9, 0.95])
-    plt.figure()
+    fig, ax = plt.subplots()
     for alpha in alphaList:
         q.param[0] = alpha
         endingValues = q.ParameterSearch(paramIndex = 2, paramList = paramList, runs = 5000) 
-        plt.plot(paramList, endingValues[1,:] + endingValues[2,:])
-    plt.legend([r"$\alpha=0.60$", r"$\alpha=0.80$", r"$\alpha=0.9$", r"$\alpha=0.95$"])
-    plt.xlabel(r"$\gamma$", fontsize=16)
-    plt.ylabel("Proportion infected", fontsize=16)
-    plt.tick_params(labelsize=14)
-    plt.tight_layout(pad=0.1)
-    plt.savefig("runge_kutta/temp.pdf", format="pdf")
-
+        ax.plot(paramList, endingValues[1,:] + endingValues[2,:], linewidth=1.0)
+    ax.legend([r"$\alpha=0.60$", r"$\alpha=0.80$", r"$\alpha=0.9$", r"$\alpha=0.95$"])
+    ax.set_xlabel(r"$\gamma$")
+    ax.set_ylabel("Proportion infected")
+    LF.format_axes(ax)
+    fig.tight_layout(pad=0.1)
+    fig.savefig("runge_kutta/"+filename+".pdf", format="pdf")
     return
-
 
 def ReplacementRastaScan():
     
@@ -61,7 +59,7 @@ def ReplacementRastaScan():
     for alpha in alphas:
         j = 0
         for gamma in gammas:
-            q = RK.RungeKutta(initialConditions = [0.99, 0.01, 0.0, 0.0], param = [alpha, 1.0, gamma], equation = Replacement, dt = 0.01)
+            q = RK.RungeKutta(initialConditions = [0.99, 0.01, 0.0, 0.0], param = [alpha, 1.0, gamma], equation = DS.Replacement, dt = 0.01)
             q.Run(10000)
             gridInfected[i,j] = q.values[1] + q.values[2] 
             gridResistant[i,j] = q.values[2] + q.values[3]
@@ -102,21 +100,27 @@ def ReplacementRastaScan():
 
     return
     
-LF.Latexify(fig_width = 12.65076*0.49, label_size = [1.05, 1.05])
+"""Latexify. fig_width is 12.65076*0.99 for full page fig and 6.19893 for sub plots"""
+LF.Latexify(fig_width = 6.19893, label_size = [1.05, 1.05])
 
 """Simple function and plotting"""
 #PlotSimple(func = DS.SimpleInfection, initial = [0.99, 0.01, 0.0, 0.0], param = [0.9, 1.0], legend = ["$S$", "$I$", "$I_R$", "$S_R$"], runs=10000, xlabel="Iteration", ylabel="Proportion")
 #PlotSimple(func = DS.SimpleInfectionSteadyState, initial = [0.99, 0.01], param = [1.1, 1.0], legend = ["$I_R$", "$S_R$"], runs=10000, xlabel="Iteration", ylabel="Proportion", color = ['g','r'])
 
 """Replacement"""
-PlotSimple(DS.Replacement, initial = [0.99, 0.01, 0.0, 0.0], param = [0.95, 1.0, 0.1], legend = ["S","I","$I_R$", "$S_R$"], runs=10000, xlabel="Iteration", ylabel="Proportion")
+PlotSimple(DS.Replacement, initial = [0.99, 0.01, 0.0, 0.0], param = [0.95, 1.0, 0.01], legend = ["S","I","$I_R$", "$S_R$"], runs=10000,
+ xlabel="Iteration", ylabel="Proportion", filename="replacement_deterministic_0_01")
+PlotSimple(DS.Replacement, initial = [0.99, 0.01, 0.0, 0.0], param = [0.95, 1.0, 0.1], legend = ["S","I","$I_R$", "$S_R$"], runs=10000,
+ xlabel="Iteration", ylabel="Proportion", filename="replacement_deterministic_0_1")
+#ReplacementParameterRasta()
+
 
 """Ross"""
-#PlotSimple(func = Ross, initial = [0.1, 0.1], param = [0.09, 0.2, 2.0, 0.01, 0.5, 0.1], legend = ["$I_h$","$I_m$"], runs=100000, xlabel="Iterations", ylabel="Proportion infected")
+#PlotSimple(func = DS.Ross, initial = [0.1, 0.1], param = [0.09, 0.2, 2.0, 0.01, 0.5, 0.1], legend = ["$I_h$","$I_m$"], runs=100000, xlabel="Iterations", ylabel="Proportion infected")
 
 """Test"""
 #RK.TestRungeKutta()
-#q = RK.RungeKutta(initialConditions = np.array([0.99, 0.01, 0.0, 0.0]), equation = SIRPlus, param = np.array([2.1, 0.0, 0.0, 1.0, 2.1, 2.0]), dt = 0.001)
+#q = RK.RungeKutta(initialConditions = np.array([0.99, 0.01, 0.0, 0.0]), equation = DS.SIRPlus, param = np.array([2.1, 0.0, 0.0, 1.0, 2.1, 2.0]), dt = 0.001)
 #q.Run(75000)
 #q.PlotTimePlot()
 #plt.legend(["S","I","R","R_I"])

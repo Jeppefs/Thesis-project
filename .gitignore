@@ -3,4 +3,5 @@ data/
 malaria.exe
 debug.test
 runge_kutta/plots
+runge_kutta/*.pdf
 __pycache__
