@@ -10,6 +10,10 @@ def simple():
     LF.Latexify(fig_width=6.19893, label_size=[1.0, 1.0])
     q = MS.MalariaStatistics("simple")
 
+    q.CalcNewMeans()
+    isEndemic, ratio = q.CheckEndemic()
+    print(isEndemic, ratio) 
+
     _, ax = plt.subplots()
     q.PlotExtinctionTime("InfectionSpeed", ax=ax, xlabel = r"$\alpha$")
     

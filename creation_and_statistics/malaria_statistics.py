@@ -37,7 +37,7 @@ class MalariaStatistics():
             self.timeConversion = 1/self.parameters['NHosts'][0]
         else:
             self.timeConversion = timeConversion 
-        self.ApplyTimeConversion()
+        self.ApplyConversion()
 
         if plotSettings == None:
             self.plotSettings = PlotSettings()
@@ -55,8 +55,13 @@ class MalariaStatistics():
         else: 
             self.isRepeated = False
 
-    def ApplyTimeConversion(self):
+    """Data loading and conversion methods:"""
+    def ApplyConversion(self):
         self.dataEnd['run'] = self.dataEnd['run']*self.timeConversion
+        self.dataEnd['mean'] = self.dataEnd['mean'] / self.parameters['NHosts'][0]
+        self.dataEnd['variance'] = self.dataEnd['variance'] / self.parameters['NHosts'][0]
+        self.dataEnd['halfMean'] = self.dataEnd['halfMean'] / self.parameters['NHosts'][0]
+        self.dataEnd['halfVariance'] = self.dataEnd['halfVariance'] / self.parameters['NHosts'][0]
         return
 
     def ApplyMask(self, mask):
@@ -83,7 +88,7 @@ class MalariaStatistics():
     def ImportTimeline(self): 
         temp = np.genfromtxt(self.pathName + "timeline/" + str(self.timelineIndex[0]) + "_" + str(self.timelineIndex[1]) + ".csv", delimiter=",", skip_header=1)
         self.timelineRuns = temp[:,0]*self.timeConversion
-        self.timelineNInfected = temp[:,1]
+        self.timelineNInfected = temp[:,1]/self.parameters["NHosts"][0]
         return
 
     def ImportStrainCounter(self):
@@ -94,8 +99,8 @@ class MalariaStatistics():
 
         return
 
-    # Calculates mean and variance of repeated runs. 
     def GetRepeatedMeanAndVariance(self):
+        """ Calculates mean and variance of repeated runs. """
         dataEndRepeat = pandas.DataFrame(data=None, index=np.arange(self.NUniqueSimulations), columns=self.dataEnd.keys()) 
 
         r = self.settings["Repeat"][0]
@@ -107,8 +112,11 @@ class MalariaStatistics():
         
         return dataEndRepeat
 
-    # Creates a plot with extinction time with whatever parameter given. 
+    """
+    Plotting methods
+    """
     def PlotExtinctionTime(self, vary, ax = None, xlabel = "vary", plotAllMeasurements = False):
+        """ Creates a plot with extinction time with whatever parameter given """
         if ax == None:
             _, ax = plt.subplots()
         
@@ -125,16 +133,16 @@ class MalariaStatistics():
 
         return
 
-    # Creates a plot of the mean and variance. 
     def PlotMeanInfection(self, vary, ax = None, xlabel = "vary"):
+        """ Creates a plot of the mean and variance. """
         if ax == None:
             _, ax = plt.subplots()
         
         if self.isRepeated:
-            ax.errorbar(self.parameters[vary], self.dataEndRepeat["halfMean"]/self.parameters["NHosts"], self.dataEndRepeat["halfMean_error"]/self.parameters["NHosts"],
+            ax.errorbar(self.parameters[vary], self.dataEndRepeat["halfMean"], self.dataEndRepeat["halfMean_error"],
             fmt='o', markersize=2, elinewidth=0.5, zorder=1)
         else: 
-            ax.errorbar(self.parameters[vary], self.dataEnd["halfMean"]/self.parameters["NHosts"], np.sqrt(self.dataEnd["halfVariance"])/self.parameters["NHosts"],
+            ax.errorbar(self.parameters[vary], self.dataEnd["halfMean"], np.sqrt(self.dataEnd["halfVariance"]),
             fmt='o', markersize=2, elinewidth=0.5, zorder=1)
             
 
@@ -142,31 +150,31 @@ class MalariaStatistics():
 
         return
 
-    # Makes a plot of the development of the number of infected over time. 
     def PlotTimeline(self, ax = None, axis = []):
+        """ Makes a plot of the development of the number of infected over time. """
         if ax == None: 
             _, ax = plt.subplots()
         if len(axis) == 0:
-            ax.plot(self.timelineRuns, self.timelineNInfected/self.parameters["NHosts"][self.timelineIndex[0]-1])
+            ax.plot(self.timelineRuns, self.timelineNInfected)
 
         if self.plotSettings.saveFigs: self.PlotNiceAndSave(ax, self.plotSettings.xTimeLabel, "Infected", "timeLine" + str(self.timelineIndex))
 
         return
 
-    # Plots strain counter 
     def PlotStrainCounter(self, ax = None, axis = []):
+        """ Plots strain counter """
         if ax == None:
             _, ax = plt.subplots()
         for strain in range(self.NStrains):
             if len(axis) == 0:
-                ax.plot(self.timelineRuns, self.strainCounter[:, strain]/self.parameters["NHosts"][self.timelineIndex[0]-1], alpha=0.6)
+                ax.plot(self.timelineRuns, self.strainCounter[:, strain], alpha=0.6)
 
         if self.plotSettings.saveFigs: self.PlotNiceAndSave(ax, self.plotSettings.xTimeLabel, "Infected", "strainCounter")
 
         return 
 
-    # vary1 is x-axis and vary2 is y 
     def Plot2D(self, vary1, vary2, ax = None):
+        """ vary1 is x-axis and vary2 is y """
         if ax == None: 
             _, ax = plt.subplots()
 
@@ -201,22 +209,68 @@ class MalariaStatistics():
 
         figName = self.plotSettings.savePath + fileName + ".pdf"
         plt.savefig(figName, format="pdf")
+        return
 
-    def IsEndemic(self):
-        repeat = 0
-        repeatMax = self.settings["Repeat"][0]
-        for i in range(self.NSimulations):
-            repeat += 1
-            if repeat >= repeatMax:
-                repeat = 0  
-            
+    """
+    Calculation and datachange methods
+    """
+    def CalcNewMeans(self):
+        """ Calculates mean with calculated threshold based on the function FindThreshold. It does so based on the timeline files.
+        The new calculated values are overwritten into the self.dataEnd and self.dataEndRepeat pandas objects. """
+
+        mean = 0
+        var = 0
+
+        for simulation in range(self.NUniqueSimulations):
+            for repeat in range(self.settings["Repeat"][0]):
+    
+                index = simulation*self.settings["Repeat"]+repeat
+
+                self.timelineIndex = [simulation+1, repeat+1]
+                self.ImportTimeline()
                 
-        return 
+                _, _, i = FindThreshold(self.timelineRuns, self.timelineNInfected, 1-1/self.parameters["InfectionSpeed"][simulation])
+
+                if i == None: 
+                    mean = 0
+                    var = 0
+                else:
+                    mean = np.mean(self.timelineNInfected[i:-1])
+                    var = np.var(self.timelineNInfected[i:-1])
+
+                self.dataEnd["mean"][index] = mean
+                self.dataEnd["variance"][index] = var
+                self.dataEnd["halfMean"][index] = mean
+                self.dataEnd["halfVariance"][index] = var  
+                
+        self.dataEndRepeat = self.GetRepeatedMeanAndVariance()
+
+        return
+
+    def CheckEndemic(self, threshold = 500):
+        
+        isEndemic =  ["" for i in range(self.NUniqueSimulations)]
+        ratio = np.zeros(self.NUniqueSimulations)
+        
+        for simulation in range(self.NUniqueSimulations):
+            for repeat in range(self.settings['Repeat'][0]):
+                index = simulation*self.settings['Repeat'][0]+repeat
+
+                ratio[simulation] += int(self.dataEnd['run'][index]>500)
+
+            if ratio[simulation] >= 9:
+                isEndemic[simulation] = "true"
+            elif ratio[simulation] >= 6:
+                isEndemic[simulation] = "maybe"
+            else:
+                isEndemic[simulation] = "false"
+
+        return isEndemic, ratio 
 
 def FindThreshold(x, y, yExpectedValue):
     """
     This function finds in time series data, when it starts to .
-    Specifically, it simply checks when timeseries hits the expected value for the second time. If it never does, return 0 
+    Specifically, it simply checks when timeseries hits the expected value for the second time. If it never does, return None
     """
     length = len(x)
     count = 0
@@ -283,8 +337,6 @@ def Func_XOverPlusOne(X, Y, param):
 
 def CalcChi2():
     return
-
-
 
 
 
