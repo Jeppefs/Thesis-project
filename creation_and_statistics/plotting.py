@@ -12,7 +12,8 @@ def simple():
 
     q.CalcNewMeans()
     isEndemic, ratio = q.CheckEndemic()
-    print(isEndemic, ratio) 
+
+    print("Alphas where malaria is endemic:", q.parameters['InfectionSpeed'][isEndemic=="true"])
 
     _, ax = plt.subplots()
     q.PlotExtinctionTime("InfectionSpeed", ax=ax, xlabel = r"$\alpha$")

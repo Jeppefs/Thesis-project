@@ -249,7 +249,7 @@ class MalariaStatistics():
 
     def CheckEndemic(self, threshold = 500):
         
-        isEndemic =  ["" for i in range(self.NUniqueSimulations)]
+        isEndemic =  np.empty(self.NUniqueSimulations, dtype='U10')
         ratio = np.zeros(self.NUniqueSimulations)
         
         for simulation in range(self.NUniqueSimulations):
@@ -265,7 +265,7 @@ class MalariaStatistics():
             else:
                 isEndemic[simulation] = "false"
 
-        return isEndemic, ratio 
+        return isEndemic, ratio
 
 def FindThreshold(x, y, yExpectedValue):
     """
