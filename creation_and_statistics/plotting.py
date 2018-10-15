@@ -13,8 +13,6 @@ def simple():
     q.CalcNewMeans()
     isEndemic, ratio = q.CheckEndemic()
 
-    print("Alphas where malaria is endemic:", q.parameters['InfectionSpeed'][isEndemic=="true"])
-
     _, ax = plt.subplots()
     q.PlotExtinctionTime("InfectionSpeed", ax=ax, xlabel = r"$\alpha$")
     
@@ -40,11 +38,25 @@ def simple():
 
 
 def replacement(): 
-    LF.Latexify()
+    LF.Latexify(fig_width = 6.19893, label_size=[1.0, 1.0])
     q = MS.MalariaStatistics("replacement")
+    q.CalcNewMeans()
+    
+    alphas = [0.6, 0.8, 0.9, 0.95]
+    q.dataEndCopy = q.dataEnd.copy()
+    q.dataEndRepeatCopy = q.dataEndRepeat.copy()
+    q.parametersCopy = q.parameters.copy()
 
-    q.PlotExtinctionTime("ReplacementSpeed", xlabel = r"$\gamma$")
-    q.PlotMeanInfection("ReplacementSpeed", xlabel = r"$\gamma$")
+    _, ax1 = plt.subplots()
+    _, ax2 = plt.subplots()
+    q.plotSettings.saveFigs = False
+
+    for alpha in alphas:
+        mask = (q.parametersCopy['InfectionSpeed'][:] == alpha).as_matrix()
+        q.ApplyMask(mask=mask)
+
+        q.PlotExtinctionTime("ReplacementSpeed", ax=ax1, xlabel = r"$\gamma$")
+        q.PlotMeanInfection("ReplacementSpeed", ax=ax2, xlabel = r"$\gamma$")
 
     #q.timelineIndex = [10, 1]
     #print("ReplacementSpeed", q.parameters["ReplacementSpeed"][q.timelineIndex[0]])

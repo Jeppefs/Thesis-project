@@ -9,8 +9,8 @@ import (
 	"time"
 )
 
-// We define a set of global constant - mostly
-const path = "data/" + "simple/"
+// We define a set of global constant
+const path = "data/" + "replacement/"
 
 // main
 func main() {

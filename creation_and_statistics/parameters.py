@@ -50,11 +50,20 @@ def replacement(name = "replacement", notes = "Replacement increases"):
     
     folder, name, parameters, settings, notes = standard(name = name, notes = notes)
 
-    parameters["InfectionSpeed"] = np.array([0.95]) 
+    parameters["InfectionSpeed"] = np.array([0.6, 0.8, 0.9, 0.95]) 
     parameters["ReplacementSpeed"] = np.arange(0, 1.0, 0.01)
     settings["Repeat"] = [10]
 
     return folder, name, parameters, settings, notes 
+
+def replacementShort(name = "replacementShort", notes = "Same as replacement, but with a shorter distance of replacement and with fewer repeats"):
+
+    folder, name, parameters, settings, notes = replacement(name = name, notes = notes)
+
+    parameters["ReplacementSpeed"] = np.arange(0, 1.0+0.001, 0.1)
+    settings["Repeat"] = [5]
+
+    return folder, name, parameters, settings, notes
 
 def replacement2D(name = "replacement2D", notes = "Loops over infection speed and replacement"):
     folder, name, parameters, settings, notes = standard(name = name, notes = notes)

@@ -23,7 +23,7 @@ def PlotSimple(func, initial, param, legend, runs = 50000, xlabel = "", ylabel =
     ax.set_ylabel(ylabel)
     LF.format_axes(ax)
     fig.tight_layout(pad = 0.1)
-    fig.savefig("runge_kutta/temp"+filename+".pdf", format="pdf")
+    fig.savefig("runge_kutta/"+filename+".pdf", format="pdf")
     return
 
 def ReplacementParameterRasta(filename="temp"):
@@ -45,12 +45,10 @@ def ReplacementParameterRasta(filename="temp"):
 
 def ReplacementRastaScan():
     
-    alphaStep = 0.02
-    gammaStep = 0.005
+    alphaStep = 0.2#0.02
+    gammaStep = 0.05#0.005
     alphas = np.arange(0.5, 1.10+0.000001, alphaStep)
     gammas = np.arange(0, 0.6+0.000001, gammaStep)
-    #alphas = np.array([0.5, 1.0])
-    #gammas = np.array([0.1, 0.2])
     gridSurvival = np.zeros((len(alphas), len(gammas)))
     gridInfected = np.zeros((len(alphas), len(gammas)))
     gridResistant = np.zeros((len(alphas), len(gammas)))
@@ -72,35 +70,36 @@ def ReplacementRastaScan():
     ## Survival
     plt.figure()
     plt.imshow(gridSurvival, origin='lower', extent=(np.min(gammas)-gammaStep/2,np.max(gammas)+gammaStep/2,np.min(alphas)-alphaStep/2,np.max(alphas)+alphaStep/2), aspect='auto' )    
-    plt.xlabel(r"$\gamma$", fontsize=18)
-    plt.ylabel(r"$\alpha$", fontsize=18)
-    plt.tick_params(labelsize=16)
-    plt.tight_layout()
+    plt.xlabel(r"$\gamma$")
+    plt.ylabel(r"$\alpha$")
+    plt.tick_params()
+    plt.tight_layout(pad = 0.1)
     plt.savefig("runge_kutta/gridSurvival.pdf", format="pdf")
 
     ## Infected
     plt.figure()
     plt.imshow(gridInfected, origin='lower', extent=(np.min(gammas)-gammaStep/2,np.max(gammas)+gammaStep/2,np.min(alphas)-alphaStep/2,np.max(alphas)+alphaStep/2), aspect='auto' )    
-    plt.xlabel(r"$\gamma$", fontsize=18)
-    plt.ylabel(r"$\alpha$", fontsize=18)
+    plt.xlabel(r"$\gamma$")
+    plt.ylabel(r"$\alpha$")
     plt.colorbar()
-    plt.tick_params(labelsize=16)
-    plt.tight_layout()
+    plt.tick_params()
+    plt.tight_layout(pad = 0.1)
     plt.savefig("runge_kutta/gridInfected.pdf", format="pdf")
 
-    ## Infected
+    ## Infectedå
     plt.figure()
     plt.imshow(gridResistant, origin='lower', extent=(np.min(gammas)-gammaStep/2,np.max(gammas)+gammaStep/2,np.min(alphas)-alphaStep/2,np.max(alphas)+alphaStep/2), aspect='auto' )    
-    plt.xlabel(r"$\gamma$", fontsize=18)
-    plt.ylabel(r"$\alpha$", fontsize=18)
+    plt.xlabel(r"$\gamma$")
+    plt.ylabel(r"$\alpha$")
     plt.colorbar()
-    plt.tick_params(labelsize=16)
-    plt.tight_layout() 
+    plt.tick_params()
+    plt.tight_layout(pad = 0.1) 
     plt.savefig("runge_kutta/gridResistant.pdf", format="pdf")
 
     return
     
 """Latexify. fig_width is 12.65076*0.99 for full page fig and 6.19893 for sub plots"""
+standard_width = 6.19893
 LF.Latexify(fig_width = 6.19893, label_size = [1.05, 1.05])
 
 """Simple function and plotting"""
@@ -108,15 +107,17 @@ LF.Latexify(fig_width = 6.19893, label_size = [1.05, 1.05])
 #PlotSimple(func = DS.SimpleInfectionSteadyState, initial = [0.99, 0.01], param = [1.1, 1.0], legend = ["$I_R$", "$S_R$"], runs=10000, xlabel="Iteration", ylabel="Proportion", color = ['g','r'])
 
 """Replacement"""
-PlotSimple(DS.Replacement, initial = [0.99, 0.01, 0.0, 0.0], param = [0.95, 1.0, 0.01], legend = ["S","I","$I_R$", "$S_R$"], runs=10000,
- xlabel="Iteration", ylabel="Proportion", filename="replacement_deterministic_0_01")
-PlotSimple(DS.Replacement, initial = [0.99, 0.01, 0.0, 0.0], param = [0.95, 1.0, 0.1], legend = ["S","I","$I_R$", "$S_R$"], runs=10000,
- xlabel="Iteration", ylabel="Proportion", filename="replacement_deterministic_0_1")
-#ReplacementParameterRasta()
+#PlotSimple(DS.Replacement, initial = [0.99, 0.01, 0.0, 0.0], param = [0.95, 1.0, 0.01], legend = ["S","I","$I_R$", "$S_R$"], runs=10000,
+# xlabel="Iteration", ylabel="Proportion", filename="replacement_deterministic_0_01")
+#PlotSimple(DS.Replacement, initial = [0.99, 0.01, 0.0, 0.0], param = [0.95, 1.0, 0.1], legend = ["S","I","$I_R$", "$S_R$"], runs=10000,
+# xlabel="Iteration", ylabel="Proportion", filename="replacement_deterministic_0_1")
+#LF.Latexify(fig_width=standard_width, fig_height=standard_width)
+#ReplacementRastaScan()
 
 
 """Ross"""
-#PlotSimple(func = DS.Ross, initial = [0.1, 0.1], param = [0.09, 0.2, 2.0, 0.01, 0.5, 0.1], legend = ["$I_h$","$I_m$"], runs=100000, xlabel="Iterations", ylabel="Proportion infected")
+PlotSimple(func = DS.Ross, initial = [0.1, 0.1], param = [0.1, 0.2, 2.0, 0.01, 0.5, 0.1], legend = ["$I_h$","$I_m$"], runs=100000,
+ xlabel="Iterations", ylabel="Proportion infected", filename= "Ross2")
 
 """Test"""
 #RK.TestRungeKutta()

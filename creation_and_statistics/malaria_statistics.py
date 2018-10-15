@@ -55,7 +55,13 @@ class MalariaStatistics():
         else: 
             self.isRepeated = False
 
-    """Data loading and conversion methods:"""
+        self.dataEndCopy = []
+        self.dataEndRepeatCopy = []
+        self.parametersCopy = []    
+
+    """
+    Data loading and conversion methods:
+    """
     def ApplyConversion(self):
         self.dataEnd['run'] = self.dataEnd['run']*self.timeConversion
         self.dataEnd['mean'] = self.dataEnd['mean'] / self.parameters['NHosts'][0]
@@ -65,11 +71,15 @@ class MalariaStatistics():
         return
 
     def ApplyMask(self, mask):
-        self.dataEndCopy = self.dataEnd.copy()
-        self.parametersCopy = self.parameters.copy()
+        
+        #if self.dataEndCopy == 0:
+        #    self.dataEndCopy = self.dataEnd.copy()
+        #    self.dataEndRepeatCopy = self.dataEndRepeat.copy()
+        #    self.parametersCopy = self.parameters.copy()
 
-        self.dataEnd = self.dataEnd[mask]
-        self.parameters = self.parameters[mask]
+        self.dataEnd = self.dataEndCopy[np.repeat(mask, self.settings['Repeat'])].copy()
+        self.dataEndRepeat = self.dataEndRepeatCopy[mask].copy()
+        self.parameters = self.parametersCopy[mask].copy()
         
         self.NUniqueSimulations = len(self.parameters["NHosts"])
         self.NSimulations = len(self.dataEnd["run"])
