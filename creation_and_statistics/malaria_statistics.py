@@ -55,9 +55,9 @@ class MalariaStatistics():
         else: 
             self.isRepeated = False
 
-        self.dataEndCopy = []
-        self.dataEndRepeatCopy = []
-        self.parametersCopy = []    
+        self.dataEndCopy = None
+        self.dataEndRepeatCopy = None
+        self.parametersCopy = None
 
     """
     Data loading and conversion methods:
@@ -70,12 +70,17 @@ class MalariaStatistics():
         self.dataEnd['halfVariance'] = self.dataEnd['halfVariance'] / self.parameters['NHosts'][0]
         return
 
+    def CreateDataCopies(self):
+        self.dataEndCopy = self.dataEnd.copy()
+        self.dataEndRepeatCopy = self.dataEndRepeat.copy()
+        self.parametersCopy = self.parameters.copy()
+        return
+
     def ApplyMask(self, mask):
         
-        #if self.dataEndCopy == 0:
-        #    self.dataEndCopy = self.dataEnd.copy()
-        #    self.dataEndRepeatCopy = self.dataEndRepeat.copy()
-        #    self.parametersCopy = self.parameters.copy()
+        # Checks if copy is empty. If not, create copies. 
+        if self.dataEndCopy is None:
+            self.CreateDataCopies()
 
         self.dataEnd = self.dataEndCopy[np.repeat(mask, self.settings['Repeat'])].copy()
         self.dataEndRepeat = self.dataEndRepeatCopy[mask].copy()
@@ -88,6 +93,7 @@ class MalariaStatistics():
 
     def RemoveMask(self):
         self.dataEnd = self.dataEndCopy.copy()
+        self.dataEndRepeat = self.dataEndRepeatCopy.copy()
         self.parameters = self.parametersCopy.copy()
 
         self.NUniqueSimulations = len(self.parameters['NHosts'])
@@ -125,11 +131,8 @@ class MalariaStatistics():
     """
     Plotting methods
     """
-    def PlotExtinctionTime(self, vary, ax = None, xlabel = "vary", plotAllMeasurements = False):
+    def PlotExtinctionTime(self, ax, vary, xlabel = "vary", plotAllMeasurements = False):
         """ Creates a plot with extinction time with whatever parameter given """
-        if ax == None:
-            _, ax = plt.subplots()
-        
         if self.isRepeated:
             ax.errorbar(self.parameters[vary], self.dataEndRepeat["run"], self.dataEndRepeat["run_error"], fmt='o', markersize=2, elinewidth = 0.5)
         else:
@@ -139,55 +142,36 @@ class MalariaStatistics():
             for i in range(self.settings["Repeat"][0]):
                 ax.plot(self.parameters[vary], self.dataEnd["run"][0+i::self.settings["Repeat"][0]],  color = "red", linestyle = "None",  marker='.', alpha=0.1)
 
-        if self.plotSettings.saveFigs: self.PlotNiceAndSave(ax, xlabel, self.plotSettings.yTimeLabel, "extinctionTime")
-
         return
 
-    def PlotMeanInfection(self, vary, ax = None, xlabel = "vary"):
+    def PlotMeanInfection(self, ax, vary, xlabel = "vary"):
         """ Creates a plot of the mean and variance. """
-        if ax == None:
-            _, ax = plt.subplots()
-        
         if self.isRepeated:
             ax.errorbar(self.parameters[vary], self.dataEndRepeat["halfMean"], self.dataEndRepeat["halfMean_error"],
             fmt='o', markersize=2, elinewidth=0.5, zorder=1)
         else: 
             ax.errorbar(self.parameters[vary], self.dataEnd["halfMean"], np.sqrt(self.dataEnd["halfVariance"]),
             fmt='o', markersize=2, elinewidth=0.5, zorder=1)
-            
-
-        if self.plotSettings.saveFigs: self.PlotNiceAndSave(ax, xlabel, "Mean infected", "mean")
 
         return
 
     def PlotTimeline(self, ax = None, axis = []):
         """ Makes a plot of the development of the number of infected over time. """
-        if ax == None: 
-            _, ax = plt.subplots()
         if len(axis) == 0:
             ax.plot(self.timelineRuns, self.timelineNInfected)
 
-        if self.plotSettings.saveFigs: self.PlotNiceAndSave(ax, self.plotSettings.xTimeLabel, "Infected", "timeLine" + str(self.timelineIndex))
-
         return
 
-    def PlotStrainCounter(self, ax = None, axis = []):
+    def PlotStrainCounter(self, ax , axis = []):
         """ Plots strain counter """
-        if ax == None:
-            _, ax = plt.subplots()
         for strain in range(self.NStrains):
             if len(axis) == 0:
                 ax.plot(self.timelineRuns, self.strainCounter[:, strain], alpha=0.6)
 
-        if self.plotSettings.saveFigs: self.PlotNiceAndSave(ax, self.plotSettings.xTimeLabel, "Infected", "strainCounter")
-
         return 
 
-    def Plot2D(self, vary1, vary2, ax = None):
+    def Plot2D(self, ax, vary1, vary2):
         """ vary1 is x-axis and vary2 is y """
-        if ax == None: 
-            _, ax = plt.subplots()
-
         x = np.unique(self.parameters[vary1])
         y = np.unique(self.parameters[vary2])
         
@@ -208,17 +192,17 @@ class MalariaStatistics():
         plt.colorbar(format='%.1e')
         return Z
     
-    def Plot2DResidual(self, vary1, vary2, newFigure = True):
+    def Plot2DResidual(self, vary1, vary2):
         return
 
-    def PlotNiceAndSave(self, ax, xlabel, ylabel, fileName):
-        plt.xlabel(xlabel)
-        plt.ylabel(ylabel)
+    def PlotNiceAndSave(self, fig, ax, xlabel, ylabel, fileName):
+        ax.set_xlabel(xlabel)
+        ax.set_ylabel(ylabel)
         LF.format_axes(ax)
-        plt.tight_layout(pad=0.1)
+        fig.tight_layout(pad=0.1)
 
         figName = self.plotSettings.savePath + fileName + ".pdf"
-        plt.savefig(figName, format="pdf")
+        fig.savefig(figName, format="pdf")
         return
 
     """
@@ -239,7 +223,8 @@ class MalariaStatistics():
                 self.timelineIndex = [simulation+1, repeat+1]
                 self.ImportTimeline()
                 
-                _, _, i = FindThreshold(self.timelineRuns, self.timelineNInfected, 1-1/self.parameters["InfectionSpeed"][simulation])
+                #_, _, i = FindThreshold(self.timelineRuns, self.timelineNInfected, 1-1/self.parameters["InfectionSpeed"][simulation])
+                _, _, i = FindThresholdAutomatic(self.timelineRuns, self.timelineNInfected)
 
                 if i == None: 
                     mean = 0
@@ -302,14 +287,57 @@ def FindThreshold(x, y, yExpectedValue):
                 count += 1
                 side = "below"
             
-        if count == 2:
+        if count == 5:
             return x[i], y[i], i
 
     return None, None, None
 
-def IsItConstant(x, y): 
+def FindThresholdAutomatic(x, y):
+    length = len(x)
+    count = 0
+    side = None
+    skip = 0 # Start at 10 to avoid initial conditions 
+
+    """Calculate the expected value (this is the tough part)"""
+    yExpectedValue = np.mean(y)
+
+    """Determine if the value starts below or above the expected value"""
+    if y[skip] < yExpectedValue:
+        side = "below"
+    else: 
+        side = "above"
+
     
-    return 
+    """Insert comment here"""
+    for i in range(10, length): 
+
+        if side == "below":
+            if y[i] > yExpectedValue:
+                count += 1
+                side = "above"
+        elif side == "above":
+            if y[i] < yExpectedValue:
+                count += 1
+                side = "below"
+            
+        if count == 2:
+            return x[i], y[i], i
+
+    """Return None to tell the reciever that no threshold was found"""
+    return None, None, None
+
+
+#def FindExpectedValue(x, y):
+#
+#    yExpectedValue = 0
+#    yLength = len(y)
+#    yMean = np.mean(y)
+#    yMax, yMax_index = np.max(y), np.argmax(y) 
+#    yMin, yMin_index = np.min(y), np.argmin(y)
+#
+#    j
+#
+#    return yExpectedValue
 
 def LinearFit(x, y):
 

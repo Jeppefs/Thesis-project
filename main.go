@@ -10,7 +10,7 @@ import (
 )
 
 // We define a set of global constant
-const path = "data/" + "replacement/"
+const path = "data/" + "simpleBigN/"
 
 // main
 func main() {

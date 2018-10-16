@@ -6,7 +6,7 @@ import malaria_statistics as MS
 """
 Full page width is 12.65076 cm 
 Half page width is 6.19893 cm
-Is there a way to automate how big the margins are (the part used for labels and such in the plots). 
+Use 1.0cm for both margins (though should be corrected, but I do not have the inclination, nor the time to do so)
 """
 
 PT.replacement()

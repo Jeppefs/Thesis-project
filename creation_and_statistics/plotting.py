@@ -13,52 +13,56 @@ def simple():
     q.CalcNewMeans()
     isEndemic, ratio = q.CheckEndemic()
 
-    _, ax = plt.subplots()
-    q.PlotExtinctionTime("InfectionSpeed", ax=ax, xlabel = r"$\alpha$")
-    
-    _, ax = plt.subplots()
-    q.plotSettings.saveFigs = False
-    q.PlotMeanInfection("InfectionSpeed", ax=ax, xlabel = r"$\alpha$")
-    ax.plot(np.arange(1.0,1.05+0.0001,0.001), -1/np.arange(1.0,1.05+0.0001,0.001)+1, color="r", linewidth=1.0, zorder=5, alpha=0.5) 
-    q.PlotNiceAndSave(ax, r"$\alpha$", "Mean infected", "mean")
-    q.plotSettings.saveFigs= True
+    fig, ax = plt.subplots()
+    q.PlotExtinctionTime(ax, "InfectionSpeed", xlabel = r"$\alpha$")
+    q.PlotNiceAndSave(fig = fig, ax=ax, xlabel=r"\alpha$", ylabel = "Extinction time (gen)", fileName = "extinctionTime")    
 
-    _, ax = plt.subplots()
+    fig, ax = plt.subplots()
+    q.PlotMeanInfection(ax, "InfectionSpeed", xlabel = r"$\alpha$")
+    ax.plot(np.arange(1.0,1.05+0.0001,0.001), -1/np.arange(1.0,1.05+0.0001,0.001)+1, color="r", linewidth=1.0, zorder=5, alpha=0.5) 
+    q.PlotNiceAndSave(fig = fig, ax = ax, xlabel = r"$\alpha$", ylabel = "Mean infected", fileName = "mean")
+
+    fig, ax = plt.subplots()
     q.timelineIndex = [10, 1]
     print("InfectionSpeed", q.parameters["InfectionSpeed"][q.timelineIndex[0]])
     q.ImportTimeline()
     q.PlotTimeline(ax = ax)
+    q.PlotNiceAndSave(fig = fig, ax=ax, xlabel=r"\alpha$", ylabel = q.plotSettings.yTimeLabel, fileName = "extinctionTime")
 
-    _, ax = plt.subplots()
+    fig, ax = plt.subplots()
     q.timelineIndex = [30, 2]
     print("InfectionSpeed", q.parameters["InfectionSpeed"][q.timelineIndex[0]])
     q.ImportTimeline()
     q.PlotTimeline(ax = ax)
+    q.PlotNiceAndSave(fig = fig, ax=ax, xlabel=r"\alpha$", ylabel = q.plotSettings.yTimeLabel, fileName = "extinctionTime")
     return
-
 
 def replacement(): 
     LF.Latexify(fig_width = 6.19893, label_size=[1.0, 1.0])
     q = MS.MalariaStatistics("replacement")
-    q.CalcNewMeans()
-    
-    alphas = [0.6, 0.8, 0.9, 0.95]
-    q.dataEndCopy = q.dataEnd.copy()
-    q.dataEndRepeatCopy = q.dataEndRepeat.copy()
-    q.parametersCopy = q.parameters.copy()
-
-    _, ax1 = plt.subplots()
-    _, ax2 = plt.subplots()
     q.plotSettings.saveFigs = False
+    q.CalcNewMeans()
+    q.CreateDataCopies()
 
+    alphas = [0.6, 0.8, 0.9, 0.95]
+
+    fig1, ax1 = plt.subplots()
+    fig2, ax2 = plt.subplots()
+    
     for alpha in alphas:
         mask = (q.parametersCopy['InfectionSpeed'][:] == alpha).as_matrix()
         q.ApplyMask(mask=mask)
 
-        q.PlotExtinctionTime("ReplacementSpeed", ax=ax1, xlabel = r"$\gamma$")
-        q.PlotMeanInfection("ReplacementSpeed", ax=ax2, xlabel = r"$\gamma$")
+        q.PlotExtinctionTime(ax1, "ReplacementSpeed", xlabel = r"$\gamma$")
+        q.PlotMeanInfection(ax2, "ReplacementSpeed", xlabel = r"$\gamma$")
 
-    #q.timelineIndex = [10, 1]
+    ax1.legend([r"$\alpha$=0.6",r"$\alpha$=0.8",r"$\alpha$=0.9",r"$\alpha$=0.95"])
+    ax2.legend([r"$\alpha$=0.6",r"$\alpha$=0.8",r"$\alpha$=0.9",r"$\alpha$=0.95"])
+    q.PlotNiceAndSave(fig1, ax1, r"$\gamma$", ylabel = "Extinction time (gen)", fileName = "extinctionTime")
+    q.PlotNiceAndSave(fig2, ax2, r"$\gamma$", ylabel = "Mean infected", fileName = "mean")
+    q.RemoveMask()
+
+    #q.timelineIndex = [35, 1]
     #print("ReplacementSpeed", q.parameters["ReplacementSpeed"][q.timelineIndex[0]])
     #q.ImportTimeline()
     #q.PlotTimeline()

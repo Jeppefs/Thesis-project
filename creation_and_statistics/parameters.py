@@ -2,7 +2,7 @@ import numpy as np
 from collections import OrderedDict
 import make_parameters as mp 
 
-func = "replacement"
+func = "simpleBigN"
 name = ""
 notes = ""
 
@@ -45,6 +45,15 @@ def simple(name = "simple", notes = "Infections speed adjusted with resistance a
 
 
     return folder, name, parameters, settings, notes 
+
+def simpleBigN(name = "simpleBigN", notes="Same as simple, but with N=100000"):
+
+    folder, name, parameters, settings, notes = simple(name = name, notes = notes)
+
+    parameters["NHosts"] = np.array([100000], dtype=int)
+    settings["Runs"] = [200000000] 
+
+    return folder, name, parameters, settings, notes
 
 def replacement(name = "replacement", notes = "Replacement increases"):
     
