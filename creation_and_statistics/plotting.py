@@ -44,7 +44,7 @@ def replacement():
     q.CalcNewMeans()
     q.CreateDataCopies()
 
-    alphas = [0.6, 0.8, 0.9, 0.95]
+    alphas = [0.6, 0.8, 0.95]
 
     fig1, ax1 = plt.subplots()
     fig2, ax2 = plt.subplots()
@@ -56,25 +56,26 @@ def replacement():
         q.PlotExtinctionTime(ax1, "ReplacementSpeed", xlabel = r"$\gamma$")
         q.PlotMeanInfection(ax2, "ReplacementSpeed", xlabel = r"$\gamma$")
 
-    ax1.legend([r"$\alpha$=0.6",r"$\alpha$=0.8",r"$\alpha$=0.9",r"$\alpha$=0.95"])
-    ax2.legend([r"$\alpha$=0.6",r"$\alpha$=0.8",r"$\alpha$=0.9",r"$\alpha$=0.95"])
+    ax1.legend([r"$\alpha$=0.6",r"$\alpha$=0.8",r"$\alpha$=0.95"])
+    ax2.legend([r"$\alpha$=0.6",r"$\alpha$=0.8",r"$\alpha$=0.95"])
     q.PlotNiceAndSave(fig1, ax1, r"$\gamma$", ylabel = "Extinction time (gen)", fileName = "extinctionTime")
     q.PlotNiceAndSave(fig2, ax2, r"$\gamma$", ylabel = "Mean infected", fileName = "mean")
     q.RemoveMask()
 
-    #q.timelineIndex = [35, 1]
-    #print("ReplacementSpeed", q.parameters["ReplacementSpeed"][q.timelineIndex[0]])
-    #q.ImportTimeline()
-    #q.PlotTimeline()
-#
-    #q.timelineIndex = [40, 1]
-    #print("ReplacementSpeed", q.parameters["ReplacementSpeed"][q.timelineIndex[0]])
-    #q.ImportTimeline()
-    #q.PlotTimeline()
-   
-    #q2 = MS.MalariaStatistics("replacement2")
-    #q2.PlotExtinctionTime("ReplacementSpeed", xlabel = r"$\gamma$")
-    #q2.PlotMeanInfection("ReplacementSpeed", xlabel = r"$\gamma$")
+    
+    fig, ax = plt.subplots()
+    q.timelineIndex = [35, 1]
+    print("ReplacementSpeed", q.parameters["ReplacementSpeed"][q.timelineIndex[0]])
+    q.ImportTimeline()
+    q.PlotTimeline(ax = ax)
+    q.PlotNiceAndSave(fig, ax, xlabel = "Time (gen)", ylabel = "Infected", fileName = "timeline1")
+
+    fig, ax = plt.subplots()
+    q.timelineIndex = [40, 1]
+    print("ReplacementSpeed", q.parameters["ReplacementSpeed"][q.timelineIndex[0]])
+    q.ImportTimeline()
+    q.PlotTimeline(ax = ax)
+    q.PlotNiceAndSave(fig, ax, xlabel = "Time (gen)", ylabel = "Infected", fileName = "timeline2")
 
     return
 """

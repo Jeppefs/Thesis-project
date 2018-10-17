@@ -155,7 +155,7 @@ class MalariaStatistics():
 
         return
 
-    def PlotTimeline(self, ax = None, axis = []):
+    def PlotTimeline(self, ax, axis = []):
         """ Makes a plot of the development of the number of infected over time. """
         if len(axis) == 0:
             ax.plot(self.timelineRuns, self.timelineNInfected)
@@ -223,10 +223,12 @@ class MalariaStatistics():
                 self.timelineIndex = [simulation+1, repeat+1]
                 self.ImportTimeline()
                 
-                #_, _, i = FindThreshold(self.timelineRuns, self.timelineNInfected, 1-1/self.parameters["InfectionSpeed"][simulation])
-                _, _, i = FindThresholdAutomatic(self.timelineRuns, self.timelineNInfected)
-
+                _, _, i = FindThreshold(self.timelineRuns, self.timelineNInfected)
+                
                 if i == None: 
+                    mean = 0
+                    var = 0
+                elif self.timelineRuns[-1] < 50:
                     mean = 0
                     var = 0
                 else:
@@ -262,44 +264,17 @@ class MalariaStatistics():
 
         return isEndemic, ratio
 
-def FindThreshold(x, y, yExpectedValue):
+def FindThreshold(x, y, yExpectedValue = None):
     """
     This function finds in time series data, when it starts to .
     Specifically, it simply checks when timeseries hits the expected value for the second time. If it never does, return None
     """
+    if yExpectedValue is None: 
+        yExpectedValue = np.mean(y)
     length = len(x)
     count = 0
     side = None
-    skip = 0 # Start at 10 to avoid initial conditions 
-    if y[skip] < yExpectedValue:
-        side = "below"
-    else: 
-        side = "above"
-
-    for i in range(10, length): 
-
-        if side == "below":
-            if y[i] > yExpectedValue:
-                count += 1
-                side = "above"
-        elif side == "above":
-            if y[i] < yExpectedValue:
-                count += 1
-                side = "below"
-            
-        if count == 5:
-            return x[i], y[i], i
-
-    return None, None, None
-
-def FindThresholdAutomatic(x, y):
-    length = len(x)
-    count = 0
-    side = None
-    skip = 0 # Start at 10 to avoid initial conditions 
-
-    """Calculate the expected value (this is the tough part)"""
-    yExpectedValue = np.mean(y)
+    skip = 0  
 
     """Determine if the value starts below or above the expected value"""
     if y[skip] < yExpectedValue:
