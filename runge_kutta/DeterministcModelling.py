@@ -29,13 +29,13 @@ def PlotSimple(func, initial, param, legend, runs = 50000, xlabel = "", ylabel =
 def ReplacementParameterRasta(filename="temp"):
     q = RK.RungeKutta(initialConditions = [0.99, 0.01, 0.0, 0.0], param = [0.80, 1.0, 0.00], equation = DS.Replacement, dt = 0.01)
     paramList = np.arange(0, 1+0.00001, 0.01)
-    alphaList = np.array([0.6, 0.8, 0.9, 0.95])
+    alphaList = np.array([0.6, 0.8, 0.95, 1.05])
     fig, ax = plt.subplots()
     for alpha in alphaList:
         q.param[0] = alpha
         endingValues = q.ParameterSearch(paramIndex = 2, paramList = paramList, runs = 5000) 
         ax.plot(paramList, endingValues[1,:] + endingValues[2,:], linewidth=1.0)
-    ax.legend([r"$\alpha=0.60$", r"$\alpha=0.80$", r"$\alpha=0.9$", r"$\alpha=0.95$"])
+    ax.legend([r"$\alpha=0.60$", r"$\alpha=0.80$", r"$\alpha=0.95$", r"$\alpha=1.05$"])
     ax.set_xlabel(r"$\gamma$")
     ax.set_ylabel("Proportion infected")
     LF.format_axes(ax)
@@ -97,10 +97,21 @@ def ReplacementRastaScan():
     plt.savefig("runge_kutta/gridResistant.pdf", format="pdf")
 
     return
-    
+
+def PlotEpedimicModels():
+    q = RK.RungeKutta(initialConditions = np.array([0.99, 0.01, 0.0]), param = np.array([1.0, 0.5, 0.1, 0.01]), equation = DS.SIRS, dt=0.001)
+    q.Run(100000)
+
+    fig, ax = plt.subplots()
+    ax.plot(q.savedValues[1, :])
+    return
+
 """Latexify. fig_width is 12.65076*0.99 for full page fig and 6.19893 for sub plots"""
 standard_width = 6.19893
 LF.Latexify(fig_width = 6.19893, label_size = [1.05, 1.05])
+
+"""Epedimic Models"""
+#PlotEpedimicModels()
 
 """Simple function and plotting"""
 #PlotSimple(func = DS.SimpleInfection, initial = [0.99, 0.01, 0.0, 0.0], param = [0.9, 1.0], legend = ["$S$", "$I$", "$I_R$", "$S_R$"], runs=10000, xlabel="Iteration", ylabel="Proportion")
@@ -108,16 +119,17 @@ LF.Latexify(fig_width = 6.19893, label_size = [1.05, 1.05])
 
 """Replacement"""
 #PlotSimple(DS.Replacement, initial = [0.99, 0.01, 0.0, 0.0], param = [0.95, 1.0, 0.01], legend = ["S","I","$I_R$", "$S_R$"], runs=10000,
-# xlabel="Iteration", ylabel="Proportion", filename="replacement_deterministic_0_01")
+#  xlabel="Iteration", ylabel="Proportion", filename="replacement_deterministic_0_01")
 #PlotSimple(DS.Replacement, initial = [0.99, 0.01, 0.0, 0.0], param = [0.95, 1.0, 0.1], legend = ["S","I","$I_R$", "$S_R$"], runs=10000,
 # xlabel="Iteration", ylabel="Proportion", filename="replacement_deterministic_0_1")
+ReplacementParameterRasta(filename="replacement_deterministic_gamma")
 #LF.Latexify(fig_width=standard_width, fig_height=standard_width)
 #ReplacementRastaScan()
 
 
 """Ross"""
-PlotSimple(func = DS.Ross, initial = [0.1, 0.1], param = [0.1, 0.2, 2.0, 0.01, 0.5, 0.1], legend = ["$I_h$","$I_m$"], runs=100000,
- xlabel="Iterations", ylabel="Proportion infected", filename= "Ross2")
+#PlotSimple(func = DS.Ross, initial = [0.1, 0.1], param = [0.1, 0.2, 2.0, 0.01, 0.5, 0.1], legend = ["$I_h$","$I_m$"], runs=100000,
+# xlabel="Iterations", ylabel="Proportion infected", filename= "Ross2")
 
 """Test"""
 #RK.TestRungeKutta()
@@ -127,4 +139,5 @@ PlotSimple(func = DS.Ross, initial = [0.1, 0.1], param = [0.1, 0.2, 2.0, 0.01, 0
 #plt.legend(["S","I","R","R_I"])
 #plt.show()
 
+plt.show()
 print("Congrats! All done!")

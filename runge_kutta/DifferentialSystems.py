@@ -1,12 +1,11 @@
 import numpy as np 
 
-def SIRPlus(param, values, t):
-    valuesRate = np.zeros(len(values))
-    
-    valuesRate[0] = -param[0] * values[0] * (values[1] + values[3]) + param[1] * values[1] + param[2] * values[3]
-    valuesRate[1] = param[0] * values[0] * (values[1] + values[3]) - param[1] * values[1] - param[3] * values[1] 
-    valuesRate[2] = - param[4] * values[2] * (values[1] + values[3]) + param[3]*values[1] + param[5] * values[3] 
-    valuesRate[3] = param[4] * values[2] * (values[1] + values[3]) - param[2] * values[3] - param[5] * values[3]
+def SIRS(p, v, t):
+    valuesRate = np.zeros(len(v))
+
+    valuesRate[0] = - p[0]*v[0]*v[1] + p[2]*v[2] + p[3] - p[3]*v[0]    
+    valuesRate[1] = p[0]*v[0]*v[1] - p[1]*v[1] - p[3]*v[1]
+    valuesRate[2] = p[1]*v[1] - p[2]*v[2] - p[3]*v[2]
 
     return valuesRate
 

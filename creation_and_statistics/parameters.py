@@ -2,7 +2,7 @@ import numpy as np
 from collections import OrderedDict
 import make_parameters as mp 
 
-func = "simpleBigN"
+func = "replacement2D"
 name = ""
 notes = ""
 
@@ -80,8 +80,7 @@ def replacement2D(name = "replacement2D", notes = "Loops over infection speed an
     parameters["InfectionSpeed"] = np.arange(0.5, 1.10+0.000001, 0.05)
     parameters["ReplacementSpeed"] = np.arange(0, 0.6+0.000001, 0.002)
     
-    settings["Repeat"] = [10]
-    settings["SkipSaving"] = [2000]
+    settings["Repeat"] = [1]
     settings["ShouldSaveDataWhileRunning"] = ["false"]
     
     return folder, name, parameters, settings, notes

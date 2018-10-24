@@ -301,19 +301,6 @@ def FindThreshold(x, y, yExpectedValue = None):
     """Return None to tell the reciever that no threshold was found"""
     return None, None, None
 
-
-#def FindExpectedValue(x, y):
-#
-#    yExpectedValue = 0
-#    yLength = len(y)
-#    yMean = np.mean(y)
-#    yMax, yMax_index = np.max(y), np.argmax(y) 
-#    yMin, yMin_index = np.min(y), np.argmin(y)
-#
-#    j
-#
-#    return yExpectedValue
-
 def LinearFit(x, y):
 
     mean_x = np.mean(x)
@@ -350,69 +337,3 @@ def Func_XOverPlusOne(X, Y, param):
 
 def CalcChi2():
     return
-
-
-
-
-
-# Recalculates dataEnd, such that it finds the mean and variance from the repeat cases. 
-    #def GetRepeatedMeanAndVariance(self):
-        #dataEndRepeat = pandas.DataFrame(data=None, index=np.arange(self.NUniqueSimulations), columns=self.dataEnd.keys()) 
-
-        #for i in range(self.NUniqueSimulations):
-            #for key in 
-
-        # r = self.settings["Repeat"][0]
-        # if r != 1:
-        #     for i in range(self.NUniqueRuns):
-        #         for key in self.dataEnd.keys():
-        #             self.dataEndRepeat.loc[i,key] = np.mean(self.dataEnd[key][i*r:i*r+r])
-        #         self.dataEndRepeat.loc[i,"run_error"] = np.sqrt(np.var(self.dataEnd["run"][i*r:i*r+r])/(self.settings["Repeat"][0]-1))
-        # else:
-        #    for i in range(self.NUniqueRuns):
-        #         for key in self.dataEnd.keys():
-        #             self.dataEndRepeat.loc[i,key] = np.mean(self.dataEnd[key][0:-1])
-        
-        #return dataEndRepeat
-
-    
-    # def CalcNewMean(self):
-
-    #     self.dataEndRepeat["mean_variance"] =  pandas.Series(index=np.arange(self.NUniqueRuns))
-
-    #     stop = int(self.settings["Runs"] / self.settings["SkipSaving"])
-    #     start = int(stop / 2)
-        
-    #     if self.settings["Repeat"][0] > 1:
-    #         for i in range(self.NUniqueRuns):
-    #             mean = 0
-    #             var = 0
-    #             count = 0
-    #             for j in range(self.settings["Repeat"][0])+1:
-    #                 if self.dataEnd["run"][i*self.settings["Repeat"][0]+j] >= stop:
-
-    #                     loaded = np.genfromtxt(self.pathName + "/timeline" + str(i+1) + "_" + str(j) + ".csv", delimiter=",")
-    #                     mean += np.mean(loaded[start:stop])
-    #                     var += np.var(loaded[start:stop])
-    #                     count += 1
-    #             if count > 0:
-    #                 mean = mean / count
-    #                 var = var / count
-
-    #             self.dataEndRepeat.loc[i, "mean"] = mean
-    #             self.dataEndRepeat.loc[i, "variance"] = var
-    #     else:
-    #         #for i in range(self.NUniqueRuns):
-    #         for i in range(1):
-    #             mean = 0
-    #             var = 0
-
-    #             loaded = np.genfromtxt(self.pathName + "timeline/" + str(i+1) + "_" + str(1) + ".csv", delimiter=",", skip_header = 1)
-    #             print(loaded[start:stop])
-    #             #mean = np.mean(loaded[start:stop, 1])
-    #             #var = np.var(loaded[start:stop, 1])
-
-    #             self.dataEndRepeat.loc[i, "mean"] = mean
-    #             self.dataEndRepeat.loc[i, "variance"] = var
-           
-    #     return        
