@@ -45,8 +45,8 @@ def ReplacementParameterRasta(filename="temp"):
 
 def ReplacementRastaScan():
     
-    alphaStep = 0.2#0.02
-    gammaStep = 0.05#0.005
+    alphaStep = 0.02
+    gammaStep = 0.005
     alphas = np.arange(0.5, 1.10+0.000001, alphaStep)
     gammas = np.arange(0, 0.6+0.000001, gammaStep)
     gridSurvival = np.zeros((len(alphas), len(gammas)))
@@ -122,9 +122,9 @@ LF.Latexify(fig_width = 6.19893, label_size = [1.05, 1.05])
 #  xlabel="Iteration", ylabel="Proportion", filename="replacement_deterministic_0_01")
 #PlotSimple(DS.Replacement, initial = [0.99, 0.01, 0.0, 0.0], param = [0.95, 1.0, 0.1], legend = ["S","I","$I_R$", "$S_R$"], runs=10000,
 # xlabel="Iteration", ylabel="Proportion", filename="replacement_deterministic_0_1")
-ReplacementParameterRasta(filename="replacement_deterministic_gamma")
-#LF.Latexify(fig_width=standard_width, fig_height=standard_width)
-#ReplacementRastaScan()
+#ReplacementParameterRasta(filename="replacement_deterministic_gamma")
+LF.Latexify(fig_width=standard_width, fig_height=standard_width)
+ReplacementRastaScan()
 
 
 """Ross"""
