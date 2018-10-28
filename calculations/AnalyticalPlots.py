@@ -4,13 +4,13 @@ import matplotlib.pyplot as plt
 from Latexifier import LatexifierFunctions as LF 
 
 def OptimalGamma(a):
-    return (2*a)**(1/3)-(1)
+    return (2*a)**(1/3) - 1
 
 def GammaDeath(a):
-    return a/2 - (a**(1/2)*(a + 4)**(1/2))/2 - 1
-    #OR a/2 + (a**(1/2)*(a + 4)**(1/2))/2 - 1
+    return a/2 + (a**(1/2)*(a + 4)**(1/2))/2 - 1
+    #OR a/2 - (a**(1/2)*(a + 4)**(1/2))/2 - 1
 
-alphas = np.arange(0,1.1,0.001)
+alphas = np.arange(0.5,2.0,0.01)
 
 LF.Latexify(fig_width=6.19893,label_size = [1.05, 1.05])
 

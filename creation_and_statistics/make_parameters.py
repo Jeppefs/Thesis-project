@@ -42,7 +42,7 @@ def CreateNotes(file, notes):
     return
 
 
-# Saves the keys onto a header for the given file. 
+""" Saves the keys onto a header for the given file. """
 def CreateHeader(file, aDict):
     i = 0
     for key in aDict:
@@ -64,7 +64,6 @@ def InsertValues(file, aDict):
             else:
                 file.write(str(npArray[i][j]))
         file.write("\n")
-    #np.savetxt(file, npArray, delimiter=",")
     return
 
 def MakeNPArrayFromDict(aDict):
@@ -90,12 +89,9 @@ def MakeNPArrayFromDict(aDict):
             return i - 1
 
     q = ProductOfDictCreator(aDict)
-    i = 0
-    q.LoopOverThis(i)
+    q.LoopOverThis(i = 0)
 
     return q.dataArray
-
-
 
 def MakeListOfKeys(aDict):
     keys = []

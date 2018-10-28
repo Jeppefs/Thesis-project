@@ -2,9 +2,12 @@ import numpy as np
 from collections import OrderedDict
 import make_parameters as mp 
 
-func = "replacement2D"
+func = "features"
 name = ""
 notes = ""
+
+def OptimalGamma(a):
+    return (2*a)**(1/3) - 1
 
 ##-------------------------------------------------------------------------------##
 def standard(name = "standard", notes = "Standard data for non-systematic tests"):
@@ -59,7 +62,7 @@ def replacement(name = "replacement", notes = "Replacement increases"):
     
     folder, name, parameters, settings, notes = standard(name = name, notes = notes)
 
-    parameters["InfectionSpeed"] = np.array([0.6, 0.8, 0.9, 0.95]) 
+    parameters["InfectionSpeed"] = np.array([0.6, 0.8, 0.95, 1.05]) 
     parameters["ReplacementSpeed"] = np.arange(0, 1.0, 0.01)
     settings["Repeat"] = [10]
 
@@ -88,11 +91,10 @@ def replacement2D(name = "replacement2D", notes = "Loops over infection speed an
 def features(name = "features", notes = "Adjusts number of surface features"):
     folder, name, parameters, settings, notes = standard(name = name, notes = notes)
     
-    parameters["InfectionSpeed"] = np.array([0.6, 0.8, 0.95])
-    parameters["ReplacementSpeed"] = np.array([0.0, 0.005, 0.01, 0.02])
+    parameters["InfectionSpeed"] = np.array([0.6, 0.8, 0.95, 1.05])
+    parameters["ReplacementSpeed"] = np.array([0]) # This should only be for the corresponding infection. How do we make that???
     parameters["MaxAntigenValue"] = np.arange(1, 25+1, 1, dtype=int)
     settings["Repeat"] = [1]
-    settings["SkipSaving"] = [2000]
 
     return folder, name, parameters, settings, notes
 
@@ -100,7 +102,7 @@ def features2D(name = "features2D", notes = "Adjusts number of surface features 
     folder, name, parameters, settings, notes = standard(name = name, notes = notes)
 
     parameters["InfectionSpeed"] = np.arange(0.5,0.8+0.01,0.01)
-    parameters["ReplacementSpeed"] = np.array([0.005,0.01])
+    parameters["ReplacementSpeed"] = np.array([0]) # Optimal Gamma
     parameters["MaxAntigenValue"] = np.arange(1, 25+1, 1, dtype=int)
 
     settings["Repeat"] = [1]

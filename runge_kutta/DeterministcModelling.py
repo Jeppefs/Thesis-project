@@ -33,7 +33,7 @@ def ReplacementParameterRasta(filename="temp"):
     fig, ax = plt.subplots()
     for alpha in alphaList:
         q.param[0] = alpha
-        endingValues = q.ParameterSearch(paramIndex = 2, paramList = paramList, runs = 5000) 
+        endingValues = q.ParameterSearch(paramIndex = 2, paramList = paramList, runs = 20000) 
         ax.plot(paramList, endingValues[1,:] + endingValues[2,:], linewidth=1.0)
     ax.legend([r"$\alpha=0.60$", r"$\alpha=0.80$", r"$\alpha=0.95$", r"$\alpha=1.05$"])
     ax.set_xlabel(r"$\gamma$")
@@ -108,7 +108,7 @@ def PlotEpedimicModels():
 
 """Latexify. fig_width is 12.65076*0.99 for full page fig and 6.19893 for sub plots"""
 standard_width = 6.19893
-LF.Latexify(fig_width = 6.19893, label_size = [1.05, 1.05])
+LF.Latexify(fig_width = 12.65076*0.8, label_size = [1.05, 1.05])
 
 """Epedimic Models"""
 #PlotEpedimicModels()
@@ -122,9 +122,9 @@ LF.Latexify(fig_width = 6.19893, label_size = [1.05, 1.05])
 #  xlabel="Iteration", ylabel="Proportion", filename="replacement_deterministic_0_01")
 #PlotSimple(DS.Replacement, initial = [0.99, 0.01, 0.0, 0.0], param = [0.95, 1.0, 0.1], legend = ["S","I","$I_R$", "$S_R$"], runs=10000,
 # xlabel="Iteration", ylabel="Proportion", filename="replacement_deterministic_0_1")
-#ReplacementParameterRasta(filename="replacement_deterministic_gamma")
-LF.Latexify(fig_width=standard_width, fig_height=standard_width)
-ReplacementRastaScan()
+ReplacementParameterRasta(filename="replacement_deterministic_gamma")
+#LF.Latexify(fig_width=standard_width, fig_height=standard_width)
+#ReplacementRastaScan()
 
 
 """Ross"""
