@@ -45,10 +45,10 @@ def ReplacementParameterRasta(filename="temp"):
 
 def ReplacementRastaScan():
     
-    alphaStep = 0.02
-    gammaStep = 0.005
+    alphaStep = 0.01 #0.01
+    gammaStep = 0.01 #0.01
     alphas = np.arange(0.5, 1.10+0.000001, alphaStep)
-    gammas = np.arange(0, 0.6+0.000001, gammaStep)
+    gammas = np.arange(0, 1.0+0.000001, gammaStep)
     gridSurvival = np.zeros((len(alphas), len(gammas)))
     gridInfected = np.zeros((len(alphas), len(gammas)))
     gridResistant = np.zeros((len(alphas), len(gammas)))
@@ -67,34 +67,38 @@ def ReplacementRastaScan():
 
     gridSurvival = np.ceil(gridInfected-1/(10**3))
 
+    fig1, ax1 = plt.subplots()
+    fig2, ax2 = plt.subplots()
+    fig3, ax3 = plt.subplots()
+
     ## Survival
-    plt.figure()
-    plt.imshow(gridSurvival, origin='lower', extent=(np.min(gammas)-gammaStep/2,np.max(gammas)+gammaStep/2,np.min(alphas)-alphaStep/2,np.max(alphas)+alphaStep/2), aspect='auto' )    
-    plt.xlabel(r"$\gamma$")
-    plt.ylabel(r"$\alpha$")
-    plt.tick_params()
-    plt.tight_layout(pad = 0.1)
-    plt.savefig("runge_kutta/gridSurvival.pdf", format="pdf")
+    ax1.imshow(gridSurvival, origin='lower', extent=(np.min(gammas)-gammaStep/2,np.max(gammas)+gammaStep/2,np.min(alphas)-alphaStep/2,np.max(alphas)+alphaStep/2), aspect='auto' )    
+    ax1.set_xlabel(r"$\gamma$")
+    ax1.set_ylabel(r"$\alpha$")
+    ax1.tick_params()
+    ax1.set_aspect('auto')
+    fig1.tight_layout(pad = 0.1)
+    fig1.savefig("runge_kutta/replacement_gridSurvival.pdf", format="pdf")
 
     ## Infected
-    plt.figure()
-    plt.imshow(gridInfected, origin='lower', extent=(np.min(gammas)-gammaStep/2,np.max(gammas)+gammaStep/2,np.min(alphas)-alphaStep/2,np.max(alphas)+alphaStep/2), aspect='auto' )    
-    plt.xlabel(r"$\gamma$")
-    plt.ylabel(r"$\alpha$")
-    plt.colorbar()
-    plt.tick_params()
-    plt.tight_layout(pad = 0.1)
-    plt.savefig("runge_kutta/gridInfected.pdf", format="pdf")
+    im = ax2.imshow(gridInfected, origin='lower', extent=(np.min(gammas)-gammaStep/2,np.max(gammas)+gammaStep/2,np.min(alphas)-alphaStep/2,np.max(alphas)+alphaStep/2), aspect='auto' )    
+    ax2.set_xlabel(r"$\gamma$")
+    ax2.set_ylabel(r"$\alpha$")
+    fig2.colorbar(im)
+    ax2.tick_params()
+    ax1.set_aspect('auto')
+    fig2.tight_layout(pad = 0.1)
+    fig2.savefig("runge_kutta/replacement_gridInfected.pdf", format="pdf")
 
-    ## Infectedå
-    plt.figure()
-    plt.imshow(gridResistant, origin='lower', extent=(np.min(gammas)-gammaStep/2,np.max(gammas)+gammaStep/2,np.min(alphas)-alphaStep/2,np.max(alphas)+alphaStep/2), aspect='auto' )    
-    plt.xlabel(r"$\gamma$")
-    plt.ylabel(r"$\alpha$")
-    plt.colorbar()
-    plt.tick_params()
-    plt.tight_layout(pad = 0.1) 
-    plt.savefig("runge_kutta/gridResistant.pdf", format="pdf")
+    ## Resistant
+    im = ax3.imshow(gridResistant, origin='lower', extent=(np.min(gammas)-gammaStep/2,np.max(gammas)+gammaStep/2,np.min(alphas)-alphaStep/2,np.max(alphas)+alphaStep/2), aspect='auto' )    
+    ax3.set_xlabel(r"$\gamma$")
+    ax3.set_ylabel(r"$\alpha$")
+    fig3.colorbar(im)
+    ax3.tick_params()
+    ax1.set_aspect('auto')
+    fig3.tight_layout(pad = 0.1) 
+    fig3.savefig("runge_kutta/replacement_gridResistant.pdf", format="pdf")
 
     return
 
@@ -108,6 +112,7 @@ def PlotEpedimicModels():
 
 """Latexify. fig_width is 12.65076*0.99 for full page fig and 6.19893 for sub plots"""
 standard_width = 6.19893
+full_width = 12.65076
 LF.Latexify(fig_width = 12.65076*0.8, label_size = [1.05, 1.05])
 
 """Epedimic Models"""
@@ -122,9 +127,9 @@ LF.Latexify(fig_width = 12.65076*0.8, label_size = [1.05, 1.05])
 #  xlabel="Iteration", ylabel="Proportion", filename="replacement_deterministic_0_01")
 #PlotSimple(DS.Replacement, initial = [0.99, 0.01, 0.0, 0.0], param = [0.95, 1.0, 0.1], legend = ["S","I","$I_R$", "$S_R$"], runs=10000,
 # xlabel="Iteration", ylabel="Proportion", filename="replacement_deterministic_0_1")
-ReplacementParameterRasta(filename="replacement_deterministic_gamma")
-#LF.Latexify(fig_width=standard_width, fig_height=standard_width)
-#ReplacementRastaScan()
+#ReplacementParameterRasta(filename="replacement_deterministic_gamma")
+LF.Latexify(fig_width=full_width*0.8)
+ReplacementRastaScan()
 
 
 """Ross"""

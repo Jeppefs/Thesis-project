@@ -136,7 +136,7 @@ class MalariaStatistics():
         if self.isRepeated:
             ax.errorbar(self.parameters[vary], self.dataEndRepeat["run"], self.dataEndRepeat["run_error"], fmt='o', markersize=2, elinewidth = 0.5)
         else:
-            ax.plot(self.parameters[vary], self.dataEnd["run"], 'o', markersize=2, elinewidth = 0.5)
+            ax.plot(self.parameters[vary], self.dataEnd["run"], 'o', markersize=2, linewidth = 0.5)
             
         if plotAllMeasurements == True:
             for i in range(self.settings["Repeat"][0]):

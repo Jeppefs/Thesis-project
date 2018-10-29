@@ -44,7 +44,7 @@ def replacement():
     q.CalcNewMeans()
     q.CreateDataCopies()
 
-    alphas = [0.6, 0.8, 0.95]
+    alphas = [0.6, 0.8, 0.95, 1.05]
 
     fig1, ax1 = plt.subplots()
     fig2, ax2 = plt.subplots()
@@ -56,118 +56,67 @@ def replacement():
         q.PlotExtinctionTime(ax1, "ReplacementSpeed", xlabel = r"$\gamma$")
         q.PlotMeanInfection(ax2, "ReplacementSpeed", xlabel = r"$\gamma$")
 
-    ax1.legend([r"$\alpha$=0.6",r"$\alpha$=0.8",r"$\alpha$=0.95"])
-    ax2.legend([r"$\alpha$=0.6",r"$\alpha$=0.8",r"$\alpha$=0.95"])
+    ax1.legend([r"$\alpha$=0.6",r"$\alpha$=0.8",r"$\alpha$=0.95",r"$\alpha$=1.05"])
+    ax2.legend([r"$\alpha$=0.6",r"$\alpha$=0.8",r"$\alpha$=0.95",r"$\alpha$=1.05"])
     q.PlotNiceAndSave(fig1, ax1, r"$\gamma$", ylabel = "Extinction time (gen)", fileName = "extinctionTime")
     q.PlotNiceAndSave(fig2, ax2, r"$\gamma$", ylabel = "Mean infected", fileName = "mean")
     q.RemoveMask()
 
-    
+def replacementTimeSeries():
+    LF.Latexify(fig_width = 6.19893, label_size=[1.0, 1.0])
+    q = MS.MalariaStatistics("replacement")
+    q.plotSettings.saveFigs = False
+
+    #TODO: Change these timeline plots to values you actually want. 
+    # Plot of alpha=0.8 and gamma=0.16961
     fig, ax = plt.subplots()
-    q.timelineIndex = [35, 1]
+    q.timelineIndex = [np.where( (q.parameters["InfectionSpeed"].values == 0.8) & (q.parameters["ReplacementSpeed"].values == 0.17) )[0][0], 1]
     print("ReplacementSpeed", q.parameters["ReplacementSpeed"][q.timelineIndex[0]])
     q.ImportTimeline()
     q.PlotTimeline(ax = ax)
     q.PlotNiceAndSave(fig, ax, xlabel = "Time (gen)", ylabel = "Infected", fileName = "timeline1")
 
+    # Plot of alpha=1.05 and gamma=0.8 
     fig, ax = plt.subplots()
-    q.timelineIndex = [40, 1]
+    q.timelineIndex = [np.where( (q.parameters["InfectionSpeed"].values == 1.05) & (q.parameters["ReplacementSpeed"].values == 0.75) )[0][0], 1]
     print("ReplacementSpeed", q.parameters["ReplacementSpeed"][q.timelineIndex[0]])
     q.ImportTimeline()
     q.PlotTimeline(ax = ax)
     q.PlotNiceAndSave(fig, ax, xlabel = "Time (gen)", ylabel = "Infected", fileName = "timeline2")
 
     return
-"""
-def features(plotThis="..."):
-    # If True, remember to change from -1 to -2
-    if plotThis == "complex":
-        q = MS.MalariaStatistics("complexFeatures", saveFigs=False)
-        add = 2
-    elif plotThis == "mutation":
-        q = MS.MalariaStatistics("featuresMutationLow", saveFigs=False)
-        add = 1
-    else:
-        q = MS.MalariaStatistics("features", saveFigs=False)
-        add = 1
 
-    maxRuns = np.max(q.dataEnd["run"])
-    maxFeatures = np.max(q.parameters["MaxAntigenValue"])
+def features():
+    LF.Latexify(fig_width = 6.19893, label_size=[1.0, 1.0])
+    q = MS.MalariaStatistics("features")
+    q.plotSettings.saveFigs = False
+    q.CalcNewMeans()
+    q.CreateDataCopies()
 
-    masks = []
-    legendString = []
-    uniqueAlphas = np.unique(q.parameters["InfectionSpeed"])
-    uniqueGammas = np.unique(q.parameters["ReplacementSpeed"])
-    for alpha in uniqueAlphas:
-        for gamma in uniqueGammas:
-            print(alpha, gamma)
-            masks.append((q.parameters["InfectionSpeed"] == alpha) & (q.parameters["ReplacementSpeed"] == gamma))
-            legendString.append(r"$\alpha=" + str(alpha) + "$ " + r"$\gamma=" + str(gamma) + "$")
+    alphas = [0.6, 0.8, 0.95, 1.05]
 
-    plt.figure()
-    for mask in masks:
-        q.ApplyMask(mask)
-        q.PlotExtinctionTime("MaxAntigenValue", newFigure=False, xlabel="Surface features")
-        q.RemoveMask()
-    plt.legend(legendString)
+    fig1, ax1 = plt.subplots()
+    fig2, ax2 = plt.subplots()
 
-    for mask in masks:
-        q.ApplyMask(mask)
-        LinearFitResults = MS.LinearFit(q.parameters["MaxAntigenValue"], q.dataEnd["run"])
-        print("slope:", LinearFitResults["slope"], "intersection:", LinearFitResults["intersect"])
-        plt.plot(np.arange(0,maxFeatures,1)+1, np.arange(0,maxFeatures,1)*LinearFitResults["slope"] + q.dataEnd["run"][mask].iloc[0], color="k", alpha=0.3)
-        q.RemoveMask()
+    for alpha in alphas:
+        mask = (q.parametersCopy["InfectionSpeed"][:] == alpha).as_matrix()
+        q.ApplyMask(mask=mask)
 
-    q.PlotNiceAndSave(xlabel="Surface features" , ylabel="Extinction time", fileName = "extinctionTime")
+        q.PlotExtinctionTime(ax1, "MaxAntigenValue", xlabel = r"$\gamma$")
+        q.PlotMeanInfection(ax2, "MaxAntigenValue", xlabel = r"$\gamma$")
 
 
-    plt.figure()
-    legendStringNew = []
-    for mask in masks:
-        q.ApplyMask(mask)
-        if q.dataEnd["run"].iloc[-1] == maxRuns:
-            q.PlotMeanInfection("MaxAntigenValue", newFigure=False, xlabel="Surface features")
-            legendStringNew.append(r"$\alpha=" + str(q.parameters["InfectionSpeed"][mask].iloc[0]) + "$ " + r"$\gamma=" + str(q.parameters["ReplacementSpeed"][mask].iloc[0]) + "$")
-        q.RemoveMask()
-    
-    plt.legend(legendStringNew)
-    ## Fit
-    
-    for mask in masks:
-        q.ApplyMask(mask)
-        if q.dataEnd["run"].iloc[-1] == maxRuns:
-            res = op.minimize(fun=MS.Loglike2D, x0=np.array([1, 1, 1]),
-            args=(q.parameters["MaxAntigenValue"][mask].values-add, q.dataEnd["halfMean"][mask].values/q.parameters["NHosts"].iloc[0], np.sqrt(q.dataEnd["halfVariance"][mask].values)/10000, MS.Func_XOverPlusOne),
-            method='Nelder-Mead')
-            print(res)
-            plt.plot(q.parameters["MaxAntigenValue"][mask], (MS.Func_XOverPlusOne(q.parameters["MaxAntigenValue"][mask].values-add, q.dataEnd["halfMean"][mask].values/10000, res.x)), color="k", alpha=0.3)
-        q.RemoveMask()
-
-    q.PlotNiceAndSave(xlabel="Surface features" , ylabel="Proportion infected", fileName = "mean")
-
-    timelineMask = ((q.parameters["InfectionSpeed"] == 0.6) & (q.parameters["ReplacementSpeed"] == 0.02) & (q.parameters["MaxAntigenValue"] == 5.0))
-    timelineIndex = q.parameters[timelineMask].index.values[0]
-    q.saveFigs = False
-    q.timelineIndex = [timelineIndex,1]
-    print(q.parameters.iloc[timelineIndex])
-    q.ImportTimeline()
-    q.ImportStrainCounter()
-    q.PlotTimeline()
-    q.PlotStrainCounter(newFigure=False)
-    q.PlotNiceAndSave(xlabel="Iteration" , ylabel="Infected", fileName = "strainCounter")
-
-    timelineMask = ((q.parameters["InfectionSpeed"] == 0.8) & (q.parameters["ReplacementSpeed"] == 0.005) & (q.parameters["MaxAntigenValue"] == 5.0))
-    timelineIndex = q.parameters[timelineMask].index.values[0]
-    q.timelineIndex = [timelineIndex,1]
-    print(q.parameters.iloc[timelineIndex])
-    q.ImportTimeline()
-    q.PlotTimeline()
-    q.ImportStrainCounter()
-    q.PlotStrainCounter(newFigure=False)
-    q.PlotNiceAndSave(xlabel="Iteration" , ylabel="Infected", fileName = "strainCounter2")
+    ax1.legend([r"$\alpha$=0.6",r"$\alpha$=0.8",r"$\alpha$=0.95",r"$\alpha$=1.05"])
+    ax2.legend([r"$\alpha$=0.6",r"$\alpha$=0.8",r"$\alpha$=0.95",r"$\alpha$=1.05"])
+    q.PlotNiceAndSave(fig1, ax1, r"$\gamma$", ylabel = "Extinction time (gen)", fileName = "extinctionTime")
+    q.PlotNiceAndSave(fig2, ax2, r"$\gamma$", ylabel = "Mean infected", fileName = "mean")
+    q.RemoveMask()
+    q.RemoveMask()
 
     return
 
+
+"""
 def features2D():
     q = MS.MalariaStatistics("features2D", saveFigs=False)
     mask = (q.parameters["ReplacementSpeed"] == 0.005)
