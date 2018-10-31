@@ -3,7 +3,7 @@ import pandas as pandas
 from collections import OrderedDict
 import make_parameters as mp 
 
-func = "features2D"
+func = "features"
 name = ""
 notes = ""
 SameyGamma = True 
@@ -197,7 +197,8 @@ mp.CreateParametersAndSettings(eval(func), name, notes)
 
 if SameyGamma == True:
     q = pandas.pandas.read_csv("data/" + func + "/parameters.csv")
-    alphas = np.arange(0.5,0.8+0.01,0.01)
+    alphas = np.array([0.6,0.8,0.95,1.05])
+    #alphas = np.arange(0.5,0.8+0.01,0.01)
     gammas = OptimalGamma(alphas)
 
     q.loc[:, ("ReplacementSpeed")] = OptimalGamma(q.loc[:, ("InfectionSpeed")])

@@ -172,7 +172,7 @@ class MalariaStatistics():
 
         return 
 
-    def Plot2D(self, ax, vary1, vary2):
+    def Plot2D(self, fig, ax, vary1, vary2, vary3):
         """ vary1 is x-axis and vary2 is y """
         x = np.unique(self.parameters[vary1])
         y = np.unique(self.parameters[vary2])
@@ -186,13 +186,15 @@ class MalariaStatistics():
         for x1 in x:
             j = 0
             for y1 in y:
-                Z[i,j] = self.dataEnd["run"][(x1 == self.parameters[vary1]) & (y1 == self.parameters[vary2])]
+                Z[i,j] = self.dataEnd[vary][(x1 == self.parameters[vary1]) & (y1 == self.parameters[vary2])]
                 j += 1
             i += 1
 
-        ax.imshow(np.transpose(Z), origin='lower', aspect='auto', extent=(np.min(x)-xStep/2, np.max(x)+xStep/2, np.min(y)-yStep/2, np.max(y)+yStep/2), vmin=0, vmax=2*10**7 )    
-        plt.colorbar(format='%.1e')
-        return Z
+        im = ax.imshow(np.transpose(Z), origin='lower', aspect='auto', extent=(np.min(x)-xStep/2, np.max(x)+xStep/2, np.min(y)-yStep/2, np.max(y)+yStep/2), vmin=0, vmax=2*10**3 )    
+        fig.colorbar(im)
+        ax.tick_params()
+        ax.set_aspect('auto')
+        return
     
     def Plot2DResidual(self, vary1, vary2):
         return

@@ -9,7 +9,7 @@ Half page width is 6.19893 cm
 Use 1.0cm for both margins (though should be corrected, but I do not have the inclination, nor the time to do so - actually something with aspect might be exactly what I am looking for.)
 """
 
-PT.features()
+PT.features2D()
 print("Congrats! All done!")
 plt.show()
 

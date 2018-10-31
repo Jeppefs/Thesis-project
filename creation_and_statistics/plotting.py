@@ -130,7 +130,18 @@ def features():
 
     return
 
-    
+def features2D():
+    LF.Latexify(fig_width=12.65076*0.8)
+    q = MS.MalariaStatistics("features2D")
+    q.plotSettings.saveFigs = False
+
+    fig, ax = plt.subplots()
+    q.Plot2D(fig, ax, "MaxAntigenValue", "InfectionSpeed", "run")
+    q.PlotNiceAndSave(fig, ax, "Strains", r"$\alpha$", "extinctionTime")
+
+    fig, ax = plt.subplots()
+    q.Plot2D(fig, ax, "MaxAntigenValue", "InfectionSpeed", "halfMean")
+    q.PlotNiceAndSave(fig, ax, "Strains", r"$\alpha$", "extinctionTime")
 
 """
 def features2D():

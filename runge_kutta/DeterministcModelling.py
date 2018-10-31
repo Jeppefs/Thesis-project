@@ -86,7 +86,7 @@ def ReplacementRastaScan():
     ax2.set_ylabel(r"$\alpha$")
     fig2.colorbar(im)
     ax2.tick_params()
-    ax1.set_aspect('auto')
+    ax2.set_aspect('auto')
     fig2.tight_layout(pad = 0.1)
     fig2.savefig("runge_kutta/replacement_gridInfected.pdf", format="pdf")
 
@@ -96,7 +96,7 @@ def ReplacementRastaScan():
     ax3.set_ylabel(r"$\alpha$")
     fig3.colorbar(im)
     ax3.tick_params()
-    ax1.set_aspect('auto')
+    ax3.set_aspect('auto')
     fig3.tight_layout(pad = 0.1) 
     fig3.savefig("runge_kutta/replacement_gridResistant.pdf", format="pdf")
 
