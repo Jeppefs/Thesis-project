@@ -10,7 +10,7 @@ import (
 )
 
 // We define a set of global constant
-const path = "data/" + "replacement/"
+const path = "data/" + "features/"
 
 // main
 func main() {
@@ -148,7 +148,7 @@ func (m *Malaria) RunModel(param Parameters, setting ModelSettings, dataFileName
 			SaveTimeline(file, &run, &m.NInfectedHosts)
 			SaveStrainCounter(file_strainCounter, &m.StrainCounter)
 			if run%2000000 == 0 {
-				fmt.Println(run)
+				fmt.Println(run, m.StrainCounter)
 			}
 		}
 		if m.NInfectedHosts == 0 {

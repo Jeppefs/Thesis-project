@@ -84,7 +84,7 @@ func (m *Malaria) Replace(hostIndex int) {
 	host := &m.Hosts[hostIndex]
 
 	if host.NInfections == 0 {
-		host.LoseAntibodies(m.MaxAntigenValue) //TODO: CHECK IF MAXANTIGENVALUE INCLUDES OR EXCLUDES 0
+		host.LoseAntibodies(m.MaxAntigenValue)
 	} else {
 		// Remove host from the m.InfectedHost slice.
 		for i := 0; i < m.NInfectedHosts; i++ {

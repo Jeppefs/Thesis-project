@@ -1,10 +1,12 @@
 import numpy as np 
+import pandas as pandas
 from collections import OrderedDict
 import make_parameters as mp 
 
-func = "replacement"
+func = "features2D"
 name = ""
 notes = ""
+SameyGamma = True 
 
 def OptimalGamma(a):
     return (2*a)**(1/3) - 1
@@ -192,3 +194,12 @@ def complexDifferenceMutation2D(name = "complexDifferenceMutation2D", notes = "S
 
 ##-------------------------------------------------------------------------------##
 mp.CreateParametersAndSettings(eval(func), name, notes)
+
+if SameyGamma == True:
+    q = pandas.pandas.read_csv("data/" + func + "/parameters.csv")
+    alphas = np.arange(0.5,0.8+0.01,0.01)
+    gammas = OptimalGamma(alphas)
+
+    q.loc[:, ("ReplacementSpeed")] = OptimalGamma(q.loc[:, ("InfectionSpeed")])
+
+    q.to_csv("data/" + func + "/parameters.csv")

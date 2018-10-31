@@ -71,7 +71,6 @@ def replacementTimeSeries():
     # Plot of alpha=0.8 and gamma=0.16961
     fig, ax = plt.subplots()
     q.timelineIndex = [np.where( (q.parameters["InfectionSpeed"].values == 0.8) & (q.parameters["ReplacementSpeed"].values == 0.17) )[0][0], 1]
-    print("ReplacementSpeed", q.parameters["ReplacementSpeed"][q.timelineIndex[0]])
     q.ImportTimeline()
     q.PlotTimeline(ax = ax)
     q.PlotNiceAndSave(fig, ax, xlabel = "Time (gen)", ylabel = "Infected", fileName = "timeline1")
@@ -79,7 +78,6 @@ def replacementTimeSeries():
     # Plot of alpha=1.05 and gamma=0.8 
     fig, ax = plt.subplots()
     q.timelineIndex = [np.where( (q.parameters["InfectionSpeed"].values == 1.05) & (q.parameters["ReplacementSpeed"].values == 0.75) )[0][0], 1]
-    print("ReplacementSpeed", q.parameters["ReplacementSpeed"][q.timelineIndex[0]])
     q.ImportTimeline()
     q.PlotTimeline(ax = ax)
     q.PlotNiceAndSave(fig, ax, xlabel = "Time (gen)", ylabel = "Infected", fileName = "timeline2")
@@ -111,10 +109,28 @@ def features():
     q.PlotNiceAndSave(fig1, ax1, r"$\gamma$", ylabel = "Extinction time (gen)", fileName = "extinctionTime")
     q.PlotNiceAndSave(fig2, ax2, r"$\gamma$", ylabel = "Mean infected", fileName = "mean")
     q.RemoveMask()
-    q.RemoveMask()
+
+    """Time Series"""
+    fig1, ax1 = plt.subplots()
+    fig2, ax2 = plt.subplots()
+
+    q.timelineIndex = [np.where( (q.parameters["InfectionSpeed"].values == 0.6) & (q.parameters["MaxAntigenValue"].values == 3) )[0][0], 1]
+    q.ImportTimeline()
+    q.ImportStrainCounter()
+    #q.PlotTimeline(ax = ax1)
+    q.PlotStrainCounter(ax = ax1)
+    q.PlotNiceAndSave(fig1, ax1, xlabel = "Time (gen)", ylabel = "Infected", fileName = "timeline1")
+    
+    q.timelineIndex = [np.where( (q.parameters["InfectionSpeed"].values == 0.6) & (q.parameters["MaxAntigenValue"].values == 5) )[0][0], 1]
+    q.ImportTimeline()
+    q.ImportStrainCounter()
+    #q.PlotTimeline(ax = ax2)
+    q.PlotStrainCounter(ax = ax2)
+    q.PlotNiceAndSave(fig2, ax2, xlabel = "Time (gen)", ylabel = "Infected", fileName = "timeline2")
 
     return
 
+    
 
 """
 def features2D():

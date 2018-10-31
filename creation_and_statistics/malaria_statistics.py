@@ -111,6 +111,8 @@ class MalariaStatistics():
         self.strainCounter = np.genfromtxt(self.pathName + "timeline/" + str(self.timelineIndex[0]) + "_" + str(self.timelineIndex[1]) + "strainCounter" + ".csv", delimiter=",")
         if len(self.strainCounter.shape) <= 1:
             self.strainCounter = np.expand_dims(self.strainCounter, axis=1)
+        self.strainCounter = self.strainCounter / self.parameters['NHosts'][0]
+        print(self.strainCounter)
         self.NStrains = self.strainCounter.shape[1]
 
         return
@@ -166,7 +168,7 @@ class MalariaStatistics():
         """ Plots strain counter """
         for strain in range(self.NStrains):
             if len(axis) == 0:
-                ax.plot(self.timelineRuns, self.strainCounter[:, strain], alpha=0.6)
+                ax.plot(self.timelineRuns, self.strainCounter[:, strain], linestyle="--", alpha=0.6)
 
         return 
 

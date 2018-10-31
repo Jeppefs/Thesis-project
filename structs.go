@@ -18,7 +18,7 @@ type Malaria struct {
 	InfectedHosts []int // A list of hosts that are infected by one or more malaria strains
 
 	InfectionCounter []int    // An array that keeps count of the number of infections in all hosts. 0 index is no infections.
-	StrainCounter    []int    // Keeps count of all strains. Key is the specific strain (anitgens seperated by comma), and int is how many is infected by that particular strain. NOTE, it keeps count of the expressed strain, not the number of infected.
+	StrainCounter    []int    // Keeps count of all strains. Key is the specific strain (anitgens seperated by comma), and int is how many is infected by that particular strain.
 	Strains          [][]int8 // The values of the strains. Each index has the antigens of that strains.
 
 	Hosts []Host // An array which contains the host struct. Each index in the array is a single host.
