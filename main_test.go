@@ -235,6 +235,12 @@ func TestReplace(t *testing.T) {
 	return
 }
 
+func TestMutation(t *testing.T) {
+	//m := CreateMalariaStructsInSlice()
+
+	return
+}
+
 func TestCountStrains(t *testing.T) {
 	m := CreateMalariaStructsInSlice()
 

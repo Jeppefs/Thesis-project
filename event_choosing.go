@@ -16,7 +16,9 @@ func (m *Malaria) EventHappens(param Parameters) {
 		m.Replace(rand.Intn(m.NHosts))
 	case 3:
 		_, hostIndex, _ := m.GetRandomInfectedHost()
-		m.MutateParasite(hostIndex)
+		infectionIndexInHost := m.Hosts[hostIndex].GetRandomInfectionIndex()
+		randomStrainNumber := m.GetRandomStrain()
+		m.MutateParasite(hostIndex, infectionIndexInHost, randomStrainNumber)
 	}
 
 	return

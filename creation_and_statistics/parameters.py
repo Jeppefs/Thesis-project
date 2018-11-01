@@ -3,10 +3,13 @@ import pandas as pandas
 from collections import OrderedDict
 import make_parameters as mp 
 
-func = "features"
+func = "mutation"
 name = ""
 notes = ""
 SameyGamma = True 
+
+alphas = np.array([0.6,0.8,0.95,1.05])
+#alphas = np.arange(0.5,0.8+0.01,0.01)
 
 def OptimalGamma(a):
     return (2*a)**(1/3) - 1
@@ -104,6 +107,13 @@ def features2D(name = "features2D", notes = "Adjusts number of surface features 
 
     return folder, name, parameters, settings, notes
 
+def mutation(name = "mutation", notes = "Over the same parameters as features, except mutation exist"):
+    folder, name, parameters, settings, notes = features(name = name, notes = notes)
+    
+    parameters["MutationSpeed"] = np.array([0.001,0.0001,0.00001])
+
+    return folder, name, parameters, settings, notes
+
 def complexFeatures(name = "complexFeatures", notes = "Over the same parameters as features, except antigen size is 2"):
     folder, name, parameters, settings, notes = features(name = name, notes = notes)
     
@@ -162,13 +172,6 @@ def mutation2D(name = "mutation2D", notes = "Search over muation and infection s
 
     return folder, name, parameters, settings, notes
 
-def featuresMutation(name = "featuresMutation", notes = "Over the same parameters as features, except mutation exist"):
-    folder, name, parameters, settings, notes = features(name = name, notes = notes)
-    
-    parameters["MutationSpeed"] = np.array([0.005])
-
-    return folder, name, parameters, settings, notes
-
 def featuresMutationLow(name = "featuresMutationLow", notes = "Over the same parameters as features, except mutation exist with 0.0005"):
     folder, name, parameters, settings, notes = features(name = name, notes = notes)
     
@@ -197,8 +200,6 @@ mp.CreateParametersAndSettings(eval(func), name, notes)
 
 if SameyGamma == True:
     q = pandas.pandas.read_csv("data/" + func + "/parameters.csv")
-    alphas = np.array([0.6,0.8,0.95,1.05])
-    #alphas = np.arange(0.5,0.8+0.01,0.01)
     gammas = OptimalGamma(alphas)
 
     q.loc[:, ("ReplacementSpeed")] = OptimalGamma(q.loc[:, ("InfectionSpeed")])

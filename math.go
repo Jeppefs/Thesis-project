@@ -191,3 +191,13 @@ func CheckUniqueInt8(s []int8, v int8) bool {
 
 	return true
 }
+
+// GetRandomInfectionIndex : For a single host, get his inde of a random infection
+func (h *Host) GetRandomInfectionIndex() int {
+	return rand.Intn(h.NInfections)
+}
+
+// GetRandomStrain : returns a number corresponding to a random strain.
+func (m *Malaria) GetRandomStrain() int {
+	return rand.Intn(m.MaxStrains)
+}

@@ -123,9 +123,11 @@ func (h *Host) RemoveInfections() {
 	return
 }
 
-// MutateParasite : Changes a single antigen in a host to a new random one.
-func (m *Malaria) MutateParasite(host int) {
-	m.Hosts[host].Infections[0]++
+// MutateParasite : Changes a strain to a single other one.
+func (m *Malaria) MutateParasite(hostIndex int, replacedIndex int, newStrain int) {
+	m.Hosts[hostIndex].Infections[replacedIndex] = newStrain
+	m.StrainCounter[m.Hosts[hostIndex].Infections[replacedIndex]]--
+	m.StrainCounter[newStrain]++
 	return
 }
 
