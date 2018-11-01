@@ -10,7 +10,7 @@ import (
 )
 
 // We define a set of global constant
-const path = "data/" + "mutation2D/"
+const path = "data/" + "features/"
 
 // main
 func main() {
@@ -82,12 +82,13 @@ func GetParametersAndStartTheThing(settings ModelSettings) {
 func GetReadyToStartModelSaveAndCreateDataFiles(param Parameters, settings ModelSettings, i int) {
 
 	var run int
+	var m *Malaria
 
 	for j := 0; j < settings.Repeat; j++ {
 		dataFileName := path + "timeline/" + strconv.Itoa(i) + "_" + strconv.Itoa(j+1)
-		run = StartModel(param, settings, dataFileName)
+		run, m = StartModel(param, settings, dataFileName)
 		if settings.ShouldSaveData == true {
-			SaveToEndFile(dataFileName+".csv", settings.DataFileName, run)
+			SaveToEndFile(dataFileName+".csv", settings.DataFileName, run, m)
 			if settings.ShouldSaveDataWhileRunning == false {
 				time.Sleep(time.Second)
 				err := os.Remove(dataFileName + ".csv")
@@ -100,7 +101,7 @@ func GetReadyToStartModelSaveAndCreateDataFiles(param Parameters, settings Model
 }
 
 // StartModel : Starts the run of the malaria model
-func StartModel(param Parameters, settings ModelSettings, dataFileName string) int {
+func StartModel(param Parameters, settings ModelSettings, dataFileName string) (int, *Malaria) {
 	modelTime := 0
 	startTime := time.Now()
 
@@ -118,7 +119,7 @@ func StartModel(param Parameters, settings ModelSettings, dataFileName string) i
 
 	fmt.Println("This set of Parameters, done.", "\n It had the following parameters:", param, "\n It took intime:", modelTime, "\n It took realtime:", endTime.Sub(startTime))
 
-	return run
+	return run, &m
 }
 
 // RunBurnIn : Runs the model N times given by the burnin settings. None of the data will be saved.

@@ -201,3 +201,14 @@ func (h *Host) GetRandomInfectionIndex() int {
 func (m *Malaria) GetRandomStrain() int {
 	return rand.Intn(m.MaxStrains)
 }
+
+func CountCurrentNumberOfStrains(strainCounter []int) int {
+	total := 0
+	for i := 0; i < len(strainCounter); i++ {
+		if strainCounter[i] > 0 {
+			total++
+		}
+	}
+
+	return total
+}

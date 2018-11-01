@@ -14,7 +14,7 @@ import (
 
 // SaveToEndFile :  Saves ending data
 // WARNING! : THERE MUST BE A LINESKIP AT END OF FILE TO REGARD THE LAST NUMBER
-func SaveToEndFile(loadFileName string, saveFileName string, run int) {
+func SaveToEndFile(loadFileName string, saveFileName string, run int, m *Malaria) {
 	csvFile, errTemp := os.Open(loadFileName)
 	check(errTemp)
 	defer csvFile.Close()
@@ -37,30 +37,6 @@ func SaveToEndFile(loadFileName string, saveFileName string, run int) {
 		lineNumber++
 	}
 
-	/*
-		data, err := ioutil.ReadFile(loadFileName)
-		check(err)
-		stringData := string(data)
-
-		var s string
-		var sSum string
-		var d []float64
-		var q int
-
-		for _, k := range stringData {
-			s = string(k)
-			fmt.Println(s)
-			if (s != "\n") && (s != " ") && (s != "\t") && (k != 13) {
-				sSum += s
-			}
-			if s == "\n" {
-				q, _ = strconv.Atoi(sSum)
-				d = append(d, float64(q))
-				sSum = ""
-			}
-		}
-	*/
-
 	file, err := os.OpenFile(path+saveFileName, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	check(err)
 	defer file.Close()
@@ -68,7 +44,7 @@ func SaveToEndFile(loadFileName string, saveFileName string, run int) {
 	mean, variance := CalcMeanAndVar(d)
 	halfMean, halfVariance := CalcMeanAndVar(d[len(d)/2 : len(d)])
 
-	fmt.Fprintf(file, "%v,%f,%f,%f,%f\n", run, mean, variance, halfMean, halfVariance) // Important, must be the same order as the header.
+	fmt.Fprintf(file, "%v,%f,%f,%f,%f,%v\n", run, mean, variance, halfMean, halfVariance, CountCurrentNumberOfStrains(m.StrainCounter)) // Important, must be the same order as the header.
 
 	return
 }
