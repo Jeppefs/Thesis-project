@@ -112,7 +112,6 @@ class MalariaStatistics():
         if len(self.strainCounter.shape) <= 1:
             self.strainCounter = np.expand_dims(self.strainCounter, axis=1)
         self.strainCounter = self.strainCounter / self.parameters['NHosts'][0]
-        print(self.strainCounter)
         self.NStrains = self.strainCounter.shape[1]
 
         return
@@ -157,18 +156,16 @@ class MalariaStatistics():
 
         return
 
-    def PlotTimeline(self, ax, axis = []):
+    def PlotTimeline(self, ax, skip = 1):
         """ Makes a plot of the development of the number of infected over time. """
-        if len(axis) == 0:
-            ax.plot(self.timelineRuns, self.timelineNInfected)
+        ax.plot(self.timelineRuns[0::skip], self.timelineNInfected[0::skip], linewidth=0.5)
 
         return
 
-    def PlotStrainCounter(self, ax , axis = []):
+    def PlotStrainCounter(self, ax, skip = 1):
         """ Plots strain counter """
         for strain in range(self.NStrains):
-            if len(axis) == 0:
-                ax.plot(self.timelineRuns, self.strainCounter[:, strain], linestyle="--", alpha=0.6)
+            ax.plot(self.timelineRuns[0::skip], self.strainCounter[0::skip, strain], linestyle="--", dashes=(2, 2), linewidth=1.0, alpha=0.75)
 
         return 
 
@@ -186,11 +183,11 @@ class MalariaStatistics():
         for x1 in x:
             j = 0
             for y1 in y:
-                Z[i,j] = self.dataEnd[vary][(x1 == self.parameters[vary1]) & (y1 == self.parameters[vary2])]
+                Z[i,j] = self.dataEnd[vary3][(x1 == self.parameters[vary1]) & (y1 == self.parameters[vary2])]
                 j += 1
             i += 1
-
-        im = ax.imshow(np.transpose(Z), origin='lower', aspect='auto', extent=(np.min(x)-xStep/2, np.max(x)+xStep/2, np.min(y)-yStep/2, np.max(y)+yStep/2), vmin=0, vmax=2*10**3 )    
+        
+        im = ax.imshow(np.transpose(Z), origin='lower', aspect='auto', extent=(np.min(x)-xStep/2, np.max(x)+xStep/2, np.min(y)-yStep/2, np.max(y)+yStep/2), vmin=0, vmax=np.max(Z) )    
         fig.colorbar(im)
         ax.tick_params()
         ax.set_aspect('auto')

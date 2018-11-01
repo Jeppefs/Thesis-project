@@ -3,13 +3,13 @@ import pandas as pandas
 from collections import OrderedDict
 import make_parameters as mp 
 
-func = "mutation"
+func = "mutation2D"
 name = ""
 notes = ""
 SameyGamma = True 
 
-alphas = np.array([0.6,0.8,0.95,1.05])
-#alphas = np.arange(0.5,0.8+0.01,0.01)
+#alphas = np.array([0.6,0.8,0.95,1.05])
+alphas = np.arange(0.5,0.8+0.01,0.01)
 
 def OptimalGamma(a):
     return (2*a)**(1/3) - 1
@@ -114,6 +114,13 @@ def mutation(name = "mutation", notes = "Over the same parameters as features, e
 
     return folder, name, parameters, settings, notes
 
+def mutation2D(name = "mutation2D", notes = "Over the same parameters as features2D, except mutation exist"):
+    folder, name, parameters, settings, notes = features2D(name = name, notes = notes)
+    
+    parameters["MutationSpeed"] = np.array([0.001,0.0001,0.00001])
+
+    return folder, name, parameters, settings, notes
+
 def complexFeatures(name = "complexFeatures", notes = "Over the same parameters as features, except antigen size is 2"):
     folder, name, parameters, settings, notes = features(name = name, notes = notes)
     
@@ -155,21 +162,6 @@ def complexDifference2D(name = "complexDifference2D", notes = "Trying with cross
     settings["ShouldSaveDataWhileRunning"] = ["false"] 
     settings["SkipSaving"] = np.array([2000], dtype=int)
     
-    return folder, name, parameters, settings, notes
-
-def mutation2D(name = "mutation2D", notes = "Search over muation and infection speed"):
-    folder, name, parameters, settings, notes = standard(name = name, notes = notes)
-
-    parameters["InfectionSpeed"] = parameters["InfectionSpeed"] = np.arange(0.5,0.8+0.01,0.01)
-    parameters["ReplacementSpeed"] = np.array([0.005])
-    parameters["MutationSpeed"] = np.arange(0.0,0.01+0.0001, 0.0002)
-    parameters["NAntigens"] = np.array([2])
-    parameters["MaxAntigenValue"] = np.array([4])
-
-    settings["Repeat"] = [1]
-    settings["ShouldSaveDataWhileRunning"] = ["false"] 
-    settings["SkipSaving"] = np.array([2000], dtype=int)
-
     return folder, name, parameters, settings, notes
 
 def featuresMutationLow(name = "featuresMutationLow", notes = "Over the same parameters as features, except mutation exist with 0.0005"):

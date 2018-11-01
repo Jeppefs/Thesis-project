@@ -110,28 +110,34 @@ def features():
     q.PlotNiceAndSave(fig2, ax2, r"$\gamma$", ylabel = "Mean infected", fileName = "mean")
     q.RemoveMask()
 
+    """Number of strains in the system"""
+    #fig, ax = plt.subplots()
+    #ax.plot()
+    #q.PlotNiceAndSave(fig, ax, xlabel = "Start Strains", ylabel = "End Strains", fileName = "endStrains")
+
     """Time Series"""
+    skip = 100
     fig1, ax1 = plt.subplots()
     fig2, ax2 = plt.subplots()
 
     q.timelineIndex = [np.where( (q.parameters["InfectionSpeed"].values == 0.6) & (q.parameters["MaxAntigenValue"].values == 3) )[0][0], 1]
     q.ImportTimeline()
     q.ImportStrainCounter()
-    #q.PlotTimeline(ax = ax1)
-    q.PlotStrainCounter(ax = ax1)
+    q.PlotTimeline(ax = ax1, skip = skip)
+    q.PlotStrainCounter(ax = ax1, skip = skip)
     q.PlotNiceAndSave(fig1, ax1, xlabel = "Time (gen)", ylabel = "Infected", fileName = "timeline1")
     
     q.timelineIndex = [np.where( (q.parameters["InfectionSpeed"].values == 0.6) & (q.parameters["MaxAntigenValue"].values == 5) )[0][0], 1]
     q.ImportTimeline()
     q.ImportStrainCounter()
-    #q.PlotTimeline(ax = ax2)
-    q.PlotStrainCounter(ax = ax2)
+    q.PlotTimeline(ax = ax2, skip = skip)
+    q.PlotStrainCounter(ax = ax2, skip = skip)
     q.PlotNiceAndSave(fig2, ax2, xlabel = "Time (gen)", ylabel = "Infected", fileName = "timeline2")
 
     return
 
 def features2D():
-    LF.Latexify(fig_width=12.65076*0.8)
+    LF.Latexify(fig_width=6.19893)
     q = MS.MalariaStatistics("features2D")
     q.plotSettings.saveFigs = False
 
@@ -141,24 +147,9 @@ def features2D():
 
     fig, ax = plt.subplots()
     q.Plot2D(fig, ax, "MaxAntigenValue", "InfectionSpeed", "halfMean")
-    q.PlotNiceAndSave(fig, ax, "Strains", r"$\alpha$", "extinctionTime")
+    q.PlotNiceAndSave(fig, ax, "Strains", r"$\alpha$", "mean")
 
 """
-def features2D():
-    q = MS.MalariaStatistics("features2D", saveFigs=False)
-    mask = (q.parameters["ReplacementSpeed"] == 0.005)
-    q.ApplyMask(mask)
-    q.Plot2D("MaxAntigenValue", "InfectionSpeed", newFigure=True)
-    q.PlotNiceAndSave(xlabel="Strains" , ylabel=r"$\alpha$", fileName = "lowReplacement")
-    q.RemoveMask
-
-    q = MS.MalariaStatistics("features2D", saveFigs=False)
-    mask = (q.parameters["ReplacementSpeed"] == 0.01)
-    q.ApplyMask(mask)
-    q.Plot2D("MaxAntigenValue", "InfectionSpeed", newFigure=True)
-    q.PlotNiceAndSave(xlabel="Strains", ylabel=r"$\alpha$", fileName = "highReplacement")
-    return
-
 def complexDifference():
     q = MS.MalariaStatistics("complexDifference", saveFigs=False)
     

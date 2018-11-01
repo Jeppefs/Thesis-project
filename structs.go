@@ -118,23 +118,5 @@ func (h *Host) InsertRandomInfection(NAntigens int, MaxAntigenValue int) {
 	return
 }
 
-// MakeHost : Make a host in the hoststruct
-func MakeHost(infected bool, NAntigens int, MaxAntigenValue int) Host {
-	var h Host
 
-	h.IsAlive = true
-	h.ExpressedStrain = make([]int8, NAntigens)
-	h.Antibodies = make([]bool, MaxAntigenValue)
-
-	if infected {
-
-		h.IsInfected = true
-		h.Infections = make([]int8, NAntigens)
-		h.InsertRandomInfection(NAntigens, MaxAntigenValue)
-	} else {
-		h.IsInfected = false
-	}
-
-	return h
-}
 */
