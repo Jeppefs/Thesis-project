@@ -195,17 +195,15 @@ def mutation():
     q.PlotNiceAndSave(fig2, ax2, r"$\gamma$", ylabel = "Mean infected", fileName = "mean")
     q.RemoveMask()
 
-    i = 0
-    fig, ax = plt.subplots()
-    ax.grid(True)
-    for alpha in alphas:
-        mask = (q.parametersCopy["InfectionSpeed"][:] == alpha).as_matrix()
-        q.ApplyMask(mask=mask)
-
-        ax.plot(q.parameters["MaxAntigenValue"], q.dataEnd["strains"], linestyle="--", dashes=(2, i+2), linewidth=1.0)
-        q.PlotNiceAndSave(fig, ax, xlabel = "Start Strains", ylabel = "End Strains", fileName = "endStrains")
-        i += 1
-    
+    #fig, ax = plt.subplots()
+    #ax.grid(True)
+    #for alpha in alphas:
+    #    mask = (q.parametersCopy["InfectionSpeed"][:] == alpha).as_matrix()
+    #    q.ApplyMask(mask=mask)
+#
+    #    ax.plot(q.parameters["MaxAntigenValue"], q.dataEnd["strains"], linestyle="--", dashes=(2, i+2), linewidth=1.0)
+    #    q.PlotNiceAndSave(fig, ax, xlabel = "Start Strains", ylabel = "End Strains", fileName = "endStrains")
+    #
     return
 
 def mutation2D():
