@@ -66,7 +66,7 @@ func CheckToCreateNedEndDataFileAndDoSoIfTrue(settings *ModelSettings) {
 func CreateAvgDataFile(fileName string) {
 	file, err := os.Create(fileName)
 	check(err)
-	fmt.Fprintf(file, "%s,%s,%s,%s,%s\n", "run", "mean", "variance", "halfMean", "halfVariance")
+	fmt.Fprintf(file, "%s,%s,%s,%s,%s,%s\n", "run", "mean", "variance", "halfMean", "halfVariance", "strains")
 	file.Close()
 	return
 }

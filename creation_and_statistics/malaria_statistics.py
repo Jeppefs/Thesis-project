@@ -13,7 +13,7 @@ class PlotSettings():
     def __init__(self):
         self.xTimeLabel = "Time (gen)"
         self.yTimeLabel = "Extinction time (gen)"
-        self.saveFigs = True
+        self.saveFigs = False
         self.savePath = None
 
         return
@@ -82,6 +82,9 @@ class MalariaStatistics():
         if self.dataEndCopy is None:
             self.CreateDataCopies()
 
+        print(len(self.dataEndCopy), len(self.dataEnd), len(self.parameters), len(mask), len(np.repeat(mask, self.settings['Repeat'])))
+        print(self.dataEnd)
+
         self.dataEnd = self.dataEndCopy[np.repeat(mask, self.settings['Repeat'])].copy()
         self.dataEndRepeat = self.dataEndRepeatCopy[mask].copy()
         self.parameters = self.parametersCopy[mask].copy()
@@ -125,7 +128,7 @@ class MalariaStatistics():
             for key in self.dataEnd.keys():
                 dataEndRepeat.loc[i,key] = np.mean(self.dataEnd[key][i*r:i*r+r])
             dataEndRepeat.loc[i,"run_error"] = np.sqrt(np.var(self.dataEnd["run"][i*r:i*r+r]))
-            dataEndRepeat.loc[i, "halfMean_error"] = np.sqrt(np.var(self.dataEnd["halfMean"][i*r:i*r+r]))
+            dataEndRepeat.loc[i,"halfMean_error"] = np.sqrt(np.var(self.dataEnd["halfMean"][i*r:i*r+r]))
         
         return dataEndRepeat
 
@@ -215,11 +218,12 @@ class MalariaStatistics():
 
         mean = 0
         var = 0
+        count = 0
 
         for simulation in range(self.NUniqueSimulations):
-            for repeat in range(self.settings["Repeat"][0]):
-    
-                index = simulation*self.settings["Repeat"]+repeat
+            for repeat in range(self.settings.loc[0, "Repeat"]):
+
+                index = simulation*int(self.settings.loc[0, "Repeat"])+repeat
 
                 self.timelineIndex = [simulation+1, repeat+1]
                 self.ImportTimeline()
@@ -236,11 +240,11 @@ class MalariaStatistics():
                     mean = np.mean(self.timelineNInfected[i:-1])
                     var = np.var(self.timelineNInfected[i:-1])
 
-                self.dataEnd["mean"][index] = mean
-                self.dataEnd["variance"][index] = var
-                self.dataEnd["halfMean"][index] = mean
-                self.dataEnd["halfVariance"][index] = var  
-                
+                self.dataEnd.loc[index, "mean"] = mean
+                self.dataEnd.loc[index, "variance"] = var
+                self.dataEnd.loc[index, "halfMean", ] = mean
+                self.dataEnd.loc[index, "halfVariance"] = var
+
         self.dataEndRepeat = self.GetRepeatedMeanAndVariance()
 
         return

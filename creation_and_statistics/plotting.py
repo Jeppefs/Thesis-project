@@ -40,7 +40,7 @@ def simple():
 def replacement(): 
     LF.Latexify(fig_width = 6.19893, label_size=[1.0, 1.0])
     q = MS.MalariaStatistics("replacement")
-    q.plotSettings.saveFigs = False
+    
     q.CalcNewMeans()
     q.CreateDataCopies()
 
@@ -65,7 +65,6 @@ def replacement():
 def replacementTimeSeries():
     LF.Latexify(fig_width = 6.19893, label_size=[1.0, 1.0])
     q = MS.MalariaStatistics("replacement")
-    q.plotSettings.saveFigs = False
 
     #TODO: Change these timeline plots to values you actually want. 
     # Plot of alpha=0.8 and gamma=0.16961
@@ -87,7 +86,6 @@ def replacementTimeSeries():
 def features():
     LF.Latexify(fig_width = 6.19893, label_size=[1.0, 1.0])
     q = MS.MalariaStatistics("features")
-    q.plotSettings.saveFigs = False
     q.CalcNewMeans()
     q.CreateDataCopies()
 
@@ -110,10 +108,7 @@ def features():
     q.PlotNiceAndSave(fig2, ax2, r"$\gamma$", ylabel = "Mean infected", fileName = "mean")
     q.RemoveMask()
 
-    """Number of strains in the system"""
-    #fig, ax = plt.subplots()
-    #ax.plot()
-    #q.PlotNiceAndSave(fig, ax, xlabel = "Start Strains", ylabel = "End Strains", fileName = "endStrains")
+   
 
     """Time Series"""
     skip = 100
@@ -136,6 +131,28 @@ def features():
 
     return
 
+"""Number of strains in the system"""
+def featuresStrains():
+    LF.Latexify(fig_width = 6.19893, label_size=[1.0, 1.0])
+    q = MS.MalariaStatistics("features")
+    q.plotSettings.saveFigs = False
+    q.CalcNewMeans()
+    q.CreateDataCopies()
+
+    alphas = [0.6, 0.8, 0.95, 1.05]
+    i = 0
+    fig, ax = plt.subplots()
+    ax.grid(True)
+    for alpha in alphas:
+        mask = (q.parametersCopy["InfectionSpeed"][:] == alpha).as_matrix()
+        q.ApplyMask(mask=mask)
+
+        ax.plot(q.parameters["MaxAntigenValue"], q.dataEnd["strains"], linestyle="--", dashes=(2, i+2), linewidth=1.0)
+        q.PlotNiceAndSave(fig, ax, xlabel = "Start Strains", ylabel = "End Strains", fileName = "endStrains")
+        i += 1
+
+    return
+
 def features2D():
     LF.Latexify(fig_width=6.19893)
     q = MS.MalariaStatistics("features2D")
@@ -149,6 +166,50 @@ def features2D():
     q.Plot2D(fig, ax, "MaxAntigenValue", "InfectionSpeed", "halfMean")
     q.PlotNiceAndSave(fig, ax, "Strains", r"$\alpha$", "mean")
 
+    return
+
+def mutation():
+    LF.Latexify(fig_width=6.19893)
+    q = MS.MalariaStatistics("mutation")
+    
+    alphas = q.parameters["InfectionSpeed"].unique()
+    mus = q.parameters["MutationSpeed"].unique()
+    
+    q.CalcNewMeans()
+    q.CreateDataCopies()
+
+    fig1, ax1 = plt.subplots()
+    fig2, ax2 = plt.subplots()
+
+    for alpha in alphas:
+        mask = ((q.parametersCopy["InfectionSpeed"][:] == alpha) & q.parametersCopy["MutationSpeed"][:] == mus[0]).as_matrix()
+        q.ApplyMask(mask=mask)
+
+        q.PlotExtinctionTime(ax1, "MaxAntigenValue", xlabel = r"$\gamma$")
+        q.PlotMeanInfection(ax2, "MaxAntigenValue", xlabel = r"$\gamma$")
+
+
+    ax1.legend([r"$\alpha$=0.6",r"$\alpha$=0.8",r"$\alpha$=0.95",r"$\alpha$=1.05"])
+    ax2.legend([r"$\alpha$=0.6",r"$\alpha$=0.8",r"$\alpha$=0.95",r"$\alpha$=1.05"])
+    q.PlotNiceAndSave(fig1, ax1, r"$\gamma$", ylabel = "Extinction time (gen)", fileName = "extinctionTime")
+    q.PlotNiceAndSave(fig2, ax2, r"$\gamma$", ylabel = "Mean infected", fileName = "mean")
+    q.RemoveMask()
+
+    i = 0
+    fig, ax = plt.subplots()
+    ax.grid(True)
+    for alpha in alphas:
+        mask = (q.parametersCopy["InfectionSpeed"][:] == alpha).as_matrix()
+        q.ApplyMask(mask=mask)
+
+        ax.plot(q.parameters["MaxAntigenValue"], q.dataEnd["strains"], linestyle="--", dashes=(2, i+2), linewidth=1.0)
+        q.PlotNiceAndSave(fig, ax, xlabel = "Start Strains", ylabel = "End Strains", fileName = "endStrains")
+        i += 1
+    
+    return
+
+def mutation2D():
+    pass
 """
 def complexDifference():
     q = MS.MalariaStatistics("complexDifference", saveFigs=False)
