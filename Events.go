@@ -125,16 +125,12 @@ func (h *Host) RemoveInfections() {
 
 // MutateParasite : Changes a strain to a single other one.
 func (m *Malaria) MutateParasite(hostIndex int, replacedIndex int, newStrain int) {
+	// First, check if the strain it converts to, already infects the given host.
+	if m.Hosts[hostIndex].HasStrain(newStrain) == true {
+		return
+	}
 	m.Hosts[hostIndex].Infections[replacedIndex] = newStrain
 	m.StrainCounter[m.Hosts[hostIndex].Infections[replacedIndex]]--
 	m.StrainCounter[newStrain]++
 	return
-}
-
-// GetRandomInfectedHost :
-func (m *Malaria) GetRandomInfectedHost() (Host, int, int) {
-	infectedHostIndex := rand.Intn(m.NInfectedHosts)
-	hostIndex := m.InfectedHosts[infectedHostIndex]
-	host := m.Hosts[hostIndex]
-	return host, hostIndex, infectedHostIndex
 }

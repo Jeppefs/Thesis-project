@@ -212,3 +212,11 @@ func CountCurrentNumberOfStrains(strainCounter []int) int {
 
 	return total
 }
+
+// GetRandomInfectedHost :
+func (m *Malaria) GetRandomInfectedHost() (Host, int, int) {
+	infectedHostIndex := rand.Intn(m.NInfectedHosts)
+	hostIndex := m.InfectedHosts[infectedHostIndex]
+	host := m.Hosts[hostIndex]
+	return host, hostIndex, infectedHostIndex
+}

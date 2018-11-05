@@ -104,8 +104,8 @@ def features():
 
     ax1.legend([r"$\alpha$=0.6",r"$\alpha$=0.8",r"$\alpha$=0.95",r"$\alpha$=1.05"])
     ax2.legend([r"$\alpha$=0.6",r"$\alpha$=0.8",r"$\alpha$=0.95",r"$\alpha$=1.05"])
-    q.PlotNiceAndSave(fig1, ax1, r"$\gamma$", ylabel = "Extinction time (gen)", fileName = "extinctionTime")
-    q.PlotNiceAndSave(fig2, ax2, r"$\gamma$", ylabel = "Mean infected", fileName = "mean")
+    q.PlotNiceAndSave(fig1, ax1, "Strains", ylabel = "Extinction time (gen)", fileName = "extinctionTime")
+    q.PlotNiceAndSave(fig2, ax2, "Strains", ylabel = "Mean infected", fileName = "mean")
     q.RemoveMask()
 
    
@@ -148,8 +148,10 @@ def featuresStrains():
         q.ApplyMask(mask=mask)
 
         ax.plot(q.parameters["MaxAntigenValue"], q.dataEnd["strains"], linestyle="--", dashes=(2, i+2), linewidth=1.0)
-        q.PlotNiceAndSave(fig, ax, xlabel = "Start Strains", ylabel = "End Strains", fileName = "endStrains")
         i += 1
+
+    q.PlotNiceAndSave(fig, ax, xlabel = "Start Strains", ylabel = "End Strains", fileName = "endStrains")
+
 
     return
 
@@ -169,41 +171,48 @@ def features2D():
     return
 
 def mutation():
-    LF.Latexify(fig_width=6.19893)
+    LF.Latexify(fig_width=6.19893, label_size=[1.0, 1.0])
     q = MS.MalariaStatistics("mutation")
     
-    alphas = q.parameters["InfectionSpeed"].unique()
+    #alphas = q.parameters["InfectionSpeed"].unique()
+    alpha = 0.6
     mus = q.parameters["MutationSpeed"].unique()
-    
+
     q.CalcNewMeans()
     q.CreateDataCopies()
+
 
     fig1, ax1 = plt.subplots()
     fig2, ax2 = plt.subplots()
 
-    for alpha in alphas:
-        mask = ((q.parametersCopy["InfectionSpeed"][:] == alpha) & q.parametersCopy["MutationSpeed"][:] == mus[0]).as_matrix()
+    for mu in mus:
+        mask = ( ((q.parametersCopy["InfectionSpeed"][:] == alpha).as_matrix()) & ((q.parametersCopy["MutationSpeed"][:] == mu).as_matrix()) )
+        #print((q.parametersCopy["InfectionSpeed"][:] == alpha).as_matrix(), (q.parametersCopy["MutationSpeed"][:] == mus[0]).as_matrix(), mask)
         q.ApplyMask(mask=mask)
 
         q.PlotExtinctionTime(ax1, "MaxAntigenValue", xlabel = r"$\gamma$")
         q.PlotMeanInfection(ax2, "MaxAntigenValue", xlabel = r"$\gamma$")
 
-
-    ax1.legend([r"$\alpha$=0.6",r"$\alpha$=0.8",r"$\alpha$=0.95",r"$\alpha$=1.05"])
-    ax2.legend([r"$\alpha$=0.6",r"$\alpha$=0.8",r"$\alpha$=0.95",r"$\alpha$=1.05"])
+    ax1.legend([r"$\mu$="+str(mus[0]),r"$\mu$="+str(mus[1]),r"$\mu$="+str(mus[2]),r"$\mu$="+str(mus[3])])
+    ax2.legend([r"$\mu$="+str(mus[0]),r"$\mu$="+str(mus[1]),r"$\mu$="+str(mus[2]),r"$\mu$="+str(mus[3])])
     q.PlotNiceAndSave(fig1, ax1, r"$\gamma$", ylabel = "Extinction time (gen)", fileName = "extinctionTime")
     q.PlotNiceAndSave(fig2, ax2, r"$\gamma$", ylabel = "Mean infected", fileName = "mean")
     q.RemoveMask()
 
-    #fig, ax = plt.subplots()
-    #ax.grid(True)
-    #for alpha in alphas:
-    #    mask = (q.parametersCopy["InfectionSpeed"][:] == alpha).as_matrix()
-    #    q.ApplyMask(mask=mask)
-#
-    #    ax.plot(q.parameters["MaxAntigenValue"], q.dataEnd["strains"], linestyle="--", dashes=(2, i+2), linewidth=1.0)
-    #    q.PlotNiceAndSave(fig, ax, xlabel = "Start Strains", ylabel = "End Strains", fileName = "endStrains")
-    #
+    fig, ax = plt.subplots()
+    ax.grid(True)
+    for mu in mus:
+        mask = (q.parametersCopy["MutationSpeed"][:] == mu).as_matrix()
+        q.ApplyMask(mask=mask)
+
+        ax.plot(q.parameters["MaxAntigenValue"], q.dataEnd["strains"], marker=".")
+
+    ax.set_xticks([0, 5, 10, 15, 20, 25])
+    ax.set_yticks([0, 5, 10, 15, 20, 25])
+    ax.legend([r"$\mu$="+str(mus[0]),r"$\mu$="+str(mus[1]),r"$\mu$="+str(mus[2]),r"$\mu$="+str(mus[3])])    
+    q.PlotNiceAndSave(fig, ax, xlabel = "Start Strains", ylabel = "End Strains", fileName = "endStrains")
+    
+
     return
 
 def mutation2D():

@@ -82,9 +82,6 @@ class MalariaStatistics():
         if self.dataEndCopy is None:
             self.CreateDataCopies()
 
-        print(len(self.dataEndCopy), len(self.dataEnd), len(self.parameters), len(mask), len(np.repeat(mask, self.settings['Repeat'])))
-        print(self.dataEnd)
-
         self.dataEnd = self.dataEndCopy[np.repeat(mask, self.settings['Repeat'])].copy()
         self.dataEndRepeat = self.dataEndRepeatCopy[mask].copy()
         self.parameters = self.parametersCopy[mask].copy()
@@ -218,7 +215,6 @@ class MalariaStatistics():
 
         mean = 0
         var = 0
-        count = 0
 
         for simulation in range(self.NUniqueSimulations):
             for repeat in range(self.settings.loc[0, "Repeat"]):

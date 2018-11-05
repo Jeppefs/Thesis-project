@@ -3,13 +3,13 @@ import pandas as pandas
 from collections import OrderedDict
 import make_parameters as mp 
 
-func = "mutation2D"
+func = "mutation"
 name = ""
 notes = ""
-SameyGamma = True 
+SameyGamma = False 
 
 #alphas = np.array([0.6,0.8,0.95,1.05])
-alphas = np.arange(0.5,0.8+0.01,0.01)
+alphas = np.arange(0.5, 0.8+0.01, 0.01)
 
 def OptimalGamma(a):
     return (2*a)**(1/3) - 1
@@ -110,7 +110,9 @@ def features2D(name = "features2D", notes = "Adjusts number of surface features 
 def mutation(name = "mutation", notes = "Over the same parameters as features, except mutation exist"):
     folder, name, parameters, settings, notes = features(name = name, notes = notes)
     
-    parameters["MutationSpeed"] = np.array([0.001,0.0001,0.00001])
+    parameters["InfectionSpeed"] = np.array([0.6])
+    parameters["ReplacementSpeed"] = OptimalGamma(parameters["InfectionSpeed"])
+    parameters["MutationSpeed"] = np.array([0.0, 0.001, 0.0001, 0.00001])
 
     return folder, name, parameters, settings, notes
 
