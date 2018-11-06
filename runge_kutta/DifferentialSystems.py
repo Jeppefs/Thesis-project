@@ -24,7 +24,7 @@ def Ross(param, values, t):
     valuesRate[1] = param[0] * param[4] * values[0] * (1 - values[1]) - param[5] * values[1]
     return valuesRate
 
-def Deitz(param, values, t):
+def Dietz(param, values, t):
     valuesRate = np.zeros(len(values))
 
     valuesRate[0] = param[0] + param[1] * values[5] - 1

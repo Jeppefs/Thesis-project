@@ -3,13 +3,10 @@ import pandas as pandas
 from collections import OrderedDict
 import make_parameters as mp 
 
-func = "mutation"
+func = "mutationTimeSeries"
 name = ""
 notes = ""
-SameyGamma = False 
-
-#alphas = np.array([0.6,0.8,0.95,1.05])
-alphas = np.arange(0.5, 0.8+0.01, 0.01)
+SameyGamma = False
 
 def OptimalGamma(a):
     return (2*a)**(1/3) - 1
@@ -116,84 +113,49 @@ def mutation(name = "mutation", notes = "Over the same parameters as features, e
 
     return folder, name, parameters, settings, notes
 
+def mutationLowReplacement(name = "mutationLowReplacement", notes = "Over the same parameters as features, except mutation exist, and replacement is a fourth of optimal, instead"):
+    folder, name, parameters, settings, notes = features(name = name, notes = notes)
+    
+    parameters["InfectionSpeed"] = np.array([0.6])
+    parameters["ReplacementSpeed"] = OptimalGamma(parameters["InfectionSpeed"])/4
+    parameters["MutationSpeed"] = np.array([0.0, 0.001, 0.0001, 0.00001])
+
+    return folder, name, parameters, settings, notes
+
+def mutationTimeSeries(name="mutationTimeSeries", notes = "Time series of the parameters I wish to look at for mutations"):
+    folder, name, parameters, settings, notes = features(name = name, notes = notes)
+    
+    parameters["InfectionSpeed"] = np.array([0.55])
+    parameters["ReplacementSpeed"] = np.array([OptimalGamma(parameters["InfectionSpeed"][0])/2, OptimalGamma(parameters["InfectionSpeed"][0]), OptimalGamma(parameters["InfectionSpeed"][0])*2])
+    parameters["MutationSpeed"] = np.array([0.0, 0.00001, 0.0001, 0.001, 0.01])
+
+    return folder, name, parameters, settings, notes
+    
 def mutation2D(name = "mutation2D", notes = "Over the same parameters as features2D, except mutation exist"):
     folder, name, parameters, settings, notes = features2D(name = name, notes = notes)
     
-    parameters["MutationSpeed"] = np.array([0.001,0.0001,0.00001])
+    parameters["MutationSpeed"] = np.array([0.0, 0.001, 0.0001, 0.00001])
 
     return folder, name, parameters, settings, notes
 
-def complexFeatures(name = "complexFeatures", notes = "Over the same parameters as features, except antigen size is 2"):
-    folder, name, parameters, settings, notes = features(name = name, notes = notes)
-    
-    parameters["MaxAntigenValue"] = np.arange(2, 25+1, 1, dtype=int)
-    parameters["NAntigens"] = np.array([2])
-    settings["SkipSaving"] = [2000]
+def complexCrossNonCross(name = "complexCrossNonCross", notes = "Simulation with and without cross immunity."):
+    folder, name, parameters, settings, notes = simple(name = name, notes = notes)
 
-    return folder, name, parameters, settings, notes
+    parameters["InfectionSpeed"] = np.arange(0.3, 0.8+0.000001, 0.01)
+    parameters["MutationSpeed"] = np.array([0.00001])
+    parameters["SpecificStrains"] = ["nonCross", "cross"]
 
-def complexFeatures2(name = "complexFeatures2", notes = "Over the same parameters as features, except antigen size is 3"):
-    folder, name, parameters, settings, notes = features(name = name, notes = notes)
-    
-    parameters["MaxAntigenValue"] = np.arange(3, 25+1, 1, dtype=int)
-    parameters["NAntigens"] = np.array([3])
-    settings["SkipSaving"] = [2000]
-
-    return folder, name, parameters, settings, notes
-
-def complexDifference(name = "complexDifference", notes = "Trying with cross immunity and not"):
-    folder, name, parameters, settings, notes = standard(name = name, notes=notes)
-
-    parameters["InfectionSpeed"] = np.array([0.6])
-    parameters["ReplacementSpeed"] = np.array([0.005])
-    parameters["SpecificStrains"] = ["nonCross", "cross"] 
-    
-    settings["Repeat"] = [10]
-    settings["SkipSaving"] = np.array([2000], dtype=int)
-    
-    return folder, name, parameters, settings, notes
-
-def complexDifference2D(name = "complexDifference2D", notes = "Trying with cross immunity and not for different alphas and replacement"):
-    folder, name, parameters, settings, notes = standard(name = name, notes=notes)
-
-    parameters["InfectionSpeed"] = np.arange(0.5,0.8+0.01,0.01)
-    parameters["ReplacementSpeed"] = np.arange(0.0,0.02+0.001, 0.001)
-    parameters["SpecificStrains"] = ["nonCross", "cross"] 
-    
-    settings["Repeat"] = [1]
     settings["ShouldSaveDataWhileRunning"] = ["false"] 
-    settings["SkipSaving"] = np.array([2000], dtype=int)
+
+    return folder, name, parameters, settings, notes
     
-    return folder, name, parameters, settings, notes
-
-def featuresMutationLow(name = "featuresMutationLow", notes = "Over the same parameters as features, except mutation exist with 0.0005"):
-    folder, name, parameters, settings, notes = features(name = name, notes = notes)
-    
-    parameters["MutationSpeed"] = np.array([0.0005])
-
-    return folder, name, parameters, settings, notes
-
-def featuresMutationVeryLow(name = "featuresMutationVeryLow", notes = "Over the same parameters as features, except mutation exist with 0.0005"):
-    folder, name, parameters, settings, notes = features(name = name, notes = notes)
-    
-    parameters["MutationSpeed"] = np.array([0.0001])
-
-    return folder, name, parameters, settings, notes
-
-def complexDifferenceMutation2D(name = "complexDifferenceMutation2D", notes = "Same as complexDifference2D but with mutation."):
-    folder, name, parameters, settings, notes = complexDifference2D(name = name, notes = notes)
-
-    parameters["MutationSpeed"] = np.array([0.0005])
-
-    return folder, name, parameters, settings, notes
-
-
 
 ##-------------------------------------------------------------------------------##
 mp.CreateParametersAndSettings(eval(func), name, notes)
 
 if SameyGamma == True:
     q = pandas.pandas.read_csv("data/" + func + "/parameters.csv")
+    alphas = q["ReplacementSpeed"].unique()
     gammas = OptimalGamma(alphas)
 
     q.loc[:, ("ReplacementSpeed")] = OptimalGamma(q.loc[:, ("InfectionSpeed")])
