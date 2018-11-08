@@ -1,10 +1,9 @@
-import malaria_statistics as MS 
-from Latexifier import LatexifierFunctions as LF
-
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pandas
 import scipy.optimize as op
+import malaria_statistics as MS 
+from Latexifier import LatexifierFunctions as LF
 
 def simple():
     LF.Latexify(fig_width=6.19893, label_size=[1.0, 1.0])
