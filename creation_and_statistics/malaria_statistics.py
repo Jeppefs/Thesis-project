@@ -49,14 +49,7 @@ class MalariaStatistics():
             self.ImportTimeline()
             self.ImportStrainCounter()
 
-        if self.settings["Repeat"][0] > 1:
-            self.isRepeated = True
-            self.dataEndRepeat = self.GetRepeatedMeanAndVariance()
-        else: 
-            self.isRepeated = False
-
         self.dataEndCopy = None
-        self.dataEndRepeatCopy = None
         self.parametersCopy = None
 
     """
@@ -72,7 +65,6 @@ class MalariaStatistics():
 
     def CreateDataCopies(self):
         self.dataEndCopy = self.dataEnd.copy()
-        self.dataEndRepeatCopy = self.dataEndRepeat.copy()
         self.parametersCopy = self.parameters.copy()
         return
 
@@ -83,7 +75,6 @@ class MalariaStatistics():
             self.CreateDataCopies()
 
         self.dataEnd = self.dataEndCopy[np.repeat(mask, self.settings['Repeat'])].copy()
-        self.dataEndRepeat = self.dataEndRepeatCopy[mask].copy()
         self.parameters = self.parametersCopy[mask].copy()
         
         self.NUniqueSimulations = len(self.parameters["NHosts"])
@@ -93,7 +84,6 @@ class MalariaStatistics():
 
     def RemoveMask(self):
         self.dataEnd = self.dataEndCopy.copy()
-        self.dataEndRepeat = self.dataEndRepeatCopy.copy()
         self.parameters = self.parametersCopy.copy()
 
         self.NUniqueSimulations = len(self.parameters['NHosts'])

@@ -12,7 +12,7 @@ Use 1.0cm for both margins (though should be corrected, but I do not have the in
 
 PT.mutationTimeSeries()
 print("Congrats! All done!")
-#plt.show()
+plt.show()
 
 """
 Tests:

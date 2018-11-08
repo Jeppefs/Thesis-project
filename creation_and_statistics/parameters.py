@@ -126,11 +126,12 @@ def mutationTimeSeries(name="mutationTimeSeries", notes = "Time series of the pa
     folder, name, parameters, settings, notes = features(name = name, notes = notes)
     
     parameters["InfectionSpeed"] = np.array([0.55])
-    parameters["ReplacementSpeed"] = np.array([OptimalGamma(parameters["InfectionSpeed"][0])/2, OptimalGamma(parameters["InfectionSpeed"][0]), OptimalGamma(parameters["InfectionSpeed"][0])*2])
+    parameters["ReplacementSpeed"] = np.array([OptimalGamma(parameters["InfectionSpeed"][0])/8, OptimalGamma(parameters["InfectionSpeed"][0])/4, OptimalGamma(parameters["InfectionSpeed"][0])/2, OptimalGamma(parameters["InfectionSpeed"][0]), OptimalGamma(parameters["InfectionSpeed"][0])*2])
     parameters["MutationSpeed"] = np.array([0.0, 0.00001, 0.0001, 0.001, 0.01])
+    parameters["MaxAntigenValue"] = np.arange(1, 11)
 
     return folder, name, parameters, settings, notes
-    
+
 def mutation2D(name = "mutation2D", notes = "Over the same parameters as features2D, except mutation exist"):
     folder, name, parameters, settings, notes = features2D(name = name, notes = notes)
     
@@ -148,6 +149,7 @@ def complexCrossNonCross(name = "complexCrossNonCross", notes = "Simulation with
     settings["ShouldSaveDataWhileRunning"] = ["false"] 
 
     return folder, name, parameters, settings, notes
+
     
 
 ##-------------------------------------------------------------------------------##
