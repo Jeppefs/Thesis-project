@@ -229,22 +229,22 @@ def mutationTimeSeries():
     gammas = q.parameters["ReplacementSpeed"].unique()
     skip = 1
 
-    for A in As:
-        for gamma in gammas:
-            for mu in mus:
-                print(A, mu, gamma)
-                fig, ax = plt.subplots()
-
-                q.timelineIndex = [np.where( (q.parameters["MutationSpeed"].values == mu) & 
-                (q.parameters["MaxAntigenValue"].values == A) & 
-                (q.parameters["ReplacementSpeed"].values == gamma) )[0][0] + 1, 1]
-               
-                q.ImportTimeline()
-                q.ImportStrainCounter()
-                q.PlotTimeline(ax = ax, skip = skip)
-                q.PlotStrainCounter(ax = ax, skip = skip)
-                q.PlotNiceAndSave(fig, ax, xlabel = "Time (gen)", ylabel = "Infected", fileName = "timeline_" + str(A) + "_" + str(gamma) + "_" + str(mu))
-                plt.close(fig)
+    #for A in As:
+    #    for gamma in gammas:
+    #        for mu in mus:
+    #            print(A, mu, gamma)
+    #            fig, ax = plt.subplots()
+#
+    #            q.timelineIndex = [np.where( (q.parameters["MutationSpeed"].values == mu) & 
+    #            (q.parameters["MaxAntigenValue"].values == A) & 
+    #            (q.parameters["ReplacementSpeed"].values == gamma) )[0][0] + 1, 1]
+    #           
+    #            q.ImportTimeline()
+    #            q.ImportStrainCounter()
+    #            q.PlotTimeline(ax = ax, skip = skip)
+    #            q.PlotStrainCounter(ax = ax, skip = skip)
+    #            q.PlotNiceAndSave(fig, ax, xlabel = "Time (gen)", ylabel = "Infected", fileName = "timeline_" + str(A) + "_" + str(gamma) + "_" + str(mu))
+    #            plt.close(fig)
 
     #for mu in mus:    
     #    fig, ax = plt.subplots()
