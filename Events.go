@@ -129,8 +129,8 @@ func (m *Malaria) MutateParasite(hostIndex int, replacedIndex int, newStrain int
 	if m.Hosts[hostIndex].HasStrain(newStrain) == true {
 		return
 	}
-	m.Hosts[hostIndex].Infections[replacedIndex] = newStrain
 	m.StrainCounter[m.Hosts[hostIndex].Infections[replacedIndex]]--
+	m.Hosts[hostIndex].Infections[replacedIndex] = newStrain
 	m.StrainCounter[newStrain]++
 	return
 }

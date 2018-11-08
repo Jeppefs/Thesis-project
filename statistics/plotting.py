@@ -1,10 +1,9 @@
-import malaria_statistics as MS 
-from Latexifier import LatexifierFunctions as LF
-
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pandas
 import scipy.optimize as op
+import malaria_statistics as MS 
+from Latexifier import LatexifierFunctions as LF
 
 def simple():
     LF.Latexify(fig_width=6.19893, label_size=[1.0, 1.0])
@@ -219,9 +218,10 @@ def mutation():
 
 def mutationTimeSeries():
     
-    LF.Latexify(fig_width = 6.19893*10, label_size=[1.0, 1.0])
+    LF.Latexify(fig_width = 6.19893, label_size=[1.0, 1.0])
     q = MS.MalariaStatistics("mutationTimeSeries")
     q.plotSettings.saveFigs = False
+    q.dataEndRepeat = np.array([0])
     q.CreateDataCopies()
 
     mus = q.parameters["MutationSpeed"].unique()
@@ -246,12 +246,13 @@ def mutationTimeSeries():
     #            q.PlotNiceAndSave(fig, ax, xlabel = "Time (gen)", ylabel = "Infected", fileName = "timeline_" + str(A) + "_" + str(gamma) + "_" + str(mu))
     #            plt.close(fig)
 
-    #for mu in mus:    
-    #    fig, ax = plt.subplots()
-    #    for gamma in gammas:
-    #        mask =( ((q.parametersCopy["ReplacementSpeed"][:] == gamma).as_matrix()) & ((q.parametersCopy["MutationSpeed"][:] == mu).as_matrix()) )
-    #        q.ApplyMask(mask)
-    #        q.PlotExtinctionTime(ax=ax, vary="MaxAntigenValue", xlabel = "Strains")
+    for mu in mus:    
+        fig, ax = plt.subplots()
+        for gamma in gammas:
+            print(((q.parametersCopy["ReplacementSpeed"][:] == gamma).as_matrix()), ((q.parametersCopy["MutationSpeed"][:] == mu).as_matrix()))
+            mask =( ((q.parametersCopy["ReplacementSpeed"][:] == gamma).as_matrix()) & ((q.parametersCopy["MutationSpeed"][:] == mu).as_matrix()) )
+            q.ApplyMask(mask)
+            q.PlotExtinctionTime(ax=ax, vary="MaxAntigenValue", xlabel = "Strains")
 
 
     return
