@@ -2,7 +2,7 @@
 This file is just for testing plots. THIS IS SHITTY CODE AND I KNOW IT! IT IS
 NOT SUPPOSED TO BE GOOD!
 """
-#%% Import
+
 """Set current path as sys path for import of files"""
 import sys
 import os 
@@ -10,17 +10,15 @@ sys.path.append(os.getcwd() + "/statistics")
 
 """Global packages"""
 import numpy as np
-import pandas as pd 
+import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib
 
 """Local Packages"""
 import malaria_statistics as MS
 from Latexifier import LatexifierFunctions as LF
-print("Importing done")
 
-TOOLS = ["pan,whell_zoom,box_zoom,reset,save,box_select"]
 
-#%% Plot fun
 LF.Latexify(fig_width = 6.19893*3, label_size=[1.0, 1.0])
 q = MS.MalariaStatistics("mutationTimeSeries")
 q.plotSettings.saveFigs = False
@@ -44,6 +42,7 @@ q.ImportStrainCounter()
 q.PlotTimeline(ax = ax, skip = skip)
 q.PlotStrainCounter(ax = ax, skip = skip)
 #q.PlotNiceAndSave(fig, ax, xlabel = "Time (gen)", ylabel = "Infected", fileName = "timeline_" + str(A) + "_" + str(gamma) + "_" + str(mu))
+
 
 
 print("All done, congrats!")

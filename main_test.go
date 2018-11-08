@@ -236,7 +236,21 @@ func TestReplace(t *testing.T) {
 }
 
 func TestMutation(t *testing.T) {
-	//m := CreateMalariaStructsInSlice()
+	m := CreateMalariaStructsInSlice()
+
+	fmt.Println(m[1].StrainCounter, m[1].InfectionCounter, m[1].Strains)
+
+	m[1].MutateParasite(1, 0, 1)
+	CheckIfEqual(t, "Mutation1", m[1].StrainCounter, []int{1, 1, 0, 0, 0, 0, 0, 1, 0, 0})
+	CheckIfEqual(t, "Mutation2", m[1].Hosts[1].Infections, []int{1})
+	CheckIfEqual(t, "Mutation3", m[1].Hosts[1].NInfections, 1)
+
+	m[1].Spread(1, 2, 5)
+	m[1].MutateParasite(1, 0, 2)
+
+	CheckIfEqual(t, "Mutation4", m[1].StrainCounter, []int{1, 1, 1, 0, 0, 0, 0, 1, 0, 0})
+	CheckIfEqual(t, "Mutation5", m[1].Hosts[1].Infections, []int{1, 2})
+	CheckIfEqual(t, "Mutation6", m[1].Hosts[1].NInfections, 2)
 
 	return
 }
