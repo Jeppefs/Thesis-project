@@ -324,3 +324,11 @@ func TestCalcMeanAndVar(t *testing.T) {
 	}
 	return
 }
+
+func TestCountAverageResistances(t *testing.T) {
+	m := CreateMalariaStructsInSlice()
+
+	m[1].ImmunityGained(1)
+	CheckIfEqual(t, "Is average resistances correct", CountAverageResistances(&m[1]), 0.1)
+
+}

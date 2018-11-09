@@ -41,10 +41,10 @@ func SaveToEndFile(loadFileName string, saveFileName string, run int, m *Malaria
 	check(err)
 	defer file.Close()
 
-	mean, variance := CalcMeanAndVar(d)
+	//mean, variance := CalcMeanAndVar(d)
 	halfMean, halfVariance := CalcMeanAndVar(d[len(d)/2 : len(d)])
 
-	fmt.Fprintf(file, "%v,%f,%f,%f,%f,%v\n", run, mean, variance, halfMean, halfVariance, CountCurrentNumberOfStrains(m.StrainCounter)) // Important, must be the same order as the header.
+	fmt.Fprintf(file, "%v,%f,%f,%f,%v\n", run, halfMean, halfVariance, CountAverageResistances(m), CountCurrentNumberOfStrains(m.StrainCounter)) // Important, must be the same order as the header.
 
 	return
 }
@@ -66,7 +66,7 @@ func CheckToCreateNedEndDataFileAndDoSoIfTrue(settings *ModelSettings) {
 func CreateAvgDataFile(fileName string) {
 	file, err := os.Create(fileName)
 	check(err)
-	fmt.Fprintf(file, "%s,%s,%s,%s,%s,%s\n", "run", "mean", "variance", "halfMean", "halfVariance", "strains")
+	fmt.Fprintf(file, "%s,%s,%s,%s\n", "run", "mean", "variance", "avgResistances", "strains")
 	file.Close()
 	return
 }
@@ -116,4 +116,20 @@ func SaveStrainCounter(file *os.File, strainCounter *[]int) {
 	}
 	fmt.Fprintf(file, "\n")
 	return
+}
+
+// CountAverageResistances : Counts the number of total resistances among the whole population
+func CountAverageResistances(m *Malaria) float64 {
+
+	resistanceCount := 0
+
+	for hostIndex := 0; hostIndex < m.NHosts; hostIndex++ {
+		for _, resistance := range m.Hosts[hostIndex].Antibodies {
+			if resistance {
+				resistanceCount++
+			}
+		}
+	}
+
+	return float64(resistanceCount) / float64(m.NHosts)
 }
