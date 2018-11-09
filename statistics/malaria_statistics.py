@@ -31,6 +31,7 @@ class MalariaStatistics():
         
         self.simulationName = simulationName
         self.pathName = "data/" + self.simulationName + "/"
+        self.plotSavePath = self.pathName + "plots/"
 
         self.dataEnd = pandas.read_csv(self.pathName + "dataEnd.csv")
         self.parameters = pandas.read_csv(self.pathName + "parameters.csv")
@@ -185,7 +186,7 @@ class MalariaStatistics():
         LF.format_axes(ax)
         fig.tight_layout(pad=0.1)
 
-        figName = self.plotSettings.savePath + fileName + ".pdf"
+        figName = self.plotSavePath + fileName + ".pdf"
         fig.savefig(figName, format="pdf")
         return
 
