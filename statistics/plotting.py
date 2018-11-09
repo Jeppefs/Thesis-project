@@ -9,7 +9,6 @@ def simple():
     LF.Latexify(fig_width=6.19893, label_size=[1.0, 1.0])
     q = MS.MalariaStatistics("simple")
 
-    q.CalcNewMeans()
     isEndemic, ratio = q.CheckEndemic()
 
     fig, ax = plt.subplots()
@@ -26,22 +25,19 @@ def simple():
     print("InfectionSpeed", q.parameters["InfectionSpeed"][q.timelineIndex[0]])
     q.ImportTimeline()
     q.PlotTimeline(ax = ax)
-    q.PlotNiceAndSave(fig = fig, ax=ax, xlabel=r"\alpha$", ylabel = q.plotSettings.yTimeLabel, fileName = "extinctionTime")
+    q.PlotNiceAndSave(fig = fig, ax=ax, xlabel=r"\alpha$", ylabel = "Extinction time (gen)", fileName = "extinctionTime")
 
     fig, ax = plt.subplots()
     q.timelineIndex = [30, 2]
     print("InfectionSpeed", q.parameters["InfectionSpeed"][q.timelineIndex[0]])
     q.ImportTimeline()
     q.PlotTimeline(ax = ax)
-    q.PlotNiceAndSave(fig = fig, ax=ax, xlabel=r"\alpha$", ylabel = q.plotSettings.yTimeLabel, fileName = "extinctionTime")
+    q.PlotNiceAndSave(fig = fig, ax=ax, xlabel=r"\alpha$", ylabel = "Extinction time (gen)", fileName = "extinctionTime")
     return
 
 def replacement(): 
     LF.Latexify(fig_width = 6.19893, label_size=[1.0, 1.0])
     q = MS.MalariaStatistics("replacement")
-    
-    q.CalcNewMeans()
-    q.CreateDataCopies()
 
     alphas = [0.6, 0.8, 0.95, 1.05]
 
@@ -49,7 +45,7 @@ def replacement():
     fig2, ax2 = plt.subplots()
     
     for alpha in alphas:
-        mask = (q.parametersCopy['InfectionSpeed'][:] == alpha).as_matrix()
+        mask = (q.parameters['InfectionSpeed'][:] == alpha).as_matrix()
         q.ApplyMask(mask=mask)
 
         q.PlotExtinctionTime(ax1, "ReplacementSpeed", xlabel = r"$\gamma$")
@@ -59,7 +55,6 @@ def replacement():
     ax2.legend([r"$\alpha$=0.6",r"$\alpha$=0.8",r"$\alpha$=0.95",r"$\alpha$=1.05"])
     q.PlotNiceAndSave(fig1, ax1, r"$\gamma$", ylabel = "Extinction time (gen)", fileName = "extinctionTime")
     q.PlotNiceAndSave(fig2, ax2, r"$\gamma$", ylabel = "Mean infected", fileName = "mean")
-    q.RemoveMask()
 
 def replacementTimeSeries():
     LF.Latexify(fig_width = 6.19893, label_size=[1.0, 1.0])

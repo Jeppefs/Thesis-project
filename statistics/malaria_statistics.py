@@ -7,8 +7,11 @@ from Latexifier import LatexifierFunctions as LF
 
 """
 Dette skal vi have i dataen
+- run
 - mean
+- error
 - variance
+- strains
 - 
 """
 
@@ -41,43 +44,55 @@ class MalariaStatistics():
         self.NUniqueSimulations = len(self.parameters['NHosts']) 
         self.NSimulations = len(self.dataEnd['run'])
 
-        dataEndOld_file = self.pathName + "dataEndOld"
-        if dataEndOld_file.exists():
-            self.ApplyConversion()
-            self.SaveNotNeededData() # Save the data in another file, 
-            self.RecalculateData()
-            self.SaveRecalculatedData()
-            
+        if os.path.exists(self.pathName + "dataEndOld.csv") == False:
+            self.DoAllConversion()
+
+        self.MakeBaseCopies() # Make base copies so you can apply and remove masks. 
+
         return
 
     """
     Data loading and conversion methods:
     """
+    def DoAllConversion(self):
+        """These methods has to be in order!!!"""
+        self.SaveNotNeededData() # Save the data in another file, 
+        self.RecalculateData() # Recalulates the data for repated cases and/or from timeseries
+        self.ApplyConversion() # Divides some values with the number of hosts
+        self.SaveRecalculatedData()
+
+    def SaveNotNeededData(self):
+        self.dataEnd.to_csv(self.pathName + "dataEndOld.csv")
+        return
+
+    def RecalculateData(self):
+        # Create new dataframe with the same keys. 
+
+        self.dataEnd.loc[:,"run_error"] = 0 # Simply create a 0 index for run_error - even if there is no error it may make things easier
+        # If timeseries data is saved, recalculate a new mean which follows the
+        # steady state
+        if self.settings["ShouldSaveDataWhileRunning"][0]:
+            self.CalcNewMeans()
+        # If simulations are repeated, condense the data 
+        if self.settings["Repeat"][0] > 1:
+            # Crate a temporary object that will smaller that the origianl. 
+            dataEndTemp = self.GetRepeatedMeanAndVariance()
+        self.dataEnd = dataEndTemp.copy()
+        return
+
     def ApplyConversion(self):
         self.dataEnd['run'] = self.dataEnd['run'] / self.parameters['NHosts'][0]
         self.dataEnd['mean'] = self.dataEnd['mean'] / self.parameters['NHosts'][0]
         self.dataEnd['variance'] = self.dataEnd['variance'] / self.parameters['NHosts'][0]
         return
 
-    def SaveNotNeededData(self):
-        self.dataEnd.to_csv(self.pathName + "dataEndOld")
-        return
-
-    def RecalculateData(self):
-        self.dataEnd.loc[:,"run_error"] = 0 # Simply create a 0 index for run_error - even if there is no error it may make things easier
-        # If timeseries data is saved, recalculate a new mean which follows the
-        # steady state 
-        if (self.settings["ShouldSaveDataWhileRunning"] == "true"):
-            self.CalcNewMeans()
-        # If simulations are repeated, condense the data 
-        if self.settings["Repeat"] > 1:
-            self.GetRepeatedMeanAndVariance()
-        return
-
     def SaveRecalculatedData(self):
-        
-        
+        self.dataEnd.to_csv(self.pathName + "dataEnd.csv")
         return
+
+    def MakeBaseCopies(self):
+        self.dataEndBase = self.dataEnd.copy()
+        self.parametersBase = self.parameters.copy()
 
     def ApplyMask(self, mask):
         """Puts a mask onto the data, so it can there after be plotted. Maybe a smart way to do this would be nice?"""
@@ -105,13 +120,15 @@ class MalariaStatistics():
 
     def GetRepeatedMeanAndVariance(self):
         """ Calculates mean and variance of repeated runs. """
+        dataEndTemp = pandas.
+
         r = self.settings["Repeat"][0]
         for i in range(self.NUniqueSimulations):
             for key in self.dataEnd.keys():
-                self.dataEnd.loc[i,key] = np.mean(self.dataEnd[key][i*r:i*r+r])
-            self.dataEnd.loc[i,"run_error"] = np.sqrt(np.var(self.dataEnd["run"][i*r:i*r+r]))
+                dataEndTemp.loc[i,key] = np.mean(self.dataEnd[key][i*r:i*r+r])
+            self.dataEndTemp.loc[i,"run_error"] = np.sqrt(np.var(self.dataEnd["run"][i*r:i*r+r]))
         
-        return
+        return dataEndtemp
 
     """
     Plotting methods
@@ -119,7 +136,7 @@ class MalariaStatistics():
     def PlotExtinctionTime(self, ax, vary, xlabel = "vary", plotAllMeasurements = False):
         """ Creates a plot with extinction time with whatever parameter given """
         if self.isRepeated:
-            ax.errorbar(self.parameters[vary], self.dataEn["run"], self.dataEnd["run_error"], fmt='o', markersize=2, elinewidth = 0.5)
+            ax.errorbar(self.parameters[vary], self.dataEnd["run"], self.dataEnd["run_error"], fmt='o', markersize=2, elinewidth = 0.5)
         else:
             ax.plot(self.parameters[vary], self.dataEnd["run"], 'o', markersize=2, linewidth = 0.5)
             
@@ -132,10 +149,10 @@ class MalariaStatistics():
     def PlotMeanInfection(self, ax, vary, xlabel = "vary"):
         """ Creates a plot of the mean and variance. """
         if self.isRepeated:
-            ax.errorbar(self.parameters[vary], self.dataEndRepeat["halfMean"], self.dataEndRepeat["halfMean_error"],
+            ax.errorbar(self.parameters[vary], self.dataEnd["mean"], self.dataEnd["mean_error"],
             fmt='o', markersize=2, elinewidth=0.5, zorder=1)
         else: 
-            ax.errorbar(self.parameters[vary], self.dataEnd["halfMean"], np.sqrt(self.dataEnd["halfVariance"]),
+            ax.errorbar(self.parameters[vary], self.dataEnd["mean"], np.sqrt(self.dataEnd["variance"]),
             fmt='o', markersize=2, elinewidth=0.5, zorder=1)
 
         return
