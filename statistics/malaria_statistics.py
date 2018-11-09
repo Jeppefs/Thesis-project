@@ -2,8 +2,15 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib
 import pandas as pandas
+import os
 from Latexifier import LatexifierFunctions as LF 
 
+"""
+Dette skal vi have i dataen
+- mean
+- variance
+- 
+"""
 
 class PlotSettings():
     """ 
@@ -20,90 +27,69 @@ class PlotSettings():
 
 class MalariaStatistics():
 
-    def __init__(self, simulationName, timelineIndex = [0,0], timeConversion = None, plotSettings = None):
+    def __init__(self, simulationName, plotSettings = None):
         
         self.simulationName = simulationName
         self.pathName = "data/" + self.simulationName + "/"
-        self.timelineIndex = timelineIndex
 
         self.dataEnd = pandas.read_csv(self.pathName + "dataEnd.csv")
         self.parameters = pandas.read_csv(self.pathName + "parameters.csv")
         self.settings = pandas.read_csv(self.pathName + "settings.csv")
 
+        self.isRepeated = self.settings["Repeat"]
         self.NUniqueSimulations = len(self.parameters['NHosts']) 
         self.NSimulations = len(self.dataEnd['run'])
 
-        if timeConversion == None:
-            self.timeConversion = 1/self.parameters['NHosts'][0]
-        else:
-            self.timeConversion = timeConversion 
-        self.ApplyConversion()
-
-        if plotSettings == None:
-            self.plotSettings = PlotSettings()
-            self.plotSettings.savePath = self.pathName + "plots" + "/" + self.simulationName + "_"
-        else:
-            self.plotSettings = plotSettings
-
-        if timelineIndex[0] > 0:
-            self.ImportTimeline()
-            self.ImportStrainCounter()
-
-        if self.settings["Repeat"][0] > 1:
-            self.isRepeated = True
-            self.dataEndRepeat = self.GetRepeatedMeanAndVariance()
-        else: 
-            self.isRepeated = False
-
-        self.dataEndCopy = None
-        self.dataEndRepeatCopy = None
-        self.parametersCopy = None
+        dataEndOld_file = self.pathName + "dataEndOld"
+        if dataEndOld_file.exists():
+            self.ApplyConversion()
+            self.SaveNotNeededData() # Save the data in another file, 
+            self.RecalculateData()
+            self.SaveRecalculatedData()
+            
+        return
 
     """
     Data loading and conversion methods:
     """
     def ApplyConversion(self):
-        self.dataEnd['run'] = self.dataEnd['run']*self.timeConversion
+        self.dataEnd['run'] = self.dataEnd['run'] / self.parameters['NHosts'][0]
         self.dataEnd['mean'] = self.dataEnd['mean'] / self.parameters['NHosts'][0]
         self.dataEnd['variance'] = self.dataEnd['variance'] / self.parameters['NHosts'][0]
-        self.dataEnd['halfMean'] = self.dataEnd['halfMean'] / self.parameters['NHosts'][0]
-        self.dataEnd['halfVariance'] = self.dataEnd['halfVariance'] / self.parameters['NHosts'][0]
         return
 
-    def CreateDataCopies(self):
-        self.dataEndCopy = self.dataEnd.copy()
-        self.dataEndRepeatCopy = self.dataEndRepeat.copy()
-        self.parametersCopy = self.parameters.copy()
+    def SaveNotNeededData(self):
+        self.dataEnd.to_csv(self.pathName + "dataEndOld")
+        return
+
+    def RecalculateData(self):
+        self.dataEnd.loc[:,"run_error"] = 0 # Simply create a 0 index for run_error - even if there is no error it may make things easier
+        # If timeseries data is saved, recalculate a new mean which follows the
+        # steady state 
+        if (self.settings["ShouldSaveDataWhileRunning"] == "true"):
+            self.CalcNewMeans()
+        # If simulations are repeated, condense the data 
+        if self.settings["Repeat"] > 1:
+            self.GetRepeatedMeanAndVariance()
+        return
+
+    def SaveRecalculatedData(self):
+        
+        
         return
 
     def ApplyMask(self, mask):
-        
-        # Checks if copy is empty. If not, create copies. 
-        if self.dataEndCopy is None:
-            self.CreateDataCopies()
+        """Puts a mask onto the data, so it can there after be plotted. Maybe a smart way to do this would be nice?"""
+        self.dataEnd = self.dataEnd.repeat(mask, self.settings['Repeat']).copy()
+        self.parameters = self.parameters[mask].copy()
 
-        self.dataEnd = self.dataEndCopy[np.repeat(mask, self.settings['Repeat'])].copy()
-        self.dataEndRepeat = self.dataEndRepeatCopy[mask].copy()
-        self.parameters = self.parametersCopy[mask].copy()
-        
         self.NUniqueSimulations = len(self.parameters["NHosts"])
         self.NSimulations = len(self.dataEnd["run"])
-
-        return
-
-    def RemoveMask(self):
-        self.dataEnd = self.dataEndCopy.copy()
-        self.dataEndRepeat = self.dataEndRepeatCopy.copy()
-        self.parameters = self.parametersCopy.copy()
-
-        self.NUniqueSimulations = len(self.parameters['NHosts'])
-        self.NSimulations = len(self.dataEnd["run"])
-
         return
 
     def ImportTimeline(self): 
         temp = np.genfromtxt(self.pathName + "timeline/" + str(self.timelineIndex[0]) + "_" + str(self.timelineIndex[1]) + ".csv", delimiter=",", skip_header=1)
-        self.timelineRuns = temp[:,0]*self.timeConversion
+        self.timelineRuns = temp[:,0]/self.parameters["NHosts"][0]
         self.timelineNInfected = temp[:,1]/self.parameters["NHosts"][0]
         return
 
@@ -118,16 +104,13 @@ class MalariaStatistics():
 
     def GetRepeatedMeanAndVariance(self):
         """ Calculates mean and variance of repeated runs. """
-        dataEndRepeat = pandas.DataFrame(data=None, index=np.arange(self.NUniqueSimulations), columns=self.dataEnd.keys()) 
-
         r = self.settings["Repeat"][0]
         for i in range(self.NUniqueSimulations):
             for key in self.dataEnd.keys():
-                dataEndRepeat.loc[i,key] = np.mean(self.dataEnd[key][i*r:i*r+r])
-            dataEndRepeat.loc[i,"run_error"] = np.sqrt(np.var(self.dataEnd["run"][i*r:i*r+r]))
-            dataEndRepeat.loc[i,"halfMean_error"] = np.sqrt(np.var(self.dataEnd["halfMean"][i*r:i*r+r]))
+                self.dataEnd.loc[i,key] = np.mean(self.dataEnd[key][i*r:i*r+r])
+            self.dataEnd.loc[i,"run_error"] = np.sqrt(np.var(self.dataEnd["run"][i*r:i*r+r]))
         
-        return dataEndRepeat
+        return
 
     """
     Plotting methods
@@ -135,7 +118,7 @@ class MalariaStatistics():
     def PlotExtinctionTime(self, ax, vary, xlabel = "vary", plotAllMeasurements = False):
         """ Creates a plot with extinction time with whatever parameter given """
         if self.isRepeated:
-            ax.errorbar(self.parameters[vary], self.dataEndRepeat["run"], self.dataEndRepeat["run_error"], fmt='o', markersize=2, elinewidth = 0.5)
+            ax.errorbar(self.parameters[vary], self.dataEn["run"], self.dataEnd["run_error"], fmt='o', markersize=2, elinewidth = 0.5)
         else:
             ax.plot(self.parameters[vary], self.dataEnd["run"], 'o', markersize=2, linewidth = 0.5)
             
@@ -211,7 +194,8 @@ class MalariaStatistics():
     """
     def CalcNewMeans(self):
         """ Calculates mean with calculated threshold based on the function FindThreshold. It does so based on the timeline files.
-        The new calculated values are overwritten into the self.dataEnd and self.dataEndRepeat pandas objects. """
+        The new calculated values are overwritten into the self.dataEnd and
+        self.dataEndRepeat pandas objects. """
 
         mean = 0
         var = 0
@@ -238,10 +222,6 @@ class MalariaStatistics():
 
                 self.dataEnd.loc[index, "mean"] = mean
                 self.dataEnd.loc[index, "variance"] = var
-                self.dataEnd.loc[index, "halfMean", ] = mean
-                self.dataEnd.loc[index, "halfVariance"] = var
-
-        self.dataEndRepeat = self.GetRepeatedMeanAndVariance()
 
         return
 
@@ -267,8 +247,9 @@ class MalariaStatistics():
 
 def FindThreshold(x, y, yExpectedValue = None):
     """
-    This function finds in time series data, when it starts to .
-    Specifically, it simply checks when timeseries hits the expected value for the second time. If it never does, return None
+    This function finds in time series data, when it starts to . Specifically,
+    it simply checks when timeseries hits the expected value for the second
+    time. If it never does, return None
     """
     if yExpectedValue is None: 
         yExpectedValue = np.mean(y)
@@ -320,7 +301,8 @@ def LinearFit(x, y):
     return linearFitResults
 
 def Loglike2D(param, X, Y, Y_err, fitFunc):
-    #loglike = -1* ( np.sum( np.log(1/(np.sqrt(2*np.pi)*Y_err)) ) + np.sum( (Y - fitFunc(X, param))**2 / (Y_err**2) ) )
+    #loglike = -1* ( np.sum( np.log(1/(np.sqrt(2*np.pi)*Y_err)) ) + np.sum( (Y -
+    #fitFunc(X, param))**2 / (Y_err**2) ) )
     loglike = 1* np.sum( (Y - fitFunc(X, Y, param))**2 / (Y_err**2) )
     return loglike
 
