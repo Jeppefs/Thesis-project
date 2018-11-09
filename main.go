@@ -10,7 +10,7 @@ import (
 )
 
 // We define a set of global constant
-const path = "data/" + "mutationTimeSeries/"
+const path = "data/" + "mutation/"
 
 // main
 func main() {
