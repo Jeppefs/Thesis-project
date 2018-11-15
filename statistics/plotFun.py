@@ -13,6 +13,8 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib
+import seaborn 
+seaborn.set()
 
 """Local Packages"""
 import malaria_statistics as MS
@@ -21,8 +23,15 @@ from Latexifier import LatexifierFunctions as LF
 
 """Have fun plotting!"""
 q = MS.MalariaStatistics("simple")
-print(q.dataEnd)
 
+LF.Latexify()
 
+plt.style.use("seaborn")
+LF.Latexify()
+fig, ax = plt.subplots()
+q.PlotExtinctionTime(ax, "InfectionSpeed")
+fig.tight_layout(pad=0.5)
+
+plt.show()
 
 print("All done, congrats!")

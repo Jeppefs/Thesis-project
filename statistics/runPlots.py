@@ -1,6 +1,6 @@
 import numpy as np 
 import matplotlib.pyplot as plt
-import plotting as PT
+import newPlotting as PT
 import pandas as pandas
 import malaria_statistics as MS
 
@@ -10,9 +10,12 @@ Half page width is 6.19893 cm
 Use 1.0cm for both margins (though should be corrected, but I do not have the inclination, nor the time to do so - actually something with aspect might be exactly what I am looking for.)
 """
 
+plt.style.use("seaborn")
+LF.Latexify(fig_width = 6.19893)
+
 PT.mutationTimeSeries()
 print("Congrats! All done!")
-#plt.show()
+plt.show()
 
 """
 Tests:

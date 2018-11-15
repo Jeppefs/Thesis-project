@@ -39,7 +39,7 @@ class MalariaStatistics():
         self.parameters = pandas.read_csv(self.pathName + "parameters.csv")
         self.settings = pandas.read_csv(self.pathName + "settings.csv")
 
-        self.isRepeated = self.settings["Repeat"]
+        self.isRepeated = self.settings["Repeat"][0] > 1
         self.NUniqueSimulations = len(self.parameters['NHosts']) 
         self.NSimulations = len(self.dataEnd['run'])
 
@@ -56,8 +56,8 @@ class MalariaStatistics():
     def DoAllConversion(self):
         """These methods has to be in order!!!"""
         self.SaveNotNeededData() # Save the data in another file, 
-        self.RecalculateData() # Recalulates the data for repated cases and/or from timeseries
         self.ApplyConversion() # Divides some values with the number of hosts
+        self.RecalculateData() # Recalulates the data for repated cases and/or from timeseries
         self.SaveRecalculatedData()
 
     def SaveNotNeededData(self):
