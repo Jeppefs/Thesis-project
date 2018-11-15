@@ -8,9 +8,8 @@ from Latexifier import LatexifierFunctions as LF
 """
 Dette skal vi have i dataen
 - run
-- mean
-- error
-- variance
+- infected_mean
+- infected_error
 - strains
 - 
 """
@@ -62,7 +61,7 @@ class MalariaStatistics():
         self.SaveRecalculatedData()
 
     def SaveNotNeededData(self):
-        self.dataEnd.to_csv(self.pathName + "dataEndOld.csv")
+        self.dataEnd.to_csv(self.pathName + "dataEndOld.csv", index=False)
         return
 
     def RecalculateData(self):
@@ -87,7 +86,7 @@ class MalariaStatistics():
         return
 
     def SaveRecalculatedData(self):
-        self.dataEnd.to_csv(self.pathName + "dataEnd.csv")
+        self.dataEnd.to_csv(self.pathName + "dataEnd.csv", index=False)
         return
 
     def MakeBaseCopies(self):
@@ -120,15 +119,16 @@ class MalariaStatistics():
 
     def GetRepeatedMeanAndVariance(self):
         """ Calculates mean and variance of repeated runs. """
-        dataEndTemp = pandas.
+        dataEndTemp = pandas.DataFrame(0, index=np.arange(self.NUniqueSimulations), columns=self.dataEnd.keys())
 
         r = self.settings["Repeat"][0]
         for i in range(self.NUniqueSimulations):
             for key in self.dataEnd.keys():
                 dataEndTemp.loc[i,key] = np.mean(self.dataEnd[key][i*r:i*r+r])
-            self.dataEndTemp.loc[i,"run_error"] = np.sqrt(np.var(self.dataEnd["run"][i*r:i*r+r]))
+            # New keys
+            dataEndTemp.loc[i,"run_error"] = np.sqrt(np.var(self.dataEnd["run"][i*r:i*r+r]))
         
-        return dataEndtemp
+        return dataEndTemp
 
     """
     Plotting methods

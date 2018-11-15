@@ -60,7 +60,6 @@ def replacementTimeSeries():
     LF.Latexify(fig_width = 6.19893, label_size=[1.0, 1.0])
     q = MS.MalariaStatistics("replacement")
 
-    #TODO: Change these timeline plots to values you actually want. 
     # Plot of alpha=0.8 and gamma=0.16961
     fig, ax = plt.subplots()
     q.timelineIndex = [np.where( (q.parameters["InfectionSpeed"].values == 0.8) & (q.parameters["ReplacementSpeed"].values == 0.17) )[0][0], 1]
