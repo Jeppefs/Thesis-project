@@ -76,7 +76,7 @@ class MalariaStatistics():
         if self.settings["Repeat"][0] > 1:
             # Crate a temporary object that will smaller that the origianl. 
             dataEndTemp = self.GetRepeatedMeanAndVariance()
-        self.dataEnd = dataEndTemp.copy()
+            self.dataEnd = dataEndTemp.copy()
         return
 
     def ApplyConversion(self):
@@ -94,8 +94,9 @@ class MalariaStatistics():
         self.parametersBase = self.parameters.copy()
 
     def ApplyMask(self, mask):
-        """Puts a mask onto the data, so it can there after be plotted. Maybe a smart way to do this would be nice?"""
-        self.dataEnd = self.dataEnd.repeat(mask, self.settings['Repeat']).copy()
+        """Puts a mask onto the data, so it can there after be plotted."""
+        #self.dataEnd = self.dataEnd.repeat(mask, self.settings['Repeat']).copy()
+        self.dataEnd = self.dataEnd[mask].copy()        
         self.parameters = self.parameters[mask].copy()
 
         self.NUniqueSimulations = len(self.parameters["NHosts"])
@@ -138,7 +139,7 @@ class MalariaStatistics():
         if self.isRepeated:
             ax.errorbar(self.parameters[vary], self.dataEnd["run"], self.dataEnd["run_error"], fmt='o', markersize=2, elinewidth = 0.5)
         else:
-            ax.plot(self.parameters[vary], self.dataEnd["run"], 'o', markersize=2, linewidth = 0.5)
+            ax.plot(self.parameters[vary], self.dataEnd["run"], '-o', markersize=6, linewidth=0.5)
             
         if plotAllMeasurements == True:
             for i in range(self.settings["Repeat"][0]):
@@ -200,8 +201,8 @@ class MalariaStatistics():
     def PlotNiceAndSave(self, fig, ax, xlabel, ylabel, fileName):
         ax.set_xlabel(xlabel)
         ax.set_ylabel(ylabel)
-        LF.format_axes(ax)
-        fig.tight_layout(pad=0.1)
+        #LF.format_axes(ax)
+        fig.tight_layout(pad=0.5)
 
         figName = self.plotSavePath + fileName + ".pdf"
         fig.savefig(figName, format="pdf")
