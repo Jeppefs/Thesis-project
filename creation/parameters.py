@@ -3,7 +3,7 @@ import pandas as pandas
 from collections import OrderedDict
 import make_parameters as mp 
 
-func = "mutation"
+func = "mutation2DLowReplacement"
 name = ""
 notes = ""
 SameyGamma = False
@@ -96,7 +96,7 @@ def features2D(name = "features2D", notes = "Adjusts number of surface features 
 
     parameters["InfectionSpeed"] = np.arange(0.5,0.8+0.01,0.01)
     parameters["ReplacementSpeed"] = np.array([0]) # Optimal Gamma
-    parameters["MaxAntigenValue"] = np.arange(1, 25+1, 1, dtype=int)
+    parameters["MaxAntigenValue"] = np.arange(1, 20+1, 1, dtype=int)
 
     settings["Repeat"] = [1]
     settings["SkipSaving"] = [2000]
@@ -129,8 +129,18 @@ def mutation2D(name = "mutation2D", notes = "Over the same parameters as feature
     folder, name, parameters, settings, notes = features2D(name = name, notes = notes)
     
     parameters["MutationSpeed"] = np.array([0.0, 0.001, 0.0001, 0.00001])
+    parameters["MaxAntigenValue"] = np.arange(1, 20+1, 1, dtype=int)
 
     return folder, name, parameters, settings, notes
+
+def mutation2DLowReplacement(name = "Mutation2DLowReplacement", notes = "Over the same parameters as mutation2D, but with half the replacementspeed"):
+    folder, name, parameters, settings, notes = features2D(name = name, notes = notes)
+    
+    parameters["MutationSpeed"] = np.array([0.0, 0.001, 0.0001, 0.00001])
+    parameters["MaxAntigenValue"] = np.arange(1, 20+1, 1, dtype=int)
+
+    return folder, name, parameters, settings, notes
+
 
 def complexCrossNonCross(name = "complexCrossNonCross", notes = "Simulation with and without cross immunity."):
     folder, name, parameters, settings, notes = simple(name = name, notes = notes)
@@ -155,4 +165,4 @@ if SameyGamma == True:
 
     q.loc[:, ("ReplacementSpeed")] = OptimalGamma(q.loc[:, ("InfectionSpeed")])
 
-    q.to_csv("data/" + func + "/parameters.csv")
+    q.to_csv("data/" + func + "/parameters.csv", index=False)
