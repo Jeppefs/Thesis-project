@@ -25,23 +25,6 @@ from Latexifier import LatexifierFunctions as LF
 plt.style.use("seaborn")
 LF.Latexify(label_size = [1.0, 1.0])
 
-#LF.Latexify(fig_width = 6.19893, label_size=[1.0, 1.0])
-q = MS.MalariaStatistics("mutationTimeSeries")
-
-mus = q.parameters["MutationSpeed"].unique()
-As = q.parameters["MaxAntigenValue"].unique()
-gammas = q.parameters["ReplacementSpeed"].unique()
-
-for mu in mus:    
-    fig, ax = plt.subplots()
-    for gamma in gammas:
-        #print(((q.parameters["ReplacementSpeed"][:] == gamma).as_matrix()), ((q.parameters["MutationSpeed"][:] == mu).as_matrix()))
-        q = MS.MalariaStatistics("mutationTimeSeries")
-        mask =( ((q.parameters["ReplacementSpeed"][:] == gamma).as_matrix()) & ((q.parameters["MutationSpeed"][:] == mu).as_matrix()) )
-        q.ApplyMask(mask)
-        q.PlotExtinctionTime(ax=ax, vary="MaxAntigenValue", xlabel = "Strains")
-    ax.legend(gammas)
-    q.PlotNiceAndSave(fig, ax, "Strains", "Extinction time (gen)", str(mu))
 
 plt.show()
 print("All done, congrats!")

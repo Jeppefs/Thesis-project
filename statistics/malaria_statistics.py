@@ -45,6 +45,7 @@ class MalariaStatistics():
 
         if os.path.exists(self.pathName + "dataEndOld.csv") == False:
             self.DoAllConversion()
+            print("Data files converted")
 
         self.MakeBaseCopies() # Make base copies so you can apply and remove masks. 
 
@@ -134,12 +135,12 @@ class MalariaStatistics():
     """
     Plotting methods
     """
-    def PlotExtinctionTime(self, ax, vary, xlabel = "vary", plotAllMeasurements = False):
+    def PlotExtinctionTime(self, ax, vary, plotAllMeasurements = False):
         """ Creates a plot with extinction time with whatever parameter given """
         if self.isRepeated:
             ax.errorbar(self.parameters[vary], self.dataEnd["run"], self.dataEnd["run_error"], fmt='o', markersize=2, elinewidth = 0.5)
         else:
-            ax.plot(self.parameters[vary], self.dataEnd["run"], '-o', markersize=6, linewidth=0.5)
+            ax.plot(self.parameters[vary], self.dataEnd["run"], '-o', markersize=3, linewidth=0.5)
             
         if plotAllMeasurements == True:
             for i in range(self.settings["Repeat"][0]):
@@ -147,14 +148,17 @@ class MalariaStatistics():
 
         return
 
-    def PlotMeanInfection(self, ax, vary, xlabel = "vary"):
+    def PlotMeanInfection(self, ax, vary, errorBars = True):
         """ Creates a plot of the mean and variance. """
-        if self.isRepeated:
-            ax.errorbar(self.parameters[vary], self.dataEnd["mean"], self.dataEnd["mean_error"],
-            fmt='o', markersize=2, elinewidth=0.5, zorder=1)
-        else: 
-            ax.errorbar(self.parameters[vary], self.dataEnd["mean"], np.sqrt(self.dataEnd["variance"]),
-            fmt='o', markersize=2, elinewidth=0.5, zorder=1)
+        if errorBars:
+            if self.isRepeated:
+                ax.errorbar(self.parameters[vary], self.dataEnd["mean"], self.dataEnd["mean_error"],
+                fmt='-o', markersize=6, linewidth=1.0, elinewidth=0.5, zorder=1)
+            else: 
+                ax.errorbar(self.parameters[vary], self.dataEnd["mean"], np.sqrt(self.dataEnd["variance"]),
+                fmt='-o', markersize=4, linewidth=0.8, elinewidth=0.5, zorder=1)
+        else:
+            ax.plot(self.parameters[vary], self.dataEnd["mean"], '-o', markersize=3, linewidth=0.5)
 
         return
 

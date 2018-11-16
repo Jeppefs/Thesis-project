@@ -3,6 +3,8 @@ import matplotlib.pyplot as plt
 import newPlotting as PT
 import pandas as pandas
 import malaria_statistics as MS
+from Latexifier import LatexifierFunctions as LF
+
 
 """
 Full page width is 12.65076 cm 
@@ -11,9 +13,9 @@ Use 1.0cm for both margins (though should be corrected, but I do not have the in
 """
 
 plt.style.use("seaborn")
-LF.Latexify(fig_width = 6.19893)
+LF.Latexify(fig_width = 6.19893, label_size=[1.0, 1.0])
 
-PT.mutationTimeSeries()
+PT.mutation()
 print("Congrats! All done!")
 plt.show()
 

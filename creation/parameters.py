@@ -86,7 +86,7 @@ def features(name = "features", notes = "Adjusts number of surface features"):
     
     parameters["InfectionSpeed"] = np.array([0.6, 0.8, 0.95, 1.05])
     parameters["ReplacementSpeed"] = np.array([0]) # This should only be for the corresponding infection. How do we make that???
-    parameters["MaxAntigenValue"] = np.arange(1, 25+1, 1, dtype=int)
+    parameters["MaxAntigenValue"] = np.arange(1, 20+0.1, 1, dtype=int)
     settings["Repeat"] = [1]
 
     return folder, name, parameters, settings, notes
@@ -96,7 +96,7 @@ def features2D(name = "features2D", notes = "Adjusts number of surface features 
 
     parameters["InfectionSpeed"] = np.arange(0.5,0.8+0.01,0.01)
     parameters["ReplacementSpeed"] = np.array([0]) # Optimal Gamma
-    parameters["MaxAntigenValue"] = np.arange(1, 20+1, 1, dtype=int)
+    parameters["MaxAntigenValue"] = np.arange(1, 20+0.1, 1, dtype=int)
 
     settings["Repeat"] = [1]
     settings["SkipSaving"] = [2000]
@@ -110,7 +110,7 @@ def mutation(name = "mutation", notes = "Over the same parameters as features, e
     parameters["InfectionSpeed"] = np.array([0.6])
     parameters["ReplacementSpeed"] = np.array([ OptimalGamma(parameters["InfectionSpeed"][0])/4,
      OptimalGamma(parameters["InfectionSpeed"][0])/2, OptimalGamma(parameters["InfectionSpeed"][0]) ])
-    parameters["MutationSpeed"] = np.array([0.0, 0.001, 0.0001, 0.00001])
+    parameters["MutationSpeed"] = np.array([0.0, 0.00001, 0.0001, 0.001])
 
     return folder, name, parameters, settings, notes
 
@@ -120,7 +120,7 @@ def mutationTimeSeries(name="mutationTimeSeries", notes = "Time series of the pa
     parameters["InfectionSpeed"] = np.array([0.55])
     parameters["ReplacementSpeed"] = np.array([OptimalGamma(parameters["InfectionSpeed"][0])/8, 
     OptimalGamma(parameters["InfectionSpeed"][0])/4, OptimalGamma(parameters["InfectionSpeed"][0])/2, OptimalGamma(parameters["InfectionSpeed"][0]), OptimalGamma(parameters["InfectionSpeed"][0])*2])
-    parameters["MutationSpeed"] = np.array([0.0, 0.00001, 0.0001, 0.001, 0.01])
+    parameters["MutationSpeed"] = np.array([0.0, 0.00001, 0.0001, 0.001])
     parameters["MaxAntigenValue"] = np.arange(1, 11)
 
     return folder, name, parameters, settings, notes
@@ -128,15 +128,15 @@ def mutationTimeSeries(name="mutationTimeSeries", notes = "Time series of the pa
 def mutation2D(name = "mutation2D", notes = "Over the same parameters as features2D, except mutation exist"):
     folder, name, parameters, settings, notes = features2D(name = name, notes = notes)
     
-    parameters["MutationSpeed"] = np.array([0.0, 0.001, 0.0001, 0.00001])
+    parameters["MutationSpeed"] = np.array([0.0, 0.00001, 0.0001, 0.001])
     parameters["MaxAntigenValue"] = np.arange(1, 20+1, 1, dtype=int)
 
     return folder, name, parameters, settings, notes
 
-def mutation2DLowReplacement(name = "Mutation2DLowReplacement", notes = "Over the same parameters as mutation2D, but with half the replacementspeed"):
+def mutation2DLowReplacement(name = "mutation2DLowReplacement", notes = "Over the same parameters as mutation2D, but with half the replacementspeed"):
     folder, name, parameters, settings, notes = features2D(name = name, notes = notes)
     
-    parameters["MutationSpeed"] = np.array([0.0, 0.001, 0.0001, 0.00001])
+    parameters["MutationSpeed"] = np.array([0.0, 0.00001, 0.0001, 0.001])
     parameters["MaxAntigenValue"] = np.arange(1, 20+1, 1, dtype=int)
 
     return folder, name, parameters, settings, notes
