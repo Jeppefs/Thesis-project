@@ -8,8 +8,8 @@ name = ""
 notes = ""
 SameyGamma = False
 
-def OptimalGamma(a):
-    return (2*a)**(1/3) - 1
+def OptimalGamma(a, b = 1.0):
+    return (2.0*a*b**2.0)**(1.0/3.0) - b
 
 ##-------------------------------------------------------------------------------##
 def standard(name = "standard", notes = "Standard data for non-systematic tests"):
