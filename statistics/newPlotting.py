@@ -69,11 +69,6 @@ def mutation():
     return
 
 def mutation2D():
-    plt.style.use("seaborn")
-    LF.Latexify(fig_width = 6.19893, label_size=[1.0, 1.0])
-    #matplotlib.rc('font',**{'family':'serif', 'serif':['Computer Modern Roman']})
-    #matplotlib.rc('text', usetex=True)
-
     q = MS.MalariaStatistics("mutation2D")
     mus = np.sort(q.parameters["MutationSpeed"].unique())
 
@@ -97,20 +92,53 @@ def mutation2D():
     return
 
 def mutationTimeSeries():
-    q = MS.MalariaStatistics("mutationTimeSeries")
+    plt.style.use("seaborn")
+    LF.Latexify(fig_width = 6.19893, fig_height=6.19893)
+    matplotlib.rc('font',**{'family':'serif', 'serif':['Computer Modern Roman']})
+    matplotlib.rc('text', usetex=True)
 
-    mus = q.parameters["MutationSpeed"].unique()
-    As = q.parameters["MaxAntigenValue"].unique()
+    q = MS.MalariaStatistics("mutation")
+
     gammas = q.parameters["ReplacementSpeed"].unique()
+    mus = q.parameters["MutationSpeed"].unique()
+    
+    
+    q.timelineIndex = [np.where( (q.parameters["MaxAntigenValue"] == 3) & (q.parameters["ReplacementSpeed"] == np.max(gammas))
+     & (q.parameters["MutationSpeed"] == 0) )[0][0] + 1, 1]
+    fig, ax = plt.subplots()
+    q.ImportTimeline()
+    q.ImportStrainCounter()
+    q.PlotTimeline(ax = ax, skip = 100)
+    q.PlotStrainCounter(ax = ax, skip = 500)
+    ax.set_xticks([0, 500, 1000, 1500, 2000])
+    ax.set_yticks([0, 0.025, 0.05, 0.075, 0.1])
+    q.PlotNiceAndSave(fig, ax, xlabel = "Time (gen)", ylabel = "Infected", fileName = "mutation_strainCounter1")
 
-    for mu in mus:    
-        fig, ax = plt.subplots()
-        for gamma in gammas:
-            q = MS.MalariaStatistics("mutationTimeSeries")
-            mask =( ((q.parameters["ReplacementSpeed"][:] == gamma).as_matrix()) & ((q.parameters["MutationSpeed"][:] == mu).as_matrix()) )
-            q.ApplyMask(mask)
-            q.PlotExtinctionTime(ax=ax, vary="MaxAntigenValue")
-        ax.legend(gammas)
-        q.PlotNiceAndSave(fig, ax, "Strains", "Extinction time (gen)", str(mu))
+    q.timelineIndex = [np.where( (q.parameters["MaxAntigenValue"] == 3) & (q.parameters["ReplacementSpeed"] == np.max(gammas))
+     & (q.parameters["MutationSpeed"] == 10**(-4)) )[0][0] + 1, 1]
+    print(q.parameters.iloc[q.timelineIndex[0], :])
+    fig, ax = plt.subplots()
+    q.ImportTimeline()
+    q.ImportStrainCounter()
+    q.PlotTimeline(ax = ax, skip = 100)
+    q.PlotStrainCounter(ax = ax, skip = 500)
+    ax.set_xticks([0, 500, 1000, 1500, 2000])
+    ax.set_yticks([0, 0.025, 0.05, 0.075, 0.1])
+    q.PlotNiceAndSave(fig, ax, xlabel = "Time (gen)", ylabel = "Infected", fileName = "mutation_strainCounter2")
+#
+    #q.timelineIndex = [np.where( (q.parameters["MaxAntigenValue"] == 4) & (q.parameters["ReplacementSpeed"] == np.max(gammas))
+    # & (q.parameters["MutationSpeed"] == 10**(-4)) )[0], 1]
+    #fig, ax = plt.subplots()
+    #q.ImportStrainCounter()
+    #q.PlotStrainCounter(ax = ax)
+    #q.PlotNiceAndSave(fig, ax, xlabel = "Time (gen)", ylabel = "Infected", fileName = "mutation_strainCounter3")
+#
+    #q.timelineIndex = [np.where( (q.parameters["MaxAntigenValue"] == 4) & (q.parameters["ReplacementSpeed"] == np.max(gammas))
+    # & (q.parameters["MutationSpeed"] == 10**(-5)) )[0][0], 1]
+    #fig, ax = plt.subplots()
+    #q.ImportStrainCounter()
+    #q.PlotStrainCounter(ax = ax)
+    #q.PlotNiceAndSave(fig, ax, xlabel = "Time (gen)", ylabel = "Infected", fileName = "mutation_strainCounter4")
+
 
     return

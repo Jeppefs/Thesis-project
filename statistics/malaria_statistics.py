@@ -164,14 +164,15 @@ class MalariaStatistics():
 
     def PlotTimeline(self, ax, skip = 1):
         """ Makes a plot of the development of the number of infected over time. """
-        ax.plot(self.timelineRuns[0::skip], self.timelineNInfected[0::skip], linewidth=0.5)
+        ax.plot(self.timelineRuns[0::skip], self.timelineNInfected[0::skip], linewidth=0.5, alpha = 0.8)
 
         return
 
     def PlotStrainCounter(self, ax, skip = 1):
         """ Plots strain counter """
         for strain in range(self.NStrains):
-            ax.plot(self.timelineRuns[0::skip], self.strainCounter[0::skip, strain], linestyle="--", dashes=(2, 2), linewidth=1.0, alpha=0.75)
+            #ax.plot(self.timelineRuns[0::skip], self.strainCounter[0::skip, strain], linestyle="-.", dashes=(3, 3), linewidth=0.4, alpha=0.6)
+            ax.plot(self.timelineRuns[0::skip], self.strainCounter[0::skip, strain], linestyle="-", linewidth=0.4, alpha=0.5)
 
         return 
 
@@ -213,7 +214,7 @@ class MalariaStatistics():
         ax.set_xlabel(xlabel)
         ax.set_ylabel(ylabel)
         #LF.format_axes(ax)
-        fig.tight_layout(pad=0.5)
+        fig.tight_layout(pad=0.2)
 
         figName = self.plotSavePath + fileName + ".pdf"
         fig.savefig(figName, format="pdf")
