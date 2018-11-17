@@ -175,7 +175,7 @@ class MalariaStatistics():
 
         return 
 
-    def Plot2D(self, fig, ax, vary1, vary2, vary3):
+    def Plot2D(self, fig, ax, vary1, vary2, vary3, ticks = None):
         """ vary1 is x-axis and vary2 is y """
         x = np.unique(self.parameters[vary1])
         y = np.unique(self.parameters[vary2])
@@ -193,10 +193,17 @@ class MalariaStatistics():
                 j += 1
             i += 1
         
-        im = ax.imshow(np.transpose(Z), origin='lower', aspect='auto', extent=(np.min(x)-xStep/2, np.max(x)+xStep/2, np.min(y)-yStep/2, np.max(y)+yStep/2), vmin=0, vmax=np.max(Z) )    
-        fig.colorbar(im)
+        if ticks is None:
+            im = ax.imshow(np.transpose(Z), origin='lower', aspect='auto',
+            extent=(np.min(x)-xStep/2, np.max(x)+xStep/2, np.min(y)-yStep/2, np.max(y)+yStep/2), vmin=0, vmax=max(Z), cmap='cividis' ) 
+        else:
+            im = ax.imshow(np.transpose(Z), origin='lower', aspect='auto',
+            extent=(np.min(x)-xStep/2, np.max(x)+xStep/2, np.min(y)-yStep/2, np.max(y)+yStep/2), vmin=ticks[0], vmax=ticks[-1], cmap='cividis' ) 
+  
+        cbar = fig.colorbar(im, ticks = ticks)
         ax.tick_params()
         ax.set_aspect('auto')
+
         return
     
     def Plot2DResidual(self, vary1, vary2):

@@ -1,4 +1,5 @@
 import numpy as np 
+import matplotlib
 import matplotlib.pyplot as plt
 import newPlotting as PT
 import pandas as pandas
@@ -14,8 +15,12 @@ Use 1.0cm for both margins (though should be corrected, but I do not have the in
 
 plt.style.use("seaborn")
 LF.Latexify(fig_width = 6.19893, label_size=[1.0, 1.0])
+matplotlib.rc('font',**{'family':'serif', 'serif':['Computer Modern Roman']})
+matplotlib.rc('text', usetex=True)
 
-PT.mutation()
+
+print("Plotting started")
+PT.mutation2D()
 print("Congrats! All done!")
 plt.show()
 

@@ -181,7 +181,7 @@ def mutation():
     fig1, ax1 = plt.subplots()
     fig2, ax2 = plt.subplots()
 
-    for mu in mus:
+    for mu in mus.sort():
         mask = ( ((q.parametersCopy["InfectionSpeed"][:] == alpha).as_matrix()) & ((q.parametersCopy["MutationSpeed"][:] == mu).as_matrix()) )
         #print((q.parametersCopy["InfectionSpeed"][:] == alpha).as_matrix(), (q.parametersCopy["MutationSpeed"][:] == mus[0]).as_matrix(), mask)
         q.ApplyMask(mask=mask)

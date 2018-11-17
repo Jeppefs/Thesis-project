@@ -3,7 +3,7 @@ import pandas as pandas
 from collections import OrderedDict
 import make_parameters as mp 
 
-func = "mutation2DLowReplacement"
+func = "mutation"
 name = ""
 notes = ""
 SameyGamma = False
@@ -111,6 +111,8 @@ def mutation(name = "mutation", notes = "Over the same parameters as features, e
     parameters["ReplacementSpeed"] = np.array([ OptimalGamma(parameters["InfectionSpeed"][0])/4,
      OptimalGamma(parameters["InfectionSpeed"][0])/2, OptimalGamma(parameters["InfectionSpeed"][0]) ])
     parameters["MutationSpeed"] = np.array([0.0, 0.00001, 0.0001, 0.001])
+
+    settings["Repeat"] = [10]
 
     return folder, name, parameters, settings, notes
 
