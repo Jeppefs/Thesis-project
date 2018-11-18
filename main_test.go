@@ -105,6 +105,10 @@ func TestStructCreation(t *testing.T) {
 	CheckIfEqual(t, "Has correct strain", malariaStructs[1].Strains[malariaStructs[1].Hosts[0].Infections[0]], []int8{3, 4})
 	CheckIfEqual(t, "Has correct strain", malariaStructs[1].Strains[malariaStructs[1].Hosts[1].Infections[0]], []int8{1, 2})
 	CheckIfEqual(t, "Has correct strain", malariaStructs[1].Strains[malariaStructs[1].Hosts[2].Infections[0]], []int8{1, 2})
+
+	CheckIfEqual(t, "Host has correct antibodies", malariaStructs[1].Hosts[1].Antibodies, []bool{false, false, false, false, false})
+	CheckIfEqual(t, "Host has correct antibody length", len(malariaStructs[1].Hosts[1].Antibodies), malariaStructs[1].MaxAntigenValue)
+
 	return
 }
 

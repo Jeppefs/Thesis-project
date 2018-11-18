@@ -45,13 +45,17 @@ func ConstructMalariaStruct(param Parameters) Malaria {
 		m.MaxStrains, m.Strains, m.StrainCounter = FindAllStrainCombinations(param.NAntigens, param.MaxAntigenValue)
 	} else if param.SpecificStrains == "nonCross" {
 		m.NAntigens = 2
+		param.NAntigens = m.NAntigens
 		m.MaxAntigenValue = 8
+		param.MaxAntigenValue = m.MaxAntigenValue
 		m.MaxStrains = 4
 		m.Strains = [][]int8{{1, 2}, {3, 4}, {5, 6}, {7, 8}}
 		m.StrainCounter = make([]int, m.MaxStrains)
 	} else if param.SpecificStrains == "cross" {
 		m.NAntigens = 2
+		param.NAntigens = m.NAntigens
 		m.MaxAntigenValue = 4
+		param.MaxAntigenValue = m.MaxAntigenValue
 		m.MaxStrains = 4
 		m.Strains = [][]int8{{1, 2}, {2, 3}, {3, 4}, {4, 1}}
 		m.StrainCounter = make([]int, m.MaxStrains)

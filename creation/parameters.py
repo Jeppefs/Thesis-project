@@ -3,10 +3,10 @@ import pandas as pandas
 from collections import OrderedDict
 import make_parameters as mp 
 
-func = "mutation"
+func = "crossNonCross"
 name = ""
 notes = ""
-SameyGamma = False
+SameyGamma = True
 
 def OptimalGamma(a, b = 1.0):
     return (2.0*a*b**2.0)**(1.0/3.0) - b
@@ -144,27 +144,26 @@ def mutation2DLowReplacement(name = "mutation2DLowReplacement", notes = "Over th
     return folder, name, parameters, settings, notes
 
 
-def complexCrossNonCross(name = "complexCrossNonCross", notes = "Simulation with and without cross immunity."):
+def crossNonCross(name = "crossNonCross", notes = "Simulation with and without cross immunity."):
     folder, name, parameters, settings, notes = simple(name = name, notes = notes)
 
-    parameters["InfectionSpeed"] = np.arange(0.3, 0.8+0.000001, 0.01)
-    parameters["MutationSpeed"] = np.array([0.00001])
+    parameters["InfectionSpeed"] = np.arange(0.35, 0.6+0.000001, 0.01)
+    parameters["MutationSpeed"] = np.array([10**-4])
     parameters["SpecificStrains"] = ["nonCross", "cross"]
 
-    settings["ShouldSaveDataWhileRunning"] = ["false"] 
+    settings["ShouldSaveDataWhileRunning"] = ["True"] 
 
     return folder, name, parameters, settings, notes
 
     
-
 ##-------------------------------------------------------------------------------##
 mp.CreateParametersAndSettings(eval(func), name, notes)
 
 if SameyGamma == True:
     q = pandas.pandas.read_csv("data/" + func + "/parameters.csv")
-    alphas = q["ReplacementSpeed"].unique()
-    gammas = OptimalGamma(alphas)
+    alphas = q["InfectionSpeed"].unique()
+    gammas = OptimalGamma(a = alphas, b = 2/3)
 
-    q.loc[:, ("ReplacementSpeed")] = OptimalGamma(q.loc[:, ("InfectionSpeed")])
+    q.loc[:, ("ReplacementSpeed")] = OptimalGamma(q.loc[:, ("InfectionSpeed")], b = 2/3)
 
     q.to_csv("data/" + func + "/parameters.csv", index=False)
