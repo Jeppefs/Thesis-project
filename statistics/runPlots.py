@@ -20,7 +20,7 @@ matplotlib.rc('text', usetex=True)
 
 
 print("Plotting started")
-PT.mutationTimeSeries()
+PT.mutation2D()
 print("Congrats! All done!")
 plt.show()
 

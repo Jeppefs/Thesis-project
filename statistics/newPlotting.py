@@ -74,20 +74,25 @@ def mutation2D():
 
     for mu in mus:
         q = MS.MalariaStatistics("mutation2D")
-        mask = (q.parameters["MutationSpeed"][:] == mu).as_matrix()
+        mask = (q.parameters["MutationSpeed"][:] == mu).values
         q.ApplyMask(mask)
 
-        fig, ax = plt.subplots()
-        q.Plot2D(fig, ax, "MaxAntigenValue", "InfectionSpeed", "run", ticks = [0,500,1000,1500,2000])
-        ax.grid(False)
-        ax.set_xticks([1,5,10,15,20,25])
-        q.PlotNiceAndSave(fig, ax, "Strains", r"$\alpha$", "mutation2D_extinctionTime" + "{:.0E}".format(mu))
+        #fig, ax = plt.subplots()
+        #q.Plot2D(fig, ax, "MaxAntigenValue", "InfectionSpeed", "run", ticks = [0,500,1000,1500,2000])
+        #ax.grid(False)
+        #ax.set_xticks([1,5,10,15,20,25])
+        #q.PlotNiceAndSave(fig, ax, "Strains", r"$\alpha$", "mutation2D_extinctionTime" + "{:.0E}".format(mu))
+#
+        #fig, ax = plt.subplots()
+        #q.Plot2D(fig, ax, "MaxAntigenValue", "InfectionSpeed", "mean", ticks = [0,0.1,0.2,0.3,0.4,0.5])
+        #ax.grid(False)
+        #ax.set_xticks([1,5,10,15,20,25])
+        #q.PlotNiceAndSave(fig, ax, "Strains", r"$\alpha$", "mutation2D_mean" + "{:.0E}".format(mu))
 
-        fig, ax = plt.subplots()
-        q.Plot2D(fig, ax, "MaxAntigenValue", "InfectionSpeed", "mean", ticks = [0,0.1,0.2,0.3,0.4,0.5])
-        ax.grid(False)
-        ax.set_xticks([1,5,10,15,20,25])
-        q.PlotNiceAndSave(fig, ax, "Strains", r"$\alpha$", "mutation2D_mean" + "{:.0E}".format(mu))
+        """Find out where extinction time is at 2000"""
+        print(mu, np.min(q.parameters.loc[q.dataEnd["run"]>1980, "InfectionSpeed"]))
+        
+    
 
     return
 
@@ -102,9 +107,8 @@ def mutationTimeSeries():
     gammas = q.parameters["ReplacementSpeed"].unique()
     mus = q.parameters["MutationSpeed"].unique()
     
-    
     q.timelineIndex = [np.where( (q.parameters["MaxAntigenValue"] == 3) & (q.parameters["ReplacementSpeed"] == np.max(gammas))
-     & (q.parameters["MutationSpeed"] == 0) )[0][0] + 1, 1]
+     & (q.parameters["MutationSpeed"] == 0) )[0][0] + 1 , 1]
     fig, ax = plt.subplots()
     q.ImportTimeline()
     q.ImportStrainCounter()
