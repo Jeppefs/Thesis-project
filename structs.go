@@ -43,24 +43,8 @@ func ConstructMalariaStruct(param Parameters) Malaria {
 
 	if param.SpecificStrains == "all" {
 		m.MaxStrains, m.Strains, m.StrainCounter = FindAllStrainCombinations(param.NAntigens, param.MaxAntigenValue)
-	} else if param.SpecificStrains == "nonCross" {
-		m.NAntigens = 2
-		param.NAntigens = m.NAntigens
-		m.MaxAntigenValue = 8
-		param.MaxAntigenValue = m.MaxAntigenValue
-		m.MaxStrains = 4
-		m.Strains = [][]int8{{1, 2}, {3, 4}, {5, 6}, {7, 8}}
-		m.StrainCounter = make([]int, m.MaxStrains)
-	} else if param.SpecificStrains == "cross" {
-		m.NAntigens = 2
-		param.NAntigens = m.NAntigens
-		m.MaxAntigenValue = 4
-		param.MaxAntigenValue = m.MaxAntigenValue
-		m.MaxStrains = 4
-		m.Strains = [][]int8{{1, 2}, {2, 3}, {3, 4}, {4, 1}}
-		m.StrainCounter = make([]int, m.MaxStrains)
 	} else {
-		panic("No specific strain option was selected")
+		m.InsertSpecificStrains(&param)
 	}
 
 	// Create hosts - infected and nonInfected
@@ -102,6 +86,45 @@ func MakeHost(param Parameters, infected bool, maxStrains int) Host {
 	}
 
 	return h
+}
+
+// InsertSpecificStrains : Puts in specific strain types, where the ordiany way of creation is not suitable.
+func (m *Malaria) InsertSpecificStrains(param *Parameters) {
+	if param.SpecificStrains == "nonCross" {
+		m.NAntigens = 2
+		param.NAntigens = m.NAntigens
+		m.MaxAntigenValue = 8
+		param.MaxAntigenValue = m.MaxAntigenValue
+		m.MaxStrains = 4
+		m.Strains = [][]int8{{1, 2}, {3, 4}, {5, 6}, {7, 8}}
+		m.StrainCounter = make([]int, m.MaxStrains)
+	} else if param.SpecificStrains == "cross" {
+		m.NAntigens = 2
+		param.NAntigens = m.NAntigens
+		m.MaxAntigenValue = 4
+		param.MaxAntigenValue = m.MaxAntigenValue
+		m.MaxStrains = 4
+		m.Strains = [][]int8{{1, 2}, {2, 3}, {3, 4}, {4, 1}}
+		m.StrainCounter = make([]int, m.MaxStrains)
+	} else if param.SpecificStrains == "crossBig" {
+		m.NAntigens = 2
+		param.NAntigens = m.NAntigens
+		m.MaxAntigenValue = 6
+		param.MaxAntigenValue = m.MaxAntigenValue
+		m.MaxStrains = 6
+		m.Strains = [][]int8{{1, 2}, {2, 3}, {3, 4}, {4, 5}, {5, 6}, {6, 1}}
+		m.StrainCounter = make([]int, m.MaxStrains)
+	} else if param.SpecificStrains == "nonCrossBig" {
+		m.NAntigens = 2
+		param.NAntigens = m.NAntigens
+		m.MaxAntigenValue = 12
+		param.MaxAntigenValue = m.MaxAntigenValue
+		m.MaxStrains = 6
+		m.Strains = [][]int8{{1, 2}, {3, 4}, {5, 6}, {7, 8}, {9, 10}}
+		m.StrainCounter = make([]int, m.MaxStrains)
+	} else {
+		panic("No specific strain option was selected")
+	}
 }
 
 /*

@@ -176,9 +176,9 @@ def crossTimeSeries():
     LF.Latexify(fig_width = 12.65076*0.98, fig_height = 12.65076*0.98*0.5)
     q = MS.MalariaStatistics("crossNonCross")
 
-    for_infectionSpeed = 0.44
+    for_infectionSpeed = 0.45
     x_ticks = [0, 250, 500, 750, 1000, 1250, 1500, 1750, 2000]
-    y_ticks = [0.0, 0.02, 0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18]
+    y_ticks = 0
 
     q.timelineIndex = [np.where( (q.parameters["InfectionSpeed"] == for_infectionSpeed) & (q.parameters["SpecificStrains"] == "cross"))[0][0] + 1, 1]
     print(q.parameters.iloc[q.timelineIndex[0], :])    
@@ -188,7 +188,7 @@ def crossTimeSeries():
     q.PlotTimeline(ax = ax, skip = 100)
     q.PlotStrainCounter(ax = ax, skip = 100)
     ax.set_xticks(x_ticks)
-    ax.set_yticks(y_ticks)
+    ax.set_yticks([0.0, 0.02, 0.04, 0.06, 0.08, 0.1, 0.12, 0.14])
     leg = ax.legend(["Sum","1,2", "2,3", "3,4", "4,1"], bbox_to_anchor=[0.5, 1.05], loc=10, ncol=5)
     for legobj in leg.legendHandles:
         legobj.set_linewidth(2.0)
@@ -202,7 +202,7 @@ def crossTimeSeries():
     q.PlotTimeline(ax = ax, skip = 100)
     q.PlotStrainCounter(ax = ax, skip = 100)
     ax.set_xticks(x_ticks)
-    ax.set_yticks(y_ticks)
+    ax.set_yticks([0.0, 0.02, 0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18])
     leg = ax.legend(["Sum","1,2","3,4","5,6","7,8"], bbox_to_anchor=[0.5, 1.05], loc=10, ncol=5)
     for legobj in leg.legendHandles:
         legobj.set_linewidth(2.0)

@@ -3,7 +3,7 @@ import pandas as pandas
 from collections import OrderedDict
 import make_parameters as mp 
 
-func = "crossNonCross"
+func = "crossBig"
 name = ""
 notes = ""
 SameyGamma = True
@@ -155,7 +155,17 @@ def crossNonCross(name = "crossNonCross", notes = "Simulation with and without c
 
     return folder, name, parameters, settings, notes
 
-    
+def crossBig(name = "crossBig", notes = "Same as with crossNonCross, but instead have two additional strains."):
+    folder, name, parameters, settings, notes = simple(name = name, notes = notes)
+
+    parameters["InfectionSpeed"] = np.arange(0.35, 0.6+0.000001, 0.01)
+    parameters["MutationSpeed"] = np.array([10**-4])
+    parameters["SpecificStrains"] = ["nonCrossBig", "crossBig"]
+
+    settings["ShouldSaveDataWhileRunning"] = ["True"] 
+
+    return folder, name, parameters, settings, notes
+
 ##-------------------------------------------------------------------------------##
 mp.CreateParametersAndSettings(eval(func), name, notes)
 

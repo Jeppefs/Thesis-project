@@ -168,7 +168,7 @@ class MalariaStatistics():
 
     def PlotTimeline(self, ax, skip = 1):
         """ Makes a plot of the development of the number of infected over time. """
-        ax.plot(self.timelineRuns[0::skip], self.timelineNInfected[0::skip], linewidth=0.5, alpha = 0.8)
+        ax.plot(self.timelineRuns[0::skip], self.timelineNInfected[0::skip], linewidth=0.75, alpha = 0.8)
 
         return
 
@@ -176,7 +176,7 @@ class MalariaStatistics():
         """ Plots strain counter """
         for strain in range(self.NStrains):
             #ax.plot(self.timelineRuns[0::skip], self.strainCounter[0::skip, strain], linestyle="-.", dashes=(3, 3), linewidth=0.4, alpha=0.6)
-            ax.plot(self.timelineRuns[0::skip], self.strainCounter[0::skip, strain], linestyle="-", linewidth=0.5, alpha=0.5)
+            ax.plot(self.timelineRuns[0::skip], self.strainCounter[0::skip, strain], linestyle="-", linewidth=0.75, alpha=0.6)
 
         return 
 
