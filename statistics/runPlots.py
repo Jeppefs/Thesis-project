@@ -20,7 +20,7 @@ matplotlib.rc('text', usetex=True)
 
 
 print("Plotting started")
-PT.mutation2D()
+PT.crossTimeSeries()
 print("Congrats! All done!")
 plt.show()
 

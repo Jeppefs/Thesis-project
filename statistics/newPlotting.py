@@ -41,17 +41,6 @@ def mutation():
         q.PlotMeanInfection(ax2, "MaxAntigenValue", errorBars=False)
         ax3.plot(q.parameters["MaxAntigenValue"], q.dataEnd["strains"], '-o', markersize=3.0, linewidth=0.5)
 
-    #fig1.tight_layout(pad=0.5)
-    #fig2.tight_layout(pad=0.5)
-    #fig3.tight_layout(pad=0.5)
-
-    box = ax2.get_position()
-    #ax2.set_position([box.x0, box.y0, box.x1*0.5, box.y1], )
-
-    box = ax3.get_position()
-    #ax3.set_position([box.x0, box.y0, box.x1*0.5, box.y1], )
-    print(box)
-
     ax1.legend([r"$\mu$="+str(mus[0]),r"$\mu$="+"{:.0E}".format(mus[1]),r"$\mu$="+"{:.0E}".format(mus[2]),r"$\mu$="+"{:.0E}".format(mus[3])])
     ax2.legend([r"$\mu$="+str(mus[0]),r"$\mu$="+"{:.0E}".format(mus[1]),r"$\mu$="+"{:.0E}".format(mus[2]),r"$\mu$="+"{:.0E}".format(mus[3])], 
      bbox_to_anchor=[0.5, 1.15], loc=10, ncol=2)
@@ -91,16 +80,12 @@ def mutation2D():
 
         """Find out where extinction time is at 2000"""
         print(mu, np.min(q.parameters.loc[q.dataEnd["run"]>1980, "InfectionSpeed"]))
-        
-    
 
     return
 
 def mutationTimeSeries():
     plt.style.use("seaborn")
-    LF.Latexify(fig_width = 6.19893, fig_height=6.19893)
-    matplotlib.rc('font',**{'family':'serif', 'serif':['Computer Modern Roman']})
-    matplotlib.rc('text', usetex=True)
+    LF.Latexify(fig_width = 12.65076*0.98, fig_height = 12.65076*0.98*0.5)
 
     q = MS.MalariaStatistics("mutation")
 
@@ -113,9 +98,9 @@ def mutationTimeSeries():
     q.ImportTimeline()
     q.ImportStrainCounter()
     q.PlotTimeline(ax = ax, skip = 100)
-    q.PlotStrainCounter(ax = ax, skip = 500)
+    q.PlotStrainCounter(ax = ax, skip = 200)
     ax.set_xticks([0, 500, 1000, 1500, 2000])
-    ax.set_yticks([0, 0.025, 0.05, 0.075, 0.1])
+    ax.set_yticks([0, 0.02, 0.04, 0.06, 0.08])
     q.PlotNiceAndSave(fig, ax, xlabel = "Time (gen)", ylabel = "Infected", fileName = "mutation_strainCounter1")
 
     q.timelineIndex = [np.where( (q.parameters["MaxAntigenValue"] == 3) & (q.parameters["ReplacementSpeed"] == np.max(gammas))
@@ -125,24 +110,102 @@ def mutationTimeSeries():
     q.ImportTimeline()
     q.ImportStrainCounter()
     q.PlotTimeline(ax = ax, skip = 100)
-    q.PlotStrainCounter(ax = ax, skip = 500)
+    q.PlotStrainCounter(ax = ax, skip = 200)
     ax.set_xticks([0, 500, 1000, 1500, 2000])
-    ax.set_yticks([0, 0.025, 0.05, 0.075, 0.1])
+    ax.set_yticks([0, 0.02, 0.04, 0.06, 0.08])
     q.PlotNiceAndSave(fig, ax, xlabel = "Time (gen)", ylabel = "Infected", fileName = "mutation_strainCounter2")
-#
-    #q.timelineIndex = [np.where( (q.parameters["MaxAntigenValue"] == 4) & (q.parameters["ReplacementSpeed"] == np.max(gammas))
-    # & (q.parameters["MutationSpeed"] == 10**(-4)) )[0], 1]
-    #fig, ax = plt.subplots()
-    #q.ImportStrainCounter()
-    #q.PlotStrainCounter(ax = ax)
-    #q.PlotNiceAndSave(fig, ax, xlabel = "Time (gen)", ylabel = "Infected", fileName = "mutation_strainCounter3")
-#
-    #q.timelineIndex = [np.where( (q.parameters["MaxAntigenValue"] == 4) & (q.parameters["ReplacementSpeed"] == np.max(gammas))
-    # & (q.parameters["MutationSpeed"] == 10**(-5)) )[0][0], 1]
-    #fig, ax = plt.subplots()
-    #q.ImportStrainCounter()
-    #q.PlotStrainCounter(ax = ax)
-    #q.PlotNiceAndSave(fig, ax, xlabel = "Time (gen)", ylabel = "Infected", fileName = "mutation_strainCounter4")
-
 
     return
+
+def crossNonCross():
+    """Plot mean and extinction time"""
+    fig1, ax1 = plt.subplots()
+    fig2, ax2 = plt.subplots()
+    fig3, ax3 = plt.subplots()
+    fig4, ax4 = plt.subplots()
+    
+    qCross = MS.MalariaStatistics("crossNonCross")
+    qNon = MS.MalariaStatistics("crossNonCross")
+    qDiff = MS.MalariaStatistics("crossNonCross")
+
+    qCross.ApplyMask(qCross.parameters["SpecificStrains"][:].values =="cross")
+    qNon.ApplyMask(qNon.parameters["SpecificStrains"][:].values == "nonCross")
+    qDiff.ApplyMask(qDiff.parameters["SpecificStrains"][:].values == "nonCross")
+    
+    qDiff.dataEnd["mean"] = qNon.dataEnd["mean"].values - qCross.dataEnd["mean"].values
+    qDiff.dataEnd["run"] = qNon.dataEnd["run"].values - qCross.dataEnd["run"].values
+    qDiff.dataEnd["strains"] = qNon.dataEnd["strains"].values - qCross.dataEnd["strains"].values
+    qDiff.dataEnd["avgResistances"] = qNon.dataEnd["avgResistances"].values - qCross.dataEnd["avgResistances"].values
+    qDiff.dataEnd["run_error"] = qCross.dataEnd["mean"].values*0
+
+    qCross.PlotExtinctionTime(ax1, "InfectionSpeed")
+    qNon.PlotExtinctionTime(ax1, "InfectionSpeed")
+    qDiff.PlotExtinctionTime(ax1, "InfectionSpeed")
+
+    qCross.PlotMeanInfection(ax2, "InfectionSpeed", errorBars=False)
+    qNon.PlotMeanInfection(ax2, "InfectionSpeed", errorBars=False)
+    qDiff.PlotMeanInfection(ax2, "InfectionSpeed", errorBars=False)
+
+    ax3.plot(qCross.parameters["InfectionSpeed"], qCross.dataEnd["strains"], '-o', markersize=3.0, linewidth=0.5)
+    ax3.plot(qNon.parameters["InfectionSpeed"], qNon.dataEnd["strains"], '-o', markersize=3.0, linewidth=0.5)
+    ax3.plot(qDiff.parameters["InfectionSpeed"], qDiff.dataEnd["strains"], '-o', markersize=3.0, linewidth=0.5)
+
+    qCross.PlotAvgResistances(ax4, "InfectionSpeed")
+    qNon.PlotAvgResistances(ax4, "InfectionSpeed")
+    qDiff.PlotAvgResistances(ax4, "InfectionSpeed")
+
+    ax1.legend(["Cross", "Not", "Diff"])
+    ax2.legend(["Cross", "Not", "Diff"])
+    ax3.legend(["Cross", "Not", "Diff"])
+    ax4.legend(["Cross", "Not", "Diff"])
+    x_ticks = [0.35, 0.4, 0.45, 0.5, 0.55, 0.6]   
+    ax1.set_xticks(x_ticks)
+    ax2.set_xticks(x_ticks)
+    ax3.set_xticks(x_ticks)
+    ax3.set_yticks([0, 1, 2, 3, 4])
+    ax4.set_xticks(x_ticks)
+    qCross.PlotNiceAndSave(fig1, ax1, r"$\alpha$", ylabel = "Extinction time (gen)", fileName = "cross_extinctionTime")
+    qCross.PlotNiceAndSave(fig2, ax2, r"$\alpha$", ylabel = "Mean infected", fileName = "cross_mean")
+    qCross.PlotNiceAndSave(fig3, ax3, r"$\alpha$", ylabel = "Number of end strains", fileName = "cross_strains")
+    qCross.PlotNiceAndSave(fig4, ax4, r"$\alpha$", ylabel = "Average resistances per host", fileName = "cross_resistances")
+
+    return
+
+def crossTimeSeries():
+    plt.style.use("seaborn")
+    LF.Latexify(fig_width = 12.65076*0.98, fig_height = 12.65076*0.98*0.5)
+    q = MS.MalariaStatistics("crossNonCross")
+
+    for_infectionSpeed = 0.44
+    x_ticks = [0, 250, 500, 750, 1000, 1250, 1500, 1750, 2000]
+    y_ticks = [0.0, 0.02, 0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18]
+
+    q.timelineIndex = [np.where( (q.parameters["InfectionSpeed"] == for_infectionSpeed) & (q.parameters["SpecificStrains"] == "cross"))[0][0] + 1, 1]
+    print(q.parameters.iloc[q.timelineIndex[0], :])    
+    fig, ax = plt.subplots()
+    q.ImportTimeline()
+    q.ImportStrainCounter()
+    q.PlotTimeline(ax = ax, skip = 100)
+    q.PlotStrainCounter(ax = ax, skip = 100)
+    ax.set_xticks(x_ticks)
+    ax.set_yticks(y_ticks)
+    leg = ax.legend(["Sum","1,2", "2,3", "3,4", "4,1"], bbox_to_anchor=[0.5, 1.05], loc=10, ncol=5)
+    for legobj in leg.legendHandles:
+        legobj.set_linewidth(2.0)
+    q.PlotNiceAndSave(fig, ax, xlabel = "Time (gen)", ylabel = "Infected", fileName = "cross_strainCounter1")
+
+    q.timelineIndex = [np.where( (q.parameters["InfectionSpeed"] == for_infectionSpeed) & (q.parameters["SpecificStrains"] == "nonCross"))[0][0] + 1, 1]
+    print(q.parameters.iloc[q.timelineIndex[0], :])
+    fig, ax = plt.subplots()
+    q.ImportTimeline()
+    q.ImportStrainCounter()
+    q.PlotTimeline(ax = ax, skip = 100)
+    q.PlotStrainCounter(ax = ax, skip = 100)
+    ax.set_xticks(x_ticks)
+    ax.set_yticks(y_ticks)
+    leg = ax.legend(["Sum","1,2","3,4","5,6","7,8"], bbox_to_anchor=[0.5, 1.05], loc=10, ncol=5)
+    for legobj in leg.legendHandles:
+        legobj.set_linewidth(2.0)
+    q.PlotNiceAndSave(fig, ax, xlabel = "Time (gen)", ylabel = "Infected", fileName = "nonCross_strainCounter1")
+
+
