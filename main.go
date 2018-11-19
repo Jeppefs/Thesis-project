@@ -10,7 +10,7 @@ import (
 )
 
 // We define a set of global constant
-const path = "data/" + "crossNonCross/"
+const path = "data/" + "crossBig/"
 
 // main
 func main() {

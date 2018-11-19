@@ -120,7 +120,7 @@ func (m *Malaria) InsertSpecificStrains(param *Parameters) {
 		m.MaxAntigenValue = 12
 		param.MaxAntigenValue = m.MaxAntigenValue
 		m.MaxStrains = 6
-		m.Strains = [][]int8{{1, 2}, {3, 4}, {5, 6}, {7, 8}, {9, 10}}
+		m.Strains = [][]int8{{1, 2}, {3, 4}, {5, 6}, {7, 8}, {9, 10}, {11, 12}}
 		m.StrainCounter = make([]int, m.MaxStrains)
 	} else {
 		panic("No specific strain option was selected")
