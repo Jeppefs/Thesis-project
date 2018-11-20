@@ -20,7 +20,7 @@ matplotlib.rc('text', usetex=True)
 
 
 print("Plotting started")
-PT.crossTimeSeries()
+PT.crossNonCross(data = "big")
 print("Congrats! All done!")
 plt.show()
 
