@@ -355,8 +355,3 @@ def Func_XOverPlusOne(X, Y, param):
 
 def CalcChi2():
     return
-
-def CalcMeanSwitchingTime(q):
-    
-    
-    return

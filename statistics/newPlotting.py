@@ -133,39 +133,67 @@ Cross immunity plots:
 |
 """
 
-def crossNonCross(data = "No"):
+def crossNonCross():
     """Plot mean and extinction time"""
-    fig1, ax1 = plt.subplots()
-    fig2, ax2 = plt.subplots()
-    fig3, ax3 = plt.subplots()
-    fig4, ax4 = plt.subplots()
+    fig = [],
+    figBig = []
+    figSimple = []
+    figOdd = []
+    ax = []
+    axBig = []
+    axSimple = []
+    axOdd = []
+
+    for i in range(4):
+        figTemp, axTemp = plt.subplots()
+        fig.append(figTemp), ax.append(axTemp)
+
+        figTemp, axTemp = plt.subplots()
+        figBig.append(figTemp), axBig.append(axTemp)
+
+        figTemp, axTemp = plt.subplots()
+        figSimple.append(figTemp), axSimple.append(axTemp)
+
+        figTemp, axTemp = plt.subplots()
+        figOdd.append(figTemp), axOdd.append(axTemp)
     
-    if data == "big":
-        qCross = MS.MalariaStatistics("crossBig")
-        qNon = MS.MalariaStatistics("crossBig")
-        qDiff = MS.MalariaStatistics("crossBig")
-
-        qCross.ApplyMask(qCross.parameters["SpecificStrains"][:].values =="crossBig")
-        qNon.ApplyMask(qNon.parameters["SpecificStrains"][:].values == "nonCrossBig")
-        qDiff.ApplyMask(qDiff.parameters["SpecificStrains"][:].values == "nonCrossBig")
-
-        addition = "Big"
-    else:
-        qCross = MS.MalariaStatistics("crossNonCross")
-        qNon = MS.MalariaStatistics("crossNonCross")
-        qDiff = MS.MalariaStatistics("crossNonCross")
-
-        qCross.ApplyMask(qCross.parameters["SpecificStrains"][:].values =="cross")
-        qNon.ApplyMask(qNon.parameters["SpecificStrains"][:].values == "nonCross")
-        qDiff.ApplyMask(qDiff.parameters["SpecificStrains"][:].values == "nonCross")
-
-        addition = ""
+    qCross = MS.MalariaStatistics("crossNonCross")
+    qNon = MS.MalariaStatistics("crossNonCross")
+    qCrossBig = MS.MalariaStatistics("crossBig")
+    qNonBig = MS.MalariaStatistics("crossBig")
+    qOdd = MS.MalariaStatistics("crossOdd")
+    qSimple = MS.MalariaStatistics("crossSimple")
     
+    qDiff = MS.MalariaStatistics("crossNonCross")
+    qDiffBig = MS.MalariaStatistics("crossBig")
+    qDiffSimple = MS.MalariaStatistics("crossSimple")
+
+    qCross.ApplyMask(qCross.parameters["SpecificStrains"][:].values =="cross")
+    qNon.ApplyMask(qNon.parameters["SpecificStrains"][:].values == "nonCross")
+    qDiff.ApplyMask(qDiff.parameters["SpecificStrains"][:].values == "nonCross")
+    qCrossBig.ApplyMask(qCrossBig.parameters["SpecificStrains"][:].values =="crossBig")
+    qNonBig.ApplyMask(qNonBig.parameters["SpecificStrains"][:].values == "nonCrossBig")
+    qDiffBig.ApplyMask(qDiffBig.parameters["SpecificStrains"][:].values == "nonCrossBig")
+
+    """ Now plotting begins """
     qDiff.dataEnd["mean"] = qNon.dataEnd["mean"].values - qCross.dataEnd["mean"].values
     qDiff.dataEnd["run"] = qNon.dataEnd["run"].values - qCross.dataEnd["run"].values
     qDiff.dataEnd["strains"] = qNon.dataEnd["strains"].values - qCross.dataEnd["strains"].values
     qDiff.dataEnd["avgResistances"] = qNon.dataEnd["avgResistances"].values - qCross.dataEnd["avgResistances"].values
     qDiff.dataEnd["run_error"] = qCross.dataEnd["mean"].values*0
+
+    qDiff.dataEnd["mean"] = qNon.dataEnd["mean"].values - qCross.dataEnd["mean"].values
+    qDiff.dataEnd["run"] = qNon.dataEnd["run"].values - qCross.dataEnd["run"].values
+    qDiff.dataEnd["strains"] = qNon.dataEnd["strains"].values - qCross.dataEnd["strains"].values
+    qDiff.dataEnd["avgResistances"] = qNon.dataEnd["avgResistances"].values - qCross.dataEnd["avgResistances"].values
+    qDiff.dataEnd["run_error"] = qCross.dataEnd["mean"].values*0
+
+    qDiff.dataEnd["mean"] = qNon.dataEnd["mean"].values - qCross.dataEnd["mean"].values
+    qDiff.dataEnd["run"] = qNon.dataEnd["run"].values - qCross.dataEnd["run"].values
+    qDiff.dataEnd["strains"] = qNon.dataEnd["strains"].values - qCross.dataEnd["strains"].values
+    qDiff.dataEnd["avgResistances"] = qNon.dataEnd["avgResistances"].values - qCross.dataEnd["avgResistances"].values
+    qDiff.dataEnd["run_error"] = qCross.dataEnd["mean"].values*0
+
 
     qCross.PlotExtinctionTime(ax1, "InfectionSpeed")
     qNon.PlotExtinctionTime(ax1, "InfectionSpeed")
