@@ -134,112 +134,66 @@ Cross immunity plots:
 """
 
 def crossNonCross():
-    """Plot mean and extinction time"""
-    fig = [],
-    figBig = []
-    figSimple = []
-    figOdd = []
-    ax = []
-    axBig = []
-    axSimple = []
-    axOdd = []
 
-    for i in range(4):
+    def calcDiff(q0, q1, q2):
+        q0.dataEnd["mean"] = abs(q1.dataEnd["mean"].values - q2.dataEnd["mean"].values)
+        q0.dataEnd["run"] = abs(q1.dataEnd["run"].values - q2.dataEnd["run"].values)
+        q0.dataEnd["strains"] = abs(q1.dataEnd["strains"].values - q2.dataEnd["strains"].values)
+        q0.dataEnd["avgResistances"] = abs(q1.dataEnd["avgResistances"].values - q2.dataEnd["avgResistances"].values)
+        q0.dataEnd["run_error"] = abs(q1.dataEnd["mean"].values*0)
+        return q0
+
+    def makeAllPlots(q, axes, figs):
+        q.PlotExtinctionTime(axes[0], "InfectionSpeed")
+        q.PlotMeanInfection(axes[1], "InfectionSpeed", errorBars=False)
+        q.PlotEndStrains(axes[2], "InfectionSpeed")
+        q.PlotAvgResistances(axes[3], "InfectionSpeed")
+        return
+
+    def saveAndSetAllPlots(q, axes, figs, nameAddition, legend = ["Cross", "Not", "Diff"]):
+        x_ticks = [0.35, 0.4, 0.45, 0.5, 0.55, 0.6]   
+
+        axes[2].set_yticks( np.arange(0, np.max(q.dataEnd["strains"].values) + 1) )
+        for ax in axes:
+            ax.legend(legend)
+            ax.set_xticks(x_ticks)
+        
+        q.PlotNiceAndSave(figs[0], axes[0], r"$\alpha$", ylabel = "Extinction time (gen)", fileName = "cross" + nameAddition + "_extinctionTime")
+        q.PlotNiceAndSave(figs[1], axes[1], r"$\alpha$", ylabel = "Mean infected", fileName = "cross" + nameAddition + "_mean")
+        q.PlotNiceAndSave(figs[2], axes[2], r"$\alpha$", ylabel = "Number of end strains", fileName = "cross" + nameAddition + "_strains")
+        q.PlotNiceAndSave(figs[3], axes[3], r"$\alpha$", ylabel = "Average resistances per host", fileName = "cross" + nameAddition + "_resistances")
+
+
+    """Write what you you want to plot"""
+    dataAndMaskList = [["crossNonCros", "cross"], ["crossNonCross", "nonCross"], ["crossNonCross", "cross"],
+    ["crossBig", "crossBig"], ["crossBig", "nonCrossBig"], ["crossBig", "crossBig"], 
+    ["crossOdd", "odd"],
+    ["crossNonCross", "cross"], ["crossSimple", "simple"],  ["crossNonCross", "cross"]]
+
+    q = []
+    for i, dataName in enumerate(dataAndMaskList):
+        q.append(MS.MalariaStatistics(dataName[0]))
+        q[i].ApplyMask(q[i].parameters["SpecificStrains"][:].values == dataName[1])
+
+    q[2] = calcDiff(q[2], q[0], q[1])
+    q[5] = calcDiff(q[5], q[3], q[4])
+    q[9] = calcDiff(q[9], q[0], q[1])
+
+    """ Now plotting begins """
+    axes = []
+    figs = []
+    for i in range(16):
         figTemp, axTemp = plt.subplots()
-        fig.append(figTemp), ax.append(axTemp)
+        figs.append(figTemp)
+        axes.append(axTemp)
 
-        figTemp, axTemp = plt.subplots()
-        figStrains.append(figTemp), axStrains.append(axTemp)
-
-        figTemp, axTemp = plt.subplots()
-        figMean.append(figTemp), axMean.append(axTemp)
-
-    qCross = MS.MalariaStatistics("crossNonCross")
-    qNon = MS.MalariaStatistics("crossNonCross")
-    qCrossBig = MS.MalariaStatistics("crossBig")
-    qNonBig = MS.MalariaStatistics("crossBig")
-    qOdd = MS.MalariaStatistics("crossOdd")
-    qSimple = MS.MalariaStatistics("crossSimple")
+    for i, qSpecific in enumerate(q):
+        makeAllPlots(qSpecific, axes[i*4:4+i*4], figs[i*4:4+i*4])
     
-    qDiff = MS.MalariaStatistics("crossNonCross")
-    qDiffBig = MS.MalariaStatistics("crossBig")
-    qDiffSimple = MS.MalariaStatistics("crossSimple")
-
-    qCross.ApplyMask(qCross.parameters["SpecificStrains"][:].values =="cross")
-    qNon.ApplyMask(qNon.parameters["SpecificStrains"][:].values == "nonCross")
-    qDiff.ApplyMask(qDiff.parameters["SpecificStrains"][:].values == "nonCross")
-    qCrossBig.ApplyMask(qCrossBig.parameters["SpecificStrains"][:].values =="crossBig")
-    qNonBig.ApplyMask(qNonBig.parameters["SpecificStrains"][:].values == "nonCrossBig")
-    qDiffBig.ApplyMask(qDiffBig.parameters["SpecificStrains"][:].values == "nonCrossBig")
-
-    """ New values being calculated """
-    qDiff.dataEnd["mean"] = abs(qNon.dataEnd["mean"].values - qCross.dataEnd["mean"].values)
-    qDiff.dataEnd["run"] = abs(qNon.dataEnd["run"].values - qCross.dataEnd["run"].values)
-    qDiff.dataEnd["strains"] = abs(qNon.dataEnd["strains"].values - qCross.dataEnd["strains"].values)
-    qDiff.dataEnd["avgResistances"] = abs(qNon.dataEnd["avgResistances"].values - qCross.dataEnd["avgResistances"].values)
-    qDiff.dataEnd["run_error"] = abs(qCross.dataEnd["mean"].values*0)
-
-    qDiffBig.dataEnd["mean"] = abs(qNonBig.dataEnd["mean"].values - qCrossBig.dataEnd["mean"].values)
-    qDiffBig.dataEnd["run"] = abs(qNonBig.dataEnd["run"].values - qCrossBig.dataEnd["run"].values)
-    qDiffBig.dataEnd["strains"] = abs(qNonBig.dataEnd["strains"].values - qCrossBig.dataEnd["strains"].values)
-    qDiffBig.dataEnd["avgResistances"] = abs(qNonBig.dataEnd["avgResistances"].values - qCrossBig.dataEnd["avgResistances"].values)
-    qDiffBig.dataEnd["run_error"] = abs(qCrossBig.dataEnd["mean"].values*0)
-
-    qDiffSimple.dataEnd["mean"] = abs(qSimple.dataEnd["mean"].values - qCross.dataEnd["mean"].values)
-    qDiffSimple.dataEnd["run"] = abs(qSimple.dataEnd["run"].values - qCross.dataEnd["run"].values)
-    qDiffSimple.dataEnd["strains"] = abs(qSimple.dataEnd["strains"].values - qCross.dataEnd["strains"].values)
-    qDiffSimple.dataEnd["avgResistances"] = abs(qSimple.dataEnd["avgResistances"].values - qCross.dataEnd["avgResistances"].values)
-    qDiffSimple.dataEnd["run_error"] = abs(qCross.dataEnd["mean"].values*0)
-
-    """ Plotting begins """
-    qCross.PlotExtinctionTime(ax[0], "InfectionSpeed")
-    qNon.PlotExtinctionTime(ax[0], "InfectionSpeed")
-    qDiff.PlotExtinctionTime(ax[0], "InfectionSpeed")
-    qCrossBig.PlotExtinctionTime(ax[1], "InfectionSpeed")
-    qNonBig.PlotExtinctionTime(ax[1], "InfectionSpeed")
-    qDiffBig.PlotExtinctionTime(ax[1], "InfectionSpeed")
-    qSimple.PlotExtinctionTime(ax[2], "InfectionSpeed")
-    qCross.PlotExtinctionTime(ax[2], "InfectionSpeed")
-    qSimpleDiff.PlotExtinctionTime(ax[2], "InfectionSpeed")
-    qOdd.PlotExtinctionTime(ax[3], "InfectionSpeed")
-
-    qCross.PlotExtinctionTime(axStrains[0], "InfectionSpeed")
-    qNon.PlotExtinctionTime(axStrains[0], "InfectionSpeed")
-    qDiff.PlotExtinctionTime(axStrains[0], "InfectionSpeed")
-    qCrossBig.PlotExtinctionTime(axStrains[1], "InfectionSpeed")
-    qNonBig.PlotExtinctionTime(axStrains[1], "InfectionSpeed")
-    qDiffBig.PlotExtinctionTime(axStrains[1], "InfectionSpeed")
-    qSimple.PlotExtinctionTime(axStrains[2], "InfectionSpeed")
-    qCross.PlotExtinctionTime(axStrains[2], "InfectionSpeed")
-    qSimpleDiff.PlotExtinctionTime(axStrains[2], "InfectionSpeed")
-    qOdd.PlotExtinctionTime(axStrains[3], "InfectionSpeed")
-
-    qCross.PlotMeanInfection(ax2, "InfectionSpeed", errorBars=False)
-    qNon.PlotMeanInfection(ax2, "InfectionSpeed", errorBars=False)
-    qDiff.PlotMeanInfection(ax2, "InfectionSpeed", errorBars=False)
-
-    #ax3.plot(qCross.parameters["InfectionSpeed"], qCross.dataEnd["strains"], '-o', markersize=3.0, linewidth=0.5)
-    #ax3.plot(qNon.parameters["InfectionSpeed"], qNon.dataEnd["strains"], '-o', markersize=3.0, linewidth=0.5)
-    #ax3.plot(qDiff.parameters["InfectionSpeed"], qDiff.dataEnd["strains"], '-o', markersize=3.0, linewidth=0.5)
-
-    qCross.PlotAvgResistances(ax4, "InfectionSpeed")
-    qNon.PlotAvgResistances(ax4, "InfectionSpeed")
-    qDiff.PlotAvgResistances(ax4, "InfectionSpeed")
-
-    ax1.legend(["Cross", "Not", "Diff"])
-    ax2.legend(["Cross", "Not", "Diff"])
-    ax3.legend(["Cross", "Not", "Diff"])
-    ax4.legend(["Cross", "Not", "Diff"])
-    x_ticks = [0.35, 0.4, 0.45, 0.5, 0.55, 0.6]   
-    ax1.set_xticks(x_ticks)
-    ax2.set_xticks(x_ticks)
-    ax3.set_xticks(x_ticks)
-    ax3.set_yticks( np.arange(0, np.max(qCross.dataEnd["strains"].values) + 1) )
-    ax4.set_xticks(x_ticks)
-    qCross.PlotNiceAndSave(fig1, ax1, r"$\alpha$", ylabel = "Extinction time (gen)", fileName = "cross" + addition + "extinctionTime")
-    qCross.PlotNiceAndSave(fig2, ax2, r"$\alpha$", ylabel = "Mean infected", fileName = "cross" + addition + "_mean")
-    qCross.PlotNiceAndSave(fig3, ax3, r"$\alpha$", ylabel = "Number of end strains", fileName = "cross" + addition + "_strains")
-    qCross.PlotNiceAndSave(fig4, ax4, r"$\alpha$", ylabel = "Average resistances per host", fileName = "cross" + addition + "_resistances")
+    saveAndSetAllPlots(q[0], axes[0:4], figs[0:4], nameAddition="")
+    saveAndSetAllPlots(q[3], axes[4:8], figs[4:8], nameAddition="Big", legend = ["Cross big", "No cross big", "Diff"])
+    saveAndSetAllPlots(q[6], axes[8:12], figs[8:12], nameAddition="Odd", legend=["Odd"])
+    saveAndSetAllPlots(q[7], axes[12:16], figs[12:16], nameAddition="Simple", legend=["Cross", "Simple", "Diff"])
 
     return
 

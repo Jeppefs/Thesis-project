@@ -162,6 +162,10 @@ class MalariaStatistics():
 
         return
 
+    def PlotEndStrains(self, ax, vary):
+        ax.plot(self.parameters[vary], self.dataEnd["strains"], '-o', markersize=3.0, linewidth=0.5)
+        return
+
     def PlotAvgResistances(self, ax, vary):
         ax.plot(self.parameters[vary], self.dataEnd["avgResistances"], '-o', markersize=4, linewidth=0.5, zorder=1)
         return
