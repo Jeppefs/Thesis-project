@@ -20,7 +20,7 @@ matplotlib.rc('text', usetex=True)
 
 
 print("Plotting started")
-PT.mutation()
+PT.crossNonCross()
 print("Congrats! All done!")
 plt.show()
 

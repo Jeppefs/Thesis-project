@@ -165,7 +165,7 @@ def crossNonCross():
 
 
     """Write what you you want to plot"""
-    dataAndMaskList = [["crossNonCros", "cross"], ["crossNonCross", "nonCross"], ["crossNonCross", "cross"],
+    dataAndMaskList = [["crossNonCross", "cross"], ["crossNonCross", "nonCross"], ["crossNonCross", "cross"],
     ["crossBig", "crossBig"], ["crossBig", "nonCrossBig"], ["crossBig", "crossBig"], 
     ["crossOdd", "odd"],
     ["crossNonCross", "cross"], ["crossSimple", "simple"],  ["crossNonCross", "cross"]]
@@ -177,7 +177,7 @@ def crossNonCross():
 
     q[2] = calcDiff(q[2], q[0], q[1])
     q[5] = calcDiff(q[5], q[3], q[4])
-    q[9] = calcDiff(q[9], q[0], q[1])
+    q[9] = calcDiff(q[9], q[7], q[8])
 
     """ Now plotting begins """
     axes = []
@@ -187,8 +187,16 @@ def crossNonCross():
         figs.append(figTemp)
         axes.append(axTemp)
 
-    for i, qSpecific in enumerate(q):
-        makeAllPlots(qSpecific, axes[i*4:4+i*4], figs[i*4:4+i*4])
+    makeAllPlots(q[0], axes[0:4], figs[0:4])
+    makeAllPlots(q[1], axes[0:4], figs[0:4])
+    makeAllPlots(q[2], axes[0:4], figs[0:4])    
+    makeAllPlots(q[3], axes[4:8], figs[4:8])
+    makeAllPlots(q[4], axes[4:8], figs[4:8])
+    makeAllPlots(q[5], axes[4:8], figs[4:8])
+    makeAllPlots(q[6], axes[8:12], figs[8:12]) 
+    makeAllPlots(q[7], axes[12:16], figs[12:16])
+    makeAllPlots(q[8], axes[12:16], figs[12:16])
+    makeAllPlots(q[9], axes[12:16], figs[12:16])
     
     saveAndSetAllPlots(q[0], axes[0:4], figs[0:4], nameAddition="")
     saveAndSetAllPlots(q[3], axes[4:8], figs[4:8], nameAddition="Big", legend = ["Cross big", "No cross big", "Diff"])

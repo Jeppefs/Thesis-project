@@ -1,6 +1,8 @@
 import numpy as np
+import matplotlib
 import matplotlib.pyplot as plt
 import malaria_statistics as MS
+from Latexifier import LatexifierFunctions as LF
 
 def getSwitchTime(pairs, strainCounter):
     strainMean = np.mean(np.mean(strainCounter, axis=1)) 
@@ -19,21 +21,21 @@ def getSwitchTime(pairs, strainCounter):
     for i in range(data_length):
 
         if state is -1:
-            if np.mean(q.strainCounter[i, pairs[0]])  < lower_threshold:
+            if np.mean(strainCounter[i, pairs[0]])  < lower_threshold:
                 #print(i*time_adjustment, state)
                 start.append(i*time_adjustment)
                 state = 0
-            if np.mean(q.strainCounter[i, pairs[1]]) < lower_threshold:
+            if np.mean(strainCounter[i, pairs[1]]) < lower_threshold:
                 #print(i*time_adjustment, state)
                 start.append(i*time_adjustment)
                 state = 1
         elif state == 0:
-            if np.mean(q.strainCounter[i, pairs[0]])> upper_threshold:
+            if np.mean(strainCounter[i, pairs[0]])> upper_threshold:
                 #print(i*time_adjustment, state)
                 end.append(i*time_adjustment)
                 state = -1
         elif state == 1:
-            if np.mean(q.strainCounter[i, pairs[1]]) > upper_threshold:
+            if np.mean(strainCounter[i, pairs[1]]) > upper_threshold:
                 #print(i*time_adjustment, state)
                 end.append(i*time_adjustment)
                 state = -1
@@ -59,7 +61,7 @@ def getSwitchTime(pairs, strainCounter):
         switch_time = np.array(end) - np.array(start)
     return switch_time
 
-def getAllSwitchingTimes(name, strain_name, pairs)
+def getAllSwitchingTimes(name, strain_name, pairs):
     q = MS.MalariaStatistics(name)
 
     switching_times_means = []
@@ -96,17 +98,16 @@ matplotlib.rc('font',**{'family':'serif', 'serif':['Computer Modern Roman']})
 matplotlib.rc('text', usetex=True)
 
 fig, ax = plt.subplots()
-ax.errorbar(switching_times_means, self.dataEnd["mean"], self.dataEnd["mean_error"], fmt='-o', markersize=6, linewidth=1.0, elinewidth=0.5, zorder=1)
-ax.errorbar(switching_times_means, self.dataEnd["mean"], self.dataEnd["mean_error"], fmt='-o', markersize=6, linewidth=1.0, elinewidth=0.5, zorder=1)
+ax.errorbar(infection_rates[5:16], switching_times_means[5:16], switching_times_errors[5:16], fmt='-o', markersize=6, linewidth=1.0, elinewidth=0.5, zorder=1)
+ax.errorbar(infection_rates_big[5:16], switching_times_means_big[5:16], switching_times_errors_big[5:16], fmt='-o', markersize=6, linewidth=1.0, elinewidth=0.5, zorder=1)
 
-ax.legend("cross", "crossBig")
+ax.legend(["Cross", "Cross big"])
 ax.set_xlabel(r"$\alpha$")
 ax.set_ylabel("Switching time (gen)")
-fig.tight_layout(pad=0.2)
+fig.tight_layout(pad=0.1)
 
-fileName = switchingTime
+fileName = "switchingTime"
 figName = fileName + ".pdf"
-fig.savefig(figName + ".pdf", format="pdf")
+fig.savefig(figName + "", format="pdf")
 
-plt.save
 plt.show()
