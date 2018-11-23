@@ -149,14 +149,11 @@ def crossNonCross():
         fig.append(figTemp), ax.append(axTemp)
 
         figTemp, axTemp = plt.subplots()
-        figBig.append(figTemp), axBig.append(axTemp)
+        figStrains.append(figTemp), axStrains.append(axTemp)
 
         figTemp, axTemp = plt.subplots()
-        figSimple.append(figTemp), axSimple.append(axTemp)
+        figMean.append(figTemp), axMean.append(axTemp)
 
-        figTemp, axTemp = plt.subplots()
-        figOdd.append(figTemp), axOdd.append(axTemp)
-    
     qCross = MS.MalariaStatistics("crossNonCross")
     qNon = MS.MalariaStatistics("crossNonCross")
     qCrossBig = MS.MalariaStatistics("crossBig")
@@ -175,37 +172,55 @@ def crossNonCross():
     qNonBig.ApplyMask(qNonBig.parameters["SpecificStrains"][:].values == "nonCrossBig")
     qDiffBig.ApplyMask(qDiffBig.parameters["SpecificStrains"][:].values == "nonCrossBig")
 
-    """ Now plotting begins """
-    qDiff.dataEnd["mean"] = qNon.dataEnd["mean"].values - qCross.dataEnd["mean"].values
-    qDiff.dataEnd["run"] = qNon.dataEnd["run"].values - qCross.dataEnd["run"].values
-    qDiff.dataEnd["strains"] = qNon.dataEnd["strains"].values - qCross.dataEnd["strains"].values
-    qDiff.dataEnd["avgResistances"] = qNon.dataEnd["avgResistances"].values - qCross.dataEnd["avgResistances"].values
-    qDiff.dataEnd["run_error"] = qCross.dataEnd["mean"].values*0
+    """ New values being calculated """
+    qDiff.dataEnd["mean"] = abs(qNon.dataEnd["mean"].values - qCross.dataEnd["mean"].values)
+    qDiff.dataEnd["run"] = abs(qNon.dataEnd["run"].values - qCross.dataEnd["run"].values)
+    qDiff.dataEnd["strains"] = abs(qNon.dataEnd["strains"].values - qCross.dataEnd["strains"].values)
+    qDiff.dataEnd["avgResistances"] = abs(qNon.dataEnd["avgResistances"].values - qCross.dataEnd["avgResistances"].values)
+    qDiff.dataEnd["run_error"] = abs(qCross.dataEnd["mean"].values*0)
 
-    qDiff.dataEnd["mean"] = qNon.dataEnd["mean"].values - qCross.dataEnd["mean"].values
-    qDiff.dataEnd["run"] = qNon.dataEnd["run"].values - qCross.dataEnd["run"].values
-    qDiff.dataEnd["strains"] = qNon.dataEnd["strains"].values - qCross.dataEnd["strains"].values
-    qDiff.dataEnd["avgResistances"] = qNon.dataEnd["avgResistances"].values - qCross.dataEnd["avgResistances"].values
-    qDiff.dataEnd["run_error"] = qCross.dataEnd["mean"].values*0
+    qDiffBig.dataEnd["mean"] = abs(qNonBig.dataEnd["mean"].values - qCrossBig.dataEnd["mean"].values)
+    qDiffBig.dataEnd["run"] = abs(qNonBig.dataEnd["run"].values - qCrossBig.dataEnd["run"].values)
+    qDiffBig.dataEnd["strains"] = abs(qNonBig.dataEnd["strains"].values - qCrossBig.dataEnd["strains"].values)
+    qDiffBig.dataEnd["avgResistances"] = abs(qNonBig.dataEnd["avgResistances"].values - qCrossBig.dataEnd["avgResistances"].values)
+    qDiffBig.dataEnd["run_error"] = abs(qCrossBig.dataEnd["mean"].values*0)
 
-    qDiff.dataEnd["mean"] = qNon.dataEnd["mean"].values - qCross.dataEnd["mean"].values
-    qDiff.dataEnd["run"] = qNon.dataEnd["run"].values - qCross.dataEnd["run"].values
-    qDiff.dataEnd["strains"] = qNon.dataEnd["strains"].values - qCross.dataEnd["strains"].values
-    qDiff.dataEnd["avgResistances"] = qNon.dataEnd["avgResistances"].values - qCross.dataEnd["avgResistances"].values
-    qDiff.dataEnd["run_error"] = qCross.dataEnd["mean"].values*0
+    qDiffSimple.dataEnd["mean"] = abs(qSimple.dataEnd["mean"].values - qCross.dataEnd["mean"].values)
+    qDiffSimple.dataEnd["run"] = abs(qSimple.dataEnd["run"].values - qCross.dataEnd["run"].values)
+    qDiffSimple.dataEnd["strains"] = abs(qSimple.dataEnd["strains"].values - qCross.dataEnd["strains"].values)
+    qDiffSimple.dataEnd["avgResistances"] = abs(qSimple.dataEnd["avgResistances"].values - qCross.dataEnd["avgResistances"].values)
+    qDiffSimple.dataEnd["run_error"] = abs(qCross.dataEnd["mean"].values*0)
 
+    """ Plotting begins """
+    qCross.PlotExtinctionTime(ax[0], "InfectionSpeed")
+    qNon.PlotExtinctionTime(ax[0], "InfectionSpeed")
+    qDiff.PlotExtinctionTime(ax[0], "InfectionSpeed")
+    qCrossBig.PlotExtinctionTime(ax[1], "InfectionSpeed")
+    qNonBig.PlotExtinctionTime(ax[1], "InfectionSpeed")
+    qDiffBig.PlotExtinctionTime(ax[1], "InfectionSpeed")
+    qSimple.PlotExtinctionTime(ax[2], "InfectionSpeed")
+    qCross.PlotExtinctionTime(ax[2], "InfectionSpeed")
+    qSimpleDiff.PlotExtinctionTime(ax[2], "InfectionSpeed")
+    qOdd.PlotExtinctionTime(ax[3], "InfectionSpeed")
 
-    qCross.PlotExtinctionTime(ax1, "InfectionSpeed")
-    qNon.PlotExtinctionTime(ax1, "InfectionSpeed")
-    qDiff.PlotExtinctionTime(ax1, "InfectionSpeed")
+    qCross.PlotExtinctionTime(axStrains[0], "InfectionSpeed")
+    qNon.PlotExtinctionTime(axStrains[0], "InfectionSpeed")
+    qDiff.PlotExtinctionTime(axStrains[0], "InfectionSpeed")
+    qCrossBig.PlotExtinctionTime(axStrains[1], "InfectionSpeed")
+    qNonBig.PlotExtinctionTime(axStrains[1], "InfectionSpeed")
+    qDiffBig.PlotExtinctionTime(axStrains[1], "InfectionSpeed")
+    qSimple.PlotExtinctionTime(axStrains[2], "InfectionSpeed")
+    qCross.PlotExtinctionTime(axStrains[2], "InfectionSpeed")
+    qSimpleDiff.PlotExtinctionTime(axStrains[2], "InfectionSpeed")
+    qOdd.PlotExtinctionTime(axStrains[3], "InfectionSpeed")
 
     qCross.PlotMeanInfection(ax2, "InfectionSpeed", errorBars=False)
     qNon.PlotMeanInfection(ax2, "InfectionSpeed", errorBars=False)
     qDiff.PlotMeanInfection(ax2, "InfectionSpeed", errorBars=False)
 
-    ax3.plot(qCross.parameters["InfectionSpeed"], qCross.dataEnd["strains"], '-o', markersize=3.0, linewidth=0.5)
-    ax3.plot(qNon.parameters["InfectionSpeed"], qNon.dataEnd["strains"], '-o', markersize=3.0, linewidth=0.5)
-    ax3.plot(qDiff.parameters["InfectionSpeed"], qDiff.dataEnd["strains"], '-o', markersize=3.0, linewidth=0.5)
+    #ax3.plot(qCross.parameters["InfectionSpeed"], qCross.dataEnd["strains"], '-o', markersize=3.0, linewidth=0.5)
+    #ax3.plot(qNon.parameters["InfectionSpeed"], qNon.dataEnd["strains"], '-o', markersize=3.0, linewidth=0.5)
+    #ax3.plot(qDiff.parameters["InfectionSpeed"], qDiff.dataEnd["strains"], '-o', markersize=3.0, linewidth=0.5)
 
     qCross.PlotAvgResistances(ax4, "InfectionSpeed")
     qNon.PlotAvgResistances(ax4, "InfectionSpeed")
