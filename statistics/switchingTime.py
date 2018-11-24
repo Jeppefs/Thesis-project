@@ -43,7 +43,7 @@ def getSwitchTime(pairs, strainCounter):
     
     # If it never ended or started, simply make the switching time 2000.
     if len(end) == 0 or len(start) == 0:
-        switch_time = 2000
+        switch_time = data_length / (10*4)
     # Remove last element of the end list, if there never was an end to switching.
     elif len(start) > len(end):
         start.pop()
@@ -53,7 +53,7 @@ def getSwitchTime(pairs, strainCounter):
             #plt.plot(np.arange(data_length), strainCounter)
             #plt.show()
         if len(start) == 0:
-            switch_time = 2000
+            switch_time = data_length / ((10*4))
         switch_time = np.array(end) - np.array(start)
     else:
         if len(start) != len(end):
@@ -82,15 +82,15 @@ def getAllSwitchingTimes(name, strain_name, pairs):
 
         print(infection_rate, switch_time)
         print(infection_rate, "mean", switch_time_mean)
-        print(infection_rate, "error:", np.sqrt(switch_time_variance/q.settings["Repeat"][0]))
+        print(infection_rate, "error:", np.sqrt(switch_time_variance/len(switch_time)))
         
         switching_times_means.append(switch_time_mean)
-        switching_times_errors.append(np.sqrt(switch_time_variance/q.settings["Repeat"][0]))
+        switching_times_errors.append(np.sqrt(switch_time_variance/len(switch_time)))
 
     return switching_times_means, switching_times_errors, q.parameters["InfectionSpeed"].unique()
 
-switching_times_means, switching_times_errors, infection_rates = getAllSwitchingTimes("crossNonCross", "cross", [[0,2], [1,3]])
-switching_times_means_big, switching_times_errors_big, infection_rates_big = getAllSwitchingTimes("crossBig", "crossBig", [[0,2,4], [1,3,5]])
+switching_times_means, switching_times_errors, infection_rates = getAllSwitchingTimes("crossSwitchingTime", "cross", [[0,2], [1,3]])
+switching_times_means_big, switching_times_errors_big, infection_rates_big = getAllSwitchingTimes("crossSwitchingTime", "crossBig", [[0,2,4], [1,3,5]])
 
 plt.style.use("seaborn")
 LF.Latexify(fig_width = 12.65076*0.6, label_size=[1.0, 1.0])
@@ -98,8 +98,8 @@ matplotlib.rc('font',**{'family':'serif', 'serif':['Computer Modern Roman']})
 matplotlib.rc('text', usetex=True)
 
 fig, ax = plt.subplots()
-ax.errorbar(infection_rates[5:16], switching_times_means[5:16], switching_times_errors[5:16], fmt='-o', markersize=6, linewidth=1.0, elinewidth=0.5, zorder=1)
-ax.errorbar(infection_rates_big[5:16], switching_times_means_big[5:16], switching_times_errors_big[5:16], fmt='-o', markersize=6, linewidth=1.0, elinewidth=0.5, zorder=1)
+ax.errorbar(infection_rates[5:16], switching_times_means[5:16], switching_times_errors[5:16], fmt='-o', markersize=5, linewidth=1.0, elinewidth=0.5, zorder=1)
+ax.errorbar(infection_rates_big[5:16], switching_times_means_big[5:16], switching_times_errors_big[5:16], fmt='-o', markersize=5, linewidth=1.0, elinewidth=0.5, zorder=1)
 
 ax.legend(["Cross", "Cross big"])
 ax.set_xlabel(r"$\alpha$")

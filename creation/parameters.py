@@ -3,7 +3,7 @@ import pandas as pandas
 from collections import OrderedDict
 import make_parameters as mp 
 
-func = "crossSimple"
+func = "crossSwitchingTime"
 name = ""
 notes = ""
 SameyGamma = True
@@ -188,7 +188,16 @@ def crossSimple(name = "crossSimple", notes = "Two strain with no crossovers"):
 
     return folder, name, parameters, settings, notes
 
-    pass
+def crossSwitchingTime(name = "crossSwitchingTime", notes = "cross and cross big with a long run to be able to calculate consistent switching times. "):
+    folder, name, parameters, settings, notes = simple(name = name, notes = notes)
+    
+    parameters["InfectionSpeed"] = np.arange(0.4, 0.5+0.000001, 0.01)
+    parameters["MutationSpeed"] = np.array([10**-4])
+    settings["Runs"] = [200000000] 
+    settings["Repeat"] = [5]
+    parameters["SpecificStrains"] = ["cross", "crossBig", "odd"]
+
+    return folder, name, parameters, settings, notes
 
 ##-------------------------------------------------------------------------------##
 mp.CreateParametersAndSettings(eval(func), name, notes)
