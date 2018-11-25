@@ -138,7 +138,7 @@ class MalariaStatistics():
     def PlotExtinctionTime(self, ax, vary, plotAllMeasurements = False):
         """ Creates a plot with extinction time with whatever parameter given """
         if self.isRepeated:
-            ax.errorbar(self.parameters[vary], self.dataEnd["run"], self.dataEnd["run_error"], fmt='o', markersize=2, elinewidth = 0.5)
+            ax.errorbar(self.parameters[vary], self.dataEnd["run"], self.dataEnd["run_error"], fmt='o', markersize=2, elinewidth = 0.75)
         else:
             ax.plot(self.parameters[vary], self.dataEnd["run"], '-o', markersize=3, linewidth=0.5)
             
@@ -153,10 +153,10 @@ class MalariaStatistics():
         if errorBars:
             if self.isRepeated:
                 ax.errorbar(self.parameters[vary], self.dataEnd["mean"], self.dataEnd["mean_error"],
-                fmt='-o', markersize=6, linewidth=1.0, elinewidth=0.5, zorder=1)
+                fmt='-o', markersize=5, linewidth=1.0, elinewidth=0.75, zorder=1)
             else: 
                 ax.errorbar(self.parameters[vary], self.dataEnd["mean"], np.sqrt(self.dataEnd["variance"]),
-                fmt='-o', markersize=4, linewidth=0.8, elinewidth=0.5, zorder=1)
+                fmt='-o', markersize=5, linewidth=1.0, elinewidth=0.75, zorder=1)
         else:
             ax.plot(self.parameters[vary], self.dataEnd["mean"], '-o', markersize=3, linewidth=0.5)
 
@@ -222,7 +222,7 @@ class MalariaStatistics():
         ax.set_xlabel(xlabel)
         ax.set_ylabel(ylabel)
         #LF.format_axes(ax)
-        fig.tight_layout(pad=0.2)
+        fig.tight_layout(pad=0.1)
 
         figName = self.plotSavePath + fileName + ".pdf"
         fig.savefig(figName, format="pdf")

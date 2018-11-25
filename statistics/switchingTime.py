@@ -8,34 +8,42 @@ def getSwitchTime(pairs, strainCounter):
     strainMean = np.mean(np.mean(strainCounter, axis=1)) 
     N_strains_in_pairs = len(pairs[0])
     lower_threshold = strainMean / 10
-    upper_threshold = strainMean
+    upper_threshold = strainMean * 1.25
     data_length = len(strainCounter)
 
     state = -1 # Can be -1, 0 or 1. 0 if pair 0 is lower, 1 if pair 1 is lower, and -1 if neither is. 
+    state_counter = np.array([0, 0, 0])
 
     start = []
     end = []
 
     time_adjustment = 0.1
 
-    for i in range(data_length):
-
+    for i in range(data_length - 2):
+        
+        # If we currently are in a merged state
         if state is -1:
-            if np.mean(strainCounter[i, pairs[0]])  < lower_threshold:
+            state_counter[0] += 1
+            if np.mean(strainCounter[i, pairs[0]])  < lower_threshold and np.mean(strainCounter[i, pairs[1]]) > upper_threshold:
                 #print(i*time_adjustment, state)
                 start.append(i*time_adjustment)
                 state = 0
-            if np.mean(strainCounter[i, pairs[1]]) < lower_threshold:
+            if np.mean(strainCounter[i, pairs[1]]) < lower_threshold and np.mean(strainCounter[i, pairs[0]]) > upper_threshold:
                 #print(i*time_adjustment, state)
                 start.append(i*time_adjustment)
                 state = 1
+        # If we currently are in a state where pair 1 is dominating
         elif state == 0:
-            if np.mean(strainCounter[i, pairs[0]])> upper_threshold:
+            state_counter[1] += 1
+            # Shoud be true a bit into the future to avoid spikes
+            if np.mean(strainCounter[i, pairs[0]]) > upper_threshold and np.mean(strainCounter[i+2, pairs[0]]) > upper_threshold: 
                 #print(i*time_adjustment, state)
                 end.append(i*time_adjustment)
                 state = -1
+        # If we currently are in a state where pair0 is dominating
         elif state == 1:
-            if np.mean(strainCounter[i, pairs[1]]) > upper_threshold:
+            state_counter[2] += 1
+            if np.mean(strainCounter[i, pairs[1]]) > upper_threshold and np.mean(strainCounter[i+2, pairs[1]]) > upper_threshold:
                 #print(i*time_adjustment, state)
                 end.append(i*time_adjustment)
                 state = -1
@@ -43,7 +51,7 @@ def getSwitchTime(pairs, strainCounter):
     
     # If it never ended or started, simply make the switching time 2000.
     if len(end) == 0 or len(start) == 0:
-        switch_time = data_length / (10*4)
+        switch_time = data_length / 10
     # Remove last element of the end list, if there never was an end to switching.
     elif len(start) > len(end):
         start.pop()
@@ -53,12 +61,15 @@ def getSwitchTime(pairs, strainCounter):
             #plt.plot(np.arange(data_length), strainCounter)
             #plt.show()
         if len(start) == 0:
-            switch_time = data_length / ((10*4))
-        switch_time = np.array(end) - np.array(start)
+            switch_time = data_length / 10 
+        else:
+            switch_time = np.array(end) - np.array(start)
     else:
         if len(start) != len(end):
             print("Start and end not equal!", start, end)
         switch_time = np.array(end) - np.array(start)
+    #print(start, end)
+    print(state_counter)
     return switch_time
 
 def getAllSwitchingTimes(name, strain_name, pairs):
@@ -66,8 +77,10 @@ def getAllSwitchingTimes(name, strain_name, pairs):
 
     switching_times_means = []
     switching_times_errors = []
+    #infection_rates = [0.40]    
+    infection_rates = q.parameters["InfectionSpeed"].unique()
 
-    for infection_rate in q.parameters["InfectionSpeed"].unique():
+    for infection_rate in infection_rates:
         switch_time = np.array([])
         for current_repeat in range(q.settings["Repeat"][0]): 
             q.timelineIndex = [np.where( (q.parameters["InfectionSpeed"] == infection_rate) & (q.parameters["SpecificStrains"] == strain_name))[0][0] + 1, current_repeat + 1]
@@ -75,7 +88,11 @@ def getAllSwitchingTimes(name, strain_name, pairs):
             q.ImportStrainCounter()
             switch_time = np.append(switch_time, getSwitchTime(pairs, q.strainCounter))
 
+            
             #print(switch_time)
+
+            #fig, ax = plt.subplots()
+            #q.PlotStrainCounter(ax, skip = 10)
 
         switch_time_mean = np.mean(switch_time)
         switch_time_variance = np.var(switch_time)
@@ -87,7 +104,7 @@ def getAllSwitchingTimes(name, strain_name, pairs):
         switching_times_means.append(switch_time_mean)
         switching_times_errors.append(np.sqrt(switch_time_variance/len(switch_time)))
 
-    return switching_times_means, switching_times_errors, q.parameters["InfectionSpeed"].unique()
+    return switching_times_means, switching_times_errors, infection_rates
 
 switching_times_means, switching_times_errors, infection_rates = getAllSwitchingTimes("crossSwitchingTime", "cross", [[0,2], [1,3]])
 switching_times_means_big, switching_times_errors_big, infection_rates_big = getAllSwitchingTimes("crossSwitchingTime", "crossBig", [[0,2,4], [1,3,5]])
@@ -98,8 +115,8 @@ matplotlib.rc('font',**{'family':'serif', 'serif':['Computer Modern Roman']})
 matplotlib.rc('text', usetex=True)
 
 fig, ax = plt.subplots()
-ax.errorbar(infection_rates[5:16], switching_times_means[5:16], switching_times_errors[5:16], fmt='-o', markersize=5, linewidth=1.0, elinewidth=0.5, zorder=1)
-ax.errorbar(infection_rates_big[5:16], switching_times_means_big[5:16], switching_times_errors_big[5:16], fmt='-o', markersize=5, linewidth=1.0, elinewidth=0.5, zorder=1)
+ax.errorbar(infection_rates, switching_times_means, switching_times_errors, fmt='-o', markersize=5, linewidth=1.0, elinewidth=0.75, zorder=1)
+ax.errorbar(infection_rates_big, switching_times_means_big, switching_times_errors_big, fmt='-o', markersize=5, linewidth=1.0, elinewidth=0.75, zorder=1)
 
 ax.legend(["Cross", "Cross big"])
 ax.set_xlabel(r"$\alpha$")

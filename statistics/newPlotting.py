@@ -207,10 +207,11 @@ def crossNonCross():
 
 def crossTimeSeries():
     plt.style.use("seaborn")
-    LF.Latexify(fig_width = 12.65076*0.98, fig_height = 12.65076*0.98*0.5)
+    LF.Latexify(fig_width = 12.65076*0.98, fig_height = 12.65076*0.98*0.45)
     q = MS.MalariaStatistics("crossNonCross")
-    
-    for_infectionSpeed = 0.45
+    number = "2"
+
+    for_infectionSpeed = 0.42
     x_ticks = [0, 250, 500, 750, 1000, 1250, 1500, 1750, 2000]
     y_ticks = 0
 
@@ -226,7 +227,7 @@ def crossTimeSeries():
     leg = ax.legend(["Sum","1,2", "2,3", "3,4", "4,1"], bbox_to_anchor=[0.5, 1.05], loc=10, ncol=5)
     for legobj in leg.legendHandles:
         legobj.set_linewidth(2.0)
-    q.PlotNiceAndSave(fig, ax, xlabel = "Time (gen)", ylabel = "Infected", fileName = "cross_strainCounter1")
+    q.PlotNiceAndSave(fig, ax, xlabel = "Time (gen)", ylabel = "Infected", fileName = "cross_strainCounter" + number)
 
     q.timelineIndex = [np.where( (q.parameters["InfectionSpeed"] == for_infectionSpeed) & (q.parameters["SpecificStrains"] == "nonCross"))[0][0] + 1, 1]
     print(q.parameters.iloc[q.timelineIndex[0], :])
@@ -240,15 +241,15 @@ def crossTimeSeries():
     leg = ax.legend(["Sum","1,2","3,4","5,6","7,8"], bbox_to_anchor=[0.5, 1.05], loc=10, ncol=5)
     for legobj in leg.legendHandles:
         legobj.set_linewidth(2.0)
-    q.PlotNiceAndSave(fig, ax, xlabel = "Time (gen)", ylabel = "Infected", fileName = "nonCross_strainCounter1")
+    q.PlotNiceAndSave(fig, ax, xlabel = "Time (gen)", ylabel = "Infected", fileName = "nonCross_strainCounter" + number)
 
 def crossBigTimeSeries():
     plt.style.use("seaborn")
-    LF.Latexify(fig_width = 12.65076*0.98, fig_height = 12.65076*0.98*0.5)
-    #q = MS.MalariaStatistics("crossNonCross")
+    LF.Latexify(fig_width = 12.65076*0.98, fig_height = 12.65076*0.98*0.45)
     q = MS.MalariaStatistics("crossBig")
+    number = "1"
 
-    for_infectionSpeed = 0.40
+    for_infectionSpeed = 0.45
     x_ticks = [0, 250, 500, 750, 1000, 1250, 1500, 1750, 2000]
     y_ticks = 0
 
@@ -264,7 +265,7 @@ def crossBigTimeSeries():
     leg = ax.legend(["Sum","1,2", "2,3", "3,4", "4,5", "5,6", "6,1"], bbox_to_anchor=[0.5, 1.05], loc=10, ncol=7)
     for legobj in leg.legendHandles:
         legobj.set_linewidth(2.0)
-    q.PlotNiceAndSave(fig, ax, xlabel = "Time (gen)", ylabel = "Infected", fileName = "crossBig_strainCounter1")
+    q.PlotNiceAndSave(fig, ax, xlabel = "Time (gen)", ylabel = "Infected", fileName = "crossBig_strainCounter" + number)
 
     q.timelineIndex = [np.where( (q.parameters["InfectionSpeed"] == for_infectionSpeed) & (q.parameters["SpecificStrains"] == "nonCrossBig"))[0][0] + 1, 1]
     print(q.parameters.iloc[q.timelineIndex[0] - 1, :])
@@ -278,4 +279,27 @@ def crossBigTimeSeries():
     leg = ax.legend(["Sum","1,2","3,4","5,6","7,8","9,10","11,12"], bbox_to_anchor=[0.5, 1.05], loc=10, ncol=7)
     for legobj in leg.legendHandles:
         legobj.set_linewidth(2.0)
-    q.PlotNiceAndSave(fig, ax, xlabel = "Time (gen)", ylabel = "Infected", fileName = "nonCrossBig_strainCounter1")
+    q.PlotNiceAndSave(fig, ax, xlabel = "Time (gen)", ylabel = "Infected", fileName = "nonCrossBig_strainCounter" + number)
+
+def crossOdd():
+    plt.style.use("seaborn")
+    LF.Latexify(fig_width = 12.65076*0.98, fig_height = 12.65076*0.98*0.45)
+    q = MS.MalariaStatistics("crossOdd")
+
+    for_infectionSpeed = 0.45
+    x_ticks = [0, 250, 500, 750, 1000, 1250, 1500, 1750, 2000]
+    y_ticks = 0
+
+    q.timelineIndex = [np.where( (q.parameters["InfectionSpeed"] == for_infectionSpeed) & (q.parameters["SpecificStrains"] == "odd"))[0][0] + 1, 1]
+    print(q.parameters.iloc[q.timelineIndex[0] - 1, :])    
+    fig, ax = plt.subplots()
+    q.ImportTimeline()
+    q.ImportStrainCounter()
+    q.PlotTimeline(ax = ax, skip = 100)
+    q.PlotStrainCounter(ax = ax, skip = 100)
+    ax.set_xticks(x_ticks)
+    #ax.set_yticks([0.0, 0.02, 0.04, 0.06, 0.08, 0.1, 0.12, 0.14])
+    leg = ax.legend(["Sum","1,2", "2,3", "3,4", "4,5", "5,1"], bbox_to_anchor=[0.5, 1.05], loc=10, ncol=7)
+    for legobj in leg.legendHandles:
+        legobj.set_linewidth(2.0)
+    q.PlotNiceAndSave(fig, ax, xlabel = "Time (gen)", ylabel = "Infected", fileName = "crossOdd_strainCounter1")

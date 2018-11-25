@@ -103,17 +103,22 @@ def ReplacementRastaScan():
     return
 
 def PlotEpedimicModels():
-    q = RK.RungeKutta(initialConditions = np.array([0.99, 0.01, 0.0]), param = np.array([1.0, 0.5, 0.1, 0.01]), equation = DS.SIRS, dt=0.001)
+    q = RK.RungeKutta(initialConditions = np.array([0.99, 0.01, 0.0]), param = np.array([1.0, 0.5, 0.1, 0.01]), equation = DS.Ross, dt=0.001)
     q.Run(100000)
 
     fig, ax = plt.subplots()
     ax.plot(q.savedValues[1, :])
+    
     return
 
 """Latexify. fig_width is 12.65076*0.99 for full page fig and 6.19893 for sub plots"""
 standard_width = 6.19893
 full_width = 12.65076
-LF.Latexify(fig_width = 12.65076*0.8, label_size = [1.05, 1.05])
+
+plt.style.use("seaborn")
+LF.Latexify(fig_width = standard_width, label_size = [1.0, 1.0])
+matplotlib.rc('font',**{'family':'serif', 'serif':['Computer Modern Roman']})
+matplotlib.rc('text', usetex=True)
 
 """Epedimic Models"""
 #PlotEpedimicModels()
@@ -128,13 +133,15 @@ LF.Latexify(fig_width = 12.65076*0.8, label_size = [1.05, 1.05])
 #PlotSimple(DS.Replacement, initial = [0.99, 0.01, 0.0, 0.0], param = [0.95, 1.0, 0.1], legend = ["S","I","$I_R$", "$S_R$"], runs=10000,
 # xlabel="Iteration", ylabel="Proportion", filename="replacement_deterministic_0_1")
 #ReplacementParameterRasta(filename="replacement_deterministic_gamma")
-LF.Latexify(fig_width=full_width*0.8)
-ReplacementRastaScan()
+#LF.Latexify(fig_width=full_width*0.8)
+#ReplacementRastaScan()
 
 
 """Ross"""
-#PlotSimple(func = DS.Ross, initial = [0.1, 0.1], param = [0.1, 0.2, 2.0, 0.01, 0.5, 0.1], legend = ["$I_h$","$I_m$"], runs=100000,
-# xlabel="Iterations", ylabel="Proportion infected", filename= "Ross2")
+PlotSimple(func = DS.Ross, initial = [0.1, 0.1], param = [0.05, 0.2, 2.0, 0.01, 0.5, 0.1], legend = ["$I_h$","$I_m$"], runs=100000,
+ xlabel="Iterations", ylabel="Proportion infected", filename= "Ross1")
+
+# a, b, m, r, c, \mu 
 
 """Test"""
 #RK.TestRungeKutta()
