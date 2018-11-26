@@ -93,7 +93,7 @@ def mutation2D():
 
 def mutationTimeSeries():
     plt.style.use("seaborn")
-    LF.Latexify(fig_width = 12.65076*0.98, fig_height = 12.65076*0.98*0.5)
+    LF.Latexify(fig_width = 12.65076*0.98, fig_height = 12.65076*0.98*0.40)
 
     q = MS.MalariaStatistics("mutation")
 
@@ -106,8 +106,8 @@ def mutationTimeSeries():
     q.ImportTimeline()
     q.ImportStrainCounter()
     q.PlotTimeline(ax = ax, skip = 100)
-    q.PlotStrainCounter(ax = ax, skip = 200)
-    ax.set_xticks([0, 500, 1000, 1500, 2000])
+    q.PlotStrainCounter(ax = ax, skip = 100)
+    ax.set_xticks([0, 250, 500, 750, 1000, 1250, 1500, 1750, 2000])
     ax.set_yticks([0, 0.02, 0.04, 0.06, 0.08])
     q.PlotNiceAndSave(fig, ax, xlabel = "Time (gen)", ylabel = "Infected", fileName = "mutation_strainCounter1")
 
@@ -118,8 +118,8 @@ def mutationTimeSeries():
     q.ImportTimeline()
     q.ImportStrainCounter()
     q.PlotTimeline(ax = ax, skip = 100)
-    q.PlotStrainCounter(ax = ax, skip = 200)
-    ax.set_xticks([0, 500, 1000, 1500, 2000])
+    q.PlotStrainCounter(ax = ax, skip = 100)
+    ax.set_xticks([0, 250, 500, 750, 1000, 1250, 1500, 1750, 2000])
     ax.set_yticks([0, 0.02, 0.04, 0.06, 0.08])
     q.PlotNiceAndSave(fig, ax, xlabel = "Time (gen)", ylabel = "Infected", fileName = "mutation_strainCounter2")
 
@@ -209,9 +209,9 @@ def crossTimeSeries():
     plt.style.use("seaborn")
     LF.Latexify(fig_width = 12.65076*0.98, fig_height = 12.65076*0.98*0.45)
     q = MS.MalariaStatistics("crossNonCross")
-    number = "2"
+    number = "1"
 
-    for_infectionSpeed = 0.42
+    for_infectionSpeed = 0.45
     x_ticks = [0, 250, 500, 750, 1000, 1250, 1500, 1750, 2000]
     y_ticks = 0
 

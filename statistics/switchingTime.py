@@ -144,7 +144,7 @@ ax.set_xlabel(r"$\alpha$")
 ax.set_ylabel("Proportion time")
 fig.tight_layout(pad=0.1)
 
-fileName = "time_in_shared"
+fileName = "sharedState"
 figName = fileName + ".pdf"
 fig.savefig(figName + "", format="pdf")
 
