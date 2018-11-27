@@ -135,10 +135,17 @@ class MalariaStatistics():
     """
     Plotting methods
     """
-    def PlotExtinctionTime(self, ax, vary, plotAllMeasurements = False):
+    def makeAllPlots(self, axes, figs, vary, showeErrorBars = False):
+        self.PlotExtinctionTime(axes[0], vary, errorBars=showErrorBars)
+        self.PlotMeanInfection(axes[1], vary, errorBars=showErrorBars)
+        self.PlotEndStrains(axes[2], vary)
+        self.PlotAvgResistances(axes[3], vary)
+        return
+
+    def PlotExtinctionTime(self, ax, vary, plotAllMeasurements = False, showErrorBars = False):
         """ Creates a plot with extinction time with whatever parameter given """
-        if self.isRepeated:
-            ax.errorbar(self.parameters[vary], self.dataEnd["run"], self.dataEnd["run_error"], fmt='o', markersize=2, elinewidth = 0.75)
+        if showErrorBars:
+            ax.errorbar(self.parameters[vary], self.dataEnd["run"], self.dataEnd["run_error"], fmt='o', markersize=2, elinewidth = 0.75, caps=0.5)
         else:
             ax.plot(self.parameters[vary], self.dataEnd["run"], '-o', markersize=3, linewidth=0.5)
             
@@ -148,9 +155,9 @@ class MalariaStatistics():
 
         return
 
-    def PlotMeanInfection(self, ax, vary, errorBars = True):
+    def PlotMeanInfection(self, ax, vary, showErrorBars = True):
         """ Creates a plot of the mean and variance. """
-        if errorBars:
+        if showErrorBars:
             if self.isRepeated:
                 ax.errorbar(self.parameters[vary], self.dataEnd["mean"], self.dataEnd["mean_error"],
                 fmt='-o', markersize=5, linewidth=1.0, elinewidth=0.75, zorder=1)
@@ -359,3 +366,15 @@ def Func_XOverPlusOne(X, Y, param):
 
 def CalcChi2():
     return
+
+def CreateFigures(N):
+    """Creates N figures and axes in a list"""
+    axes = []
+    figs = []
+    for i in range(16):
+        figTemp, axTemp = plt.subplots()
+        figs.append(figTemp)
+        axes.append(axTemp)
+
+
+    return figs, axes

@@ -3,7 +3,7 @@ import pandas as pandas
 from collections import OrderedDict
 import make_parameters as mp 
 
-func = "crossSwitchingTime"
+func = "features"
 name = ""
 notes = ""
 SameyGamma = True
@@ -85,9 +85,9 @@ def features(name = "features", notes = "Adjusts number of surface features"):
     folder, name, parameters, settings, notes = standard(name = name, notes = notes)
     
     parameters["InfectionSpeed"] = np.array([0.6, 0.8, 0.95, 1.05])
-    parameters["ReplacementSpeed"] = np.array([0]) # This should only be for the corresponding infection. How do we make that???
+    parameters["ReplacementSpeed"] = np.array([0]) # This should only be for the corresponding infection.
     parameters["MaxAntigenValue"] = np.arange(1, 20+0.1, 1, dtype=int)
-    settings["Repeat"] = [1]
+    settings["Repeat"] = [10]
 
     return folder, name, parameters, settings, notes
 
@@ -205,8 +205,8 @@ mp.CreateParametersAndSettings(eval(func), name, notes)
 if SameyGamma == True:
     q = pandas.pandas.read_csv("data/" + func + "/parameters.csv")
     alphas = q["InfectionSpeed"].unique()
-    gammas = OptimalGamma(a = alphas, b = 2/3)
+    gammas = OptimalGamma(a = alphas, b = 1)
 
-    q.loc[:, ("ReplacementSpeed")] = OptimalGamma(q.loc[:, ("InfectionSpeed")], b = 2/3)
+    q.loc[:, ("ReplacementSpeed")] = OptimalGamma(q.loc[:, ("InfectionSpeed")], b = 1)
 
     q.to_csv("data/" + func + "/parameters.csv", index=False)

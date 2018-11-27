@@ -1,7 +1,8 @@
 import numpy as np 
 import matplotlib
 import matplotlib.pyplot as plt
-import newPlotting as PT
+import newPlotting as PN
+import oldPlotting as PO
 import pandas as pandas
 import malaria_statistics as MS
 from Latexifier import LatexifierFunctions as LF
@@ -20,7 +21,7 @@ matplotlib.rc('text', usetex=True)
 
 
 print("Plotting started")
-PT.mutationTimeSeries()
+PN.mutationTimeSeries()
 print("Congrats! All done!")
 plt.show()
 
