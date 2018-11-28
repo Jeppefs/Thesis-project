@@ -120,8 +120,8 @@ matplotlib.rc('font',**{'family':'serif', 'serif':['Computer Modern Roman']})
 matplotlib.rc('text', usetex=True)
 
 fig, ax = plt.subplots()
-ax.errorbar(infection_rates, switching_times_means, switching_times_errors, fmt='-o', markersize=5, linewidth=1.0, elinewidth=0.75, zorder=1)
-ax.errorbar(infection_rates_big, switching_times_means_big, switching_times_errors_big, fmt='-o', markersize=5, linewidth=1.0, elinewidth=0.75, zorder=1)
+ax.errorbar(infection_rates, switching_times_means, switching_times_errors, fmt='-o', markersize=5, linewidth=1.0, elinewidth=0.75, capssize=1.0, zorder=1)
+ax.errorbar(infection_rates_big, switching_times_means_big, switching_times_errors_big, fmt='-o', markersize=5, linewidth=1.0, elinewidth=0.75, capsize=1.0, zorder=1)
 
 ax.set_xticks([0.4, 0.42, 0.44, 0.46, 0.48, 0.5])
 ax.legend(["Cross", "Cross big"])

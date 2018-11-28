@@ -102,14 +102,6 @@ def ReplacementRastaScan():
 
     return
 
-def PlotEpedimicModels():
-    q = RK.RungeKutta(initialConditions = np.array([0.99, 0.01, 0.0]), param = np.array([1.0, 0.5, 0.1, 0.01]), equation = DS.Ross, dt=0.001)
-    q.Run(100000)
-
-    fig, ax = plt.subplots()
-    ax.plot(q.savedValues[1, :])
-    
-    return
 
 """Latexify. fig_width is 12.65076*0.99 for full page fig and 6.19893 for sub plots"""
 standard_width = 6.19893
@@ -121,7 +113,11 @@ matplotlib.rc('font',**{'family':'serif', 'serif':['Computer Modern Roman']})
 matplotlib.rc('text', usetex=True)
 
 """Epedimic Models"""
-#PlotEpedimicModels()
+PlotSimple(DS.SIR, initial = [0.99, 0.01, 0.0], param = [0.95, 1.0], legend = ["S", "I", "R"], runs = 4000, xlabel = "Iterations", ylabel = "Proportion", filename="SIR1")
+PlotSimple(DS.SIR, initial = [0.99, 0.01, 0.0], param = [1.5, 1.0], legend = ["S", "I", "R"], runs = 4000, xlabel = "Iterations", ylabel = "Proportion", filename="SIR2")
+PlotSimple(DS.SI, initial = [0.99, 0.01], param = [0.5, 1.0], legend = ["S", "I"], runs = 1000, xlabel = "Iterations", ylabel = "Proportion", filename="SI1")
+PlotSimple(DS.SI, initial = [0.99, 0.01], param = [1.5, 1.0], legend = ["S", "I"], runs = 1000, xlabel = "Iterations", ylabel = "Proportion", filename="SI2")
+
 
 """Simple function and plotting"""
 #PlotSimple(func = DS.SimpleInfection, initial = [0.99, 0.01, 0.0, 0.0], param = [0.9, 1.0], legend = ["$S$", "$I$", "$I_R$", "$S_R$"], runs=10000, xlabel="Iteration", ylabel="Proportion")
@@ -138,8 +134,8 @@ matplotlib.rc('text', usetex=True)
 
 
 """Ross"""
-PlotSimple(func = DS.Ross, initial = [0.1, 0.1], param = [0.05, 0.2, 2.0, 0.01, 0.5, 0.1], legend = ["$I_h$","$I_m$"], runs=100000,
- xlabel="Iterations", ylabel="Proportion infected", filename= "Ross1")
+#PlotSimple(func = DS.Ross, initial = [0.1, 0.1], param = [0.05, 0.2, 2.0, 0.01, 0.5, 0.1], legend = ["$I_h$","$I_m$"], runs=100000,
+# xlabel="Iterations", ylabel="Proportion infected", filename= "Ross1")
 
 # a, b, m, r, c, \mu 
 

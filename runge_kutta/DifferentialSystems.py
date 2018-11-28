@@ -1,5 +1,14 @@
 import numpy as np 
 
+def SIR(p, v, t):
+    valuesRate = np.zeros(len(v))
+
+    valuesRate[0] = - p[0]*v[0]*v[1]  
+    valuesRate[1] = p[0]*v[0]*v[1] - p[1]*v[1]
+    valuesRate[2] = p[1]*v[1]
+
+    return valuesRate
+
 def SIRS(p, v, t):
     valuesRate = np.zeros(len(v))
 
