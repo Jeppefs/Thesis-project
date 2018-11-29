@@ -26,6 +26,31 @@ def PlotSimple(func, initial, param, legend, runs = 50000, xlabel = "", ylabel =
     fig.savefig("runge_kutta/"+filename+".pdf", format="pdf")
     return
 
+def SIR_vitalRastaScan():
+    alphaStep = 0.1
+    alphas = np.arange(0.8, 1.2+0.0000001, alphaStep)
+    beta = 1.0
+    gammaStep = 0.1
+    gammas = np.arange(0.0, 0.4+0.0000001, gammaStep)
+    infected = np.array(len(alphas), len(gammas))
+
+    for i, alpha in enumerate(alphas):
+        for j, gamma in enumerate(gammas):
+            q = RK.RungeKutta(initialConditions = [0.99, 0.01, 0.0], param = [alpha, beta, gamma], equation = DS.SIR_vital, dt = 0.005)
+            q.Run(5000)
+            infected[i, j] = q.values[1]
+    
+    fig, ax = plt.subplots()
+
+    im = ax.imshow(infected, origin='lower', extent=(np.min(gammas)-gammaStep/2,np.max(gammas)+gammaStep/2,np.min(alphas)-alphaStep/2,np.max(alphas)+alphaStep/2), aspect='auto' )    
+    ax.set_xlabel(r"$\gamma$")
+    ax.set_ylabel(r"$\alpha$")
+    fig.colorbar(im)
+    ax.tick_params()
+    ax.set_aspect('auto')
+    fig.tight_layout(pad = 0.1)
+    fig.savefig("runge_kutta/replacement_gridInfected.pdf", format="pdf")
+
 def ReplacementParameterRasta(filename="temp"):
     q = RK.RungeKutta(initialConditions = [0.99, 0.01, 0.0, 0.0], param = [0.80, 1.0, 0.00], equation = DS.Replacement, dt = 0.01)
     paramList = np.arange(0, 1+0.00001, 0.01)
@@ -113,11 +138,12 @@ matplotlib.rc('font',**{'family':'serif', 'serif':['Computer Modern Roman']})
 matplotlib.rc('text', usetex=True)
 
 """Epedimic Models"""
-PlotSimple(DS.SIR, initial = [0.99, 0.01, 0.0], param = [0.95, 1.0], legend = ["S", "I", "R"], runs = 4000, xlabel = "Iterations", ylabel = "Proportion", filename="SIR1")
-PlotSimple(DS.SIR, initial = [0.99, 0.01, 0.0], param = [1.5, 1.0], legend = ["S", "I", "R"], runs = 4000, xlabel = "Iterations", ylabel = "Proportion", filename="SIR2")
-PlotSimple(DS.SI, initial = [0.99, 0.01], param = [0.5, 1.0], legend = ["S", "I"], runs = 1000, xlabel = "Iterations", ylabel = "Proportion", filename="SI1")
-PlotSimple(DS.SI, initial = [0.99, 0.01], param = [1.5, 1.0], legend = ["S", "I"], runs = 1000, xlabel = "Iterations", ylabel = "Proportion", filename="SI2")
+#PlotSimple(DS.SIR, initial = [0.99, 0.01, 0.0], param = [0.95, 1.0], legend = ["S", "I", "R"], runs = 4000, xlabel = "Iterations", ylabel = "Proportion", filename="SIR1")
+#PlotSimple(DS.SIR, initial = [0.99, 0.01, 0.0], param = [1.5, 1.0], legend = ["S", "I", "R"], runs = 4000, xlabel = "Iterations", ylabel = "Proportion", filename="SIR2")
+#PlotSimple(DS.SI, initial = [0.99, 0.01], param = [0.5, 1.0], legend = ["S", "I"], runs = 1000, xlabel = "Iterations", ylabel = "Proportion", filename="SI1")
+#PlotSimple(DS.SI, initial = [0.99, 0.01], param = [1.5, 1.0], legend = ["S", "I"], runs = 1000, xlabel = "Iterations", ylabel = "Proportion", filename="SI2")
 
+SIR_vitalRastaScan()
 
 """Simple function and plotting"""
 #PlotSimple(func = DS.SimpleInfection, initial = [0.99, 0.01, 0.0, 0.0], param = [0.9, 1.0], legend = ["$S$", "$I$", "$I_R$", "$S_R$"], runs=10000, xlabel="Iteration", ylabel="Proportion")

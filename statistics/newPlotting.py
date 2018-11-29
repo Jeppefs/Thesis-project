@@ -46,7 +46,7 @@ def mutation():
         q.ApplyMask(mask=mask)
 
         q.PlotExtinctionTime(ax1, "MaxAntigenValue")
-        q.PlotMeanInfection(ax2, "MaxAntigenValue", errorBars=False)
+        q.PlotMeanInfection(ax2, "MaxAntigenValue", showErrorBars=False)
         ax3.plot(q.parameters["MaxAntigenValue"], q.dataEnd["strains"], '-o', markersize=3.0, linewidth=0.5)
 
     ax1.legend([r"$\mu$="+str(mus[0]),r"$\mu$="+"{:.0E}".format(mus[1]),r"$\mu$="+"{:.0E}".format(mus[2]),r"$\mu$="+"{:.0E}".format(mus[3])])

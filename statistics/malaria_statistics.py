@@ -136,8 +136,8 @@ class MalariaStatistics():
     Plotting methods
     """
     def makeAllPlots(self, axes, figs, vary, showeErrorBars = False):
-        self.PlotExtinctionTime(axes[0], vary, errorBars=showErrorBars)
-        self.PlotMeanInfection(axes[1], vary, errorBars=showErrorBars)
+        self.PlotExtinctionTime(axes[0], vary, showErrorBars=showErrorBars)
+        self.PlotMeanInfection(axes[1], vary, showErrorBars=showErrorBars)
         self.PlotEndStrains(axes[2], vary)
         self.PlotAvgResistances(axes[3], vary)
         return

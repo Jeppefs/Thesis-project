@@ -9,12 +9,12 @@ def SIR(p, v, t):
 
     return valuesRate
 
-def SIRS(p, v, t):
+def SIR_vital(p, v, t):
     valuesRate = np.zeros(len(v))
 
-    valuesRate[0] = - p[0]*v[0]*v[1] + p[2]*v[2] + p[3] - p[3]*v[0]    
-    valuesRate[1] = p[0]*v[0]*v[1] - p[1]*v[1] - p[3]*v[1]
-    valuesRate[2] = p[1]*v[1] - p[2]*v[2] - p[3]*v[2]
+    valuesRate[0] = - p[0]*v[0]*v[1] + p[2]*(v[1] + v[2])
+    valuesRate[1] = p[0]*v[0]*v[1] - p[1]*v[1] - p[2]*v[1]
+    valuesRate[2] = p[1]*v[1] - p[2]*v[2]
 
     return valuesRate
 
