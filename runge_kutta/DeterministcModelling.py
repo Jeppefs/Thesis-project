@@ -15,44 +15,54 @@ def PlotSimple(func, initial, param, legend, runs = 50000, xlabel = "", ylabel =
     fig, ax = plt.subplots() 
     for i in range(q.NValues):
         if color == None:
-            ax.plot(q.savedValues[i,:], linewidth = 1.0) 
+            ax.plot(q.times, q.savedValues[i,:], linewidth = 1.0) 
         else:
-            ax.plot(q.savedValues[i,:], linewidth = 1.0, color = color[i])
+            ax.plot(q.times, q.savedValues[i,:], linewidth = 1.0, color = color[i])
     ax.legend(legend)
     ax.set_xlabel(xlabel)
     ax.set_ylabel(ylabel)
     LF.format_axes(ax)
     fig.tight_layout(pad = 0.1)
-    fig.savefig("runge_kutta/"+filename+".pdf", format="pdf")
+    fig.savefig("runge_kutta/plots/"+filename+".pdf", format="pdf")
     return
 
 def SIR_vitalRastaScan():
-    alphaStep = 0.1
-    alphas = np.arange(0.8, 1.2+0.0000001, alphaStep)
+
+    plt.style.use("seaborn")
+    LF.Latexify(fig_width = standard_width, label_size = [1.0, 1.0])
+    matplotlib.rc('font',**{'family':'serif', 'serif':['Computer Modern Roman']})
+    matplotlib.rc('text', usetex=True)
+
+    alphaStep = 0.01
+    gammaStep = 0.01
+    alphas = np.arange(1.0, 2.0+0.0000001, alphaStep)
+    gammas = np.arange(0.0, 0.5+0.0000001, gammaStep)
     beta = 1.0
-    gammaStep = 0.1
-    gammas = np.arange(0.0, 0.4+0.0000001, gammaStep)
-    infected = np.array(len(alphas), len(gammas))
+    infected = np.zeros((len(alphas), len(gammas)))
 
     for i, alpha in enumerate(alphas):
         for j, gamma in enumerate(gammas):
-            q = RK.RungeKutta(initialConditions = [0.99, 0.01, 0.0], param = [alpha, beta, gamma], equation = DS.SIR_vital, dt = 0.005)
-            q.Run(5000)
+            q = RK.RungeKutta(initialConditions = [0.90, 0.10, 0.0], param = [alpha, beta, gamma], equation = DS.SIR_vital, dt = 0.01)
+            q.Run(10000)
             infected[i, j] = q.values[1]
-    
+        print(i)
+
     fig, ax = plt.subplots()
 
-    im = ax.imshow(infected, origin='lower', extent=(np.min(gammas)-gammaStep/2,np.max(gammas)+gammaStep/2,np.min(alphas)-alphaStep/2,np.max(alphas)+alphaStep/2), aspect='auto' )    
+    ax.grid(False)
+    im = ax.imshow(infected, origin='lower', extent=(np.min(gammas)-gammaStep/2,np.max(gammas)+gammaStep/2,np.min(alphas)-alphaStep/2,np.max(alphas)+alphaStep/2), aspect='auto', cmap='cividis')    
     ax.set_xlabel(r"$\gamma$")
     ax.set_ylabel(r"$\alpha$")
+    ax.set_yticks([1.0, 1.2, 1.4, 1.6, 1.8, 2.0])
+    ax.set_xticks([0.0, 0.1, 0.2, 0.3, 0.4, 0.5])
     fig.colorbar(im)
     ax.tick_params()
     ax.set_aspect('auto')
     fig.tight_layout(pad = 0.1)
-    fig.savefig("runge_kutta/replacement_gridInfected.pdf", format="pdf")
+    fig.savefig("runge_kutta/plots/SIR_vital2D.pdf", format="pdf")
 
 def ReplacementParameterRasta(filename="temp"):
-    q = RK.RungeKutta(initialConditions = [0.99, 0.01, 0.0, 0.0], param = [0.80, 1.0, 0.00], equation = DS.Replacement, dt = 0.01)
+    q = RK.RungeKutta(initialConditions = [0.95, 0.05, 0.0, 0.0], param = [0.80, 1.0, 0.00], equation = DS.Replacement, dt = 0.01)
     paramList = np.arange(0, 1+0.00001, 0.01)
     alphaList = np.array([0.6, 0.8, 0.95, 1.05])
     fig, ax = plt.subplots()
@@ -65,7 +75,7 @@ def ReplacementParameterRasta(filename="temp"):
     ax.set_ylabel("Proportion infected")
     LF.format_axes(ax)
     fig.tight_layout(pad=0.1)
-    fig.savefig("runge_kutta/"+filename+".pdf", format="pdf")
+    fig.savefig("runge_kutta/plots/"+filename+".pdf", format="pdf")
     return
 
 def ReplacementRastaScan():
@@ -97,33 +107,36 @@ def ReplacementRastaScan():
     fig3, ax3 = plt.subplots()
 
     ## Survival
-    ax1.imshow(gridSurvival, origin='lower', extent=(np.min(gammas)-gammaStep/2,np.max(gammas)+gammaStep/2,np.min(alphas)-alphaStep/2,np.max(alphas)+alphaStep/2), aspect='auto' )    
+    ax1.imshow(gridSurvival, origin='lower', extent=(np.min(gammas)-gammaStep/2,np.max(gammas)+gammaStep/2,np.min(alphas)-alphaStep/2,np.max(alphas)+alphaStep/2), aspect='auto',cmap='cividis' )    
+    ax1.grid(False)
     ax1.set_xlabel(r"$\gamma$")
     ax1.set_ylabel(r"$\alpha$")
     ax1.tick_params()
     ax1.set_aspect('auto')
     fig1.tight_layout(pad = 0.1)
-    fig1.savefig("runge_kutta/replacement_gridSurvival.pdf", format="pdf")
+    fig1.savefig("runge_kutta/plots/replacement_gridSurvival.pdf", format="pdf")
 
     ## Infected
-    im = ax2.imshow(gridInfected, origin='lower', extent=(np.min(gammas)-gammaStep/2,np.max(gammas)+gammaStep/2,np.min(alphas)-alphaStep/2,np.max(alphas)+alphaStep/2), aspect='auto' )    
+    im = ax2.imshow(gridInfected, origin='lower', extent=(np.min(gammas)-gammaStep/2,np.max(gammas)+gammaStep/2,np.min(alphas)-alphaStep/2,np.max(alphas)+alphaStep/2), aspect='auto', cmap='cividis')    
+    ax2.grid(False)
     ax2.set_xlabel(r"$\gamma$")
     ax2.set_ylabel(r"$\alpha$")
     fig2.colorbar(im)
     ax2.tick_params()
     ax2.set_aspect('auto')
     fig2.tight_layout(pad = 0.1)
-    fig2.savefig("runge_kutta/replacement_gridInfected.pdf", format="pdf")
+    fig2.savefig("runge_kutta/plots/replacement_gridInfected.pdf", format="pdf")
 
     ## Resistant
-    im = ax3.imshow(gridResistant, origin='lower', extent=(np.min(gammas)-gammaStep/2,np.max(gammas)+gammaStep/2,np.min(alphas)-alphaStep/2,np.max(alphas)+alphaStep/2), aspect='auto' )    
+    im = ax3.imshow(gridResistant, origin='lower', extent=(np.min(gammas)-gammaStep/2,np.max(gammas)+gammaStep/2,np.min(alphas)-alphaStep/2,np.max(alphas)+alphaStep/2), aspect='auto', cmap='cividis')    
+    ax3.grid(False)
     ax3.set_xlabel(r"$\gamma$")
     ax3.set_ylabel(r"$\alpha$")
     fig3.colorbar(im)
     ax3.tick_params()
     ax3.set_aspect('auto')
     fig3.tight_layout(pad = 0.1) 
-    fig3.savefig("runge_kutta/replacement_gridResistant.pdf", format="pdf")
+    fig3.savefig("runge_kutta/plots/replacement_gridResistant.pdf", format="pdf")
 
     return
 
@@ -138,12 +151,17 @@ matplotlib.rc('font',**{'family':'serif', 'serif':['Computer Modern Roman']})
 matplotlib.rc('text', usetex=True)
 
 """Epedimic Models"""
-#PlotSimple(DS.SIR, initial = [0.99, 0.01, 0.0], param = [0.95, 1.0], legend = ["S", "I", "R"], runs = 4000, xlabel = "Iterations", ylabel = "Proportion", filename="SIR1")
-#PlotSimple(DS.SIR, initial = [0.99, 0.01, 0.0], param = [1.5, 1.0], legend = ["S", "I", "R"], runs = 4000, xlabel = "Iterations", ylabel = "Proportion", filename="SIR2")
-#PlotSimple(DS.SI, initial = [0.99, 0.01], param = [0.5, 1.0], legend = ["S", "I"], runs = 1000, xlabel = "Iterations", ylabel = "Proportion", filename="SI1")
-#PlotSimple(DS.SI, initial = [0.99, 0.01], param = [1.5, 1.0], legend = ["S", "I"], runs = 1000, xlabel = "Iterations", ylabel = "Proportion", filename="SI2")
+#PlotSimple(DS.SIR, initial = [0.99, 0.01, 0.0], param = [0.95, 1.0], legend = ["S", "I", "R"], runs = 4000, xlabel = "Time", ylabel = "Proportion", filename="SIR1")
+#PlotSimple(DS.SIR, initial = [0.99, 0.01, 0.0], param = [1.5, 1.0], legend = ["S", "I", "R"], runs = 4000, xlabel = "Time", ylabel = "Proportion", filename="SIR2")
+#PlotSimple(DS.SI, initial = [0.99, 0.01], param = [0.5, 1.0], legend = ["S", "I"], runs = 1000, xlabel = "Time", ylabel = "Proportion", filename="SI1")
+#PlotSimple(DS.SI, initial = [0.99, 0.01], param = [1.5, 1.0], legend = ["S", "I"], runs = 1000, xlabel = "Time", ylabel = "Proportion", filename="SI2")
+#PlotSimple(DS.SIR_vital, initial = [0.9, 0.1, 0.0], param = [0.95, 1.0, 0.5], legend = ["S", "I", "R"], runs = 4000, xlabel = "Time", ylabel = "Proportion", filename="SIR_vital1")
+#PlotSimple(DS.SIR_vital, initial = [0.9, 0.1, 0.0], param = [1.5, 1.0, 0.1], legend = ["S", "I", "R"], runs = 4000, xlabel = "Time", ylabel = "Proportion", filename="SIR_vital2")
+#SIR_vitalRastaScan()
 
-SIR_vitalRastaScan()
+"""Ross"""
+#PlotSimple(func = DS.Ross, initial = [0.1, 0.1], param = [0.05, 0.2, 2.0, 0.01, 0.5, 0.1], legend = ["$I_h$","$I_m$"], runs=100000,
+# xlabel="Iterations", ylabel="Proportion infected", filename= "Ross1")
 
 """Simple function and plotting"""
 #PlotSimple(func = DS.SimpleInfection, initial = [0.99, 0.01, 0.0, 0.0], param = [0.9, 1.0], legend = ["$S$", "$I$", "$I_R$", "$S_R$"], runs=10000, xlabel="Iteration", ylabel="Proportion")
@@ -156,12 +174,10 @@ SIR_vitalRastaScan()
 # xlabel="Iteration", ylabel="Proportion", filename="replacement_deterministic_0_1")
 #ReplacementParameterRasta(filename="replacement_deterministic_gamma")
 #LF.Latexify(fig_width=full_width*0.8)
-#ReplacementRastaScan()
+ReplacementRastaScan()
 
 
-"""Ross"""
-#PlotSimple(func = DS.Ross, initial = [0.1, 0.1], param = [0.05, 0.2, 2.0, 0.01, 0.5, 0.1], legend = ["$I_h$","$I_m$"], runs=100000,
-# xlabel="Iterations", ylabel="Proportion infected", filename= "Ross1")
+
 
 # a, b, m, r, c, \mu 
 

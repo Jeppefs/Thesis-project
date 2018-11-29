@@ -18,9 +18,11 @@ class RungeKutta():
 
         self.savedValues = np.zeros((self.NValues, maxRuns + 1))
         self.savedValues[:,0] = self.values
+        self.times = np.zeros(maxRuns + 1)
 
         for run in range(maxRuns):
             self.Progress()
+            self.times[run+1] = self.t
             self.savedValues[:,run+1] = self.values
         return
 
