@@ -135,42 +135,43 @@ class MalariaStatistics():
     """
     Plotting methods
     """
-    def makeAllPlots(self, axes, figs, vary, showeErrorBars = False):
+    def makeAllPlots(self, axes, figs, vary, showErrorBars = False):
         self.PlotExtinctionTime(axes[0], vary, showErrorBars=showErrorBars)
         self.PlotMeanInfection(axes[1], vary, showErrorBars=showErrorBars)
         self.PlotEndStrains(axes[2], vary)
         self.PlotAvgResistances(axes[3], vary)
         return
 
-    def PlotExtinctionTime(self, ax, vary, plotAllMeasurements = False, showErrorBars = False):
+    def PlotExtinctionTime(self, ax, vary, plotAllMeasurements = False, showErrorBars = False, linewidth= 0.5, alpha = 1.0):
         """ Creates a plot with extinction time with whatever parameter given """
-        if showErrorBars:
-            ax.errorbar(self.parameters[vary], self.dataEnd["run"], self.dataEnd["run_error"], fmt='o', markersize=2, elinewidth = 0.75, caps=0.5)
+        if showErrorBars == True:
+            ax.errorbar(self.parameters[vary], self.dataEnd["run"], self.dataEnd["run_error"]/np.sqrt(self.settings["Repeat"][0]), 
+            fmt='-o', markersize=3, linewidth=linewidth, elinewidth = 1.0, alpha = alpha)
         else:
-            ax.plot(self.parameters[vary], self.dataEnd["run"], '-o', markersize=3, linewidth=0.5)
+            ax.plot(self.parameters[vary], self.dataEnd["run"], '-o', markersize=3, linewidth=linewidth)
             
         if plotAllMeasurements == True:
             for i in range(self.settings["Repeat"][0]):
-                ax.plot(self.parameters[vary], self.dataEnd["run"][0+i::self.settings["Repeat"][0]],  color = "red", linestyle = "None",  marker='.', alpha=0.1)
+                ax.plot(self.parameters[vary], self.dataEnd["run"][0+i::self.settings["Repeat"][0]], color = "red", linestyle = "None",  marker='.', alpha=0.1)
+
+        ax.set_ylabel("Extinction time (gen)")
 
         return
 
-    def PlotMeanInfection(self, ax, vary, showErrorBars = True):
+    def PlotMeanInfection(self, ax, vary, showErrorBars = False, linewidth = 0.5, alpha = 1.0):
         """ Creates a plot of the mean and variance. """
-        if showErrorBars:
-            if self.isRepeated:
-                ax.errorbar(self.parameters[vary], self.dataEnd["mean"], self.dataEnd["mean_error"],
-                fmt='-o', markersize=5, linewidth=1.0, elinewidth=0.75, zorder=1)
-            else: 
-                ax.errorbar(self.parameters[vary], self.dataEnd["mean"], np.sqrt(self.dataEnd["variance"]),
-                fmt='-o', markersize=5, linewidth=1.0, elinewidth=0.75, zorder=1)
+        if showErrorBars == True:
+            ax.errorbar(self.parameters[vary], self.dataEnd["mean"], np.sqrt(self.dataEnd["variance"]),
+            fmt='o', markersize=3, linewidth=linewidth, elinewidth=0.75, zorder=1, alpha = alpha)
         else:
-            ax.plot(self.parameters[vary], self.dataEnd["mean"], '-o', markersize=3, linewidth=0.5)
+            ax.plot(self.parameters[vary], self.dataEnd["mean"], '-o', markersize=3, linewidth=linewidth)
+
+        ax.set_ylabel("Proportion infected")
 
         return
 
-    def PlotEndStrains(self, ax, vary):
-        ax.plot(self.parameters[vary], self.dataEnd["strains"], '-o', markersize=3.0, linewidth=0.5)
+    def PlotEndStrains(self, ax, vary, alpha = 1.0):
+        ax.plot(self.parameters[vary], self.dataEnd["strains"], '-o', markersize=3.0, linewidth=0.5 , alpha=alpha)
         return
 
     def PlotAvgResistances(self, ax, vary):
@@ -183,11 +184,11 @@ class MalariaStatistics():
 
         return
 
-    def PlotStrainCounter(self, ax, skip = 1):
+    def PlotStrainCounter(self, ax, skip = 1, alpha=0.8):
         """ Plots strain counter """
         for strain in range(self.NStrains):
             #ax.plot(self.timelineRuns[0::skip], self.strainCounter[0::skip, strain], linestyle="-.", dashes=(3, 3), linewidth=0.4, alpha=0.6)
-            ax.plot(self.timelineRuns[0::skip], self.strainCounter[0::skip, strain], linestyle="-", linewidth=0.75, alpha=0.8)
+            ax.plot(self.timelineRuns[0::skip], self.strainCounter[0::skip, strain], linestyle="-", linewidth=0.75, alpha=alpha)
 
         return 
 
@@ -211,7 +212,8 @@ class MalariaStatistics():
         
         if ticks is None:
             im = ax.imshow(np.transpose(Z), origin='lower', aspect='auto',
-            extent=(np.min(x)-xStep/2, np.max(x)+xStep/2, np.min(y)-yStep/2, np.max(y)+yStep/2), vmin=0, vmax=max(Z), cmap='cividis' ) 
+            extent=(np.min(x)-xStep/2, np.max(x)+xStep/2, np.min(y)-yStep/2, np.max(y)+yStep/2), vmin=0, vmax=np.max(np.max(Z)), cmap='cividis' ) 
+            
         else:
             im = ax.imshow(np.transpose(Z), origin='lower', aspect='auto',
             extent=(np.min(x)-xStep/2, np.max(x)+xStep/2, np.min(y)-yStep/2, np.max(y)+yStep/2), vmin=ticks[0], vmax=ticks[-1], cmap='cividis' ) 
@@ -225,10 +227,11 @@ class MalariaStatistics():
     def Plot2DResidual(self, vary1, vary2):
         return
 
-    def PlotNiceAndSave(self, fig, ax, xlabel, ylabel, fileName):
-        ax.set_xlabel(xlabel)
-        ax.set_ylabel(ylabel)
-        #LF.format_axes(ax)
+    def PlotNiceAndSave(self, fig, ax, xlabel = None, ylabel = None, fileName = "temp"):
+        if xlabel is not None:
+            ax.set_xlabel(xlabel)
+        if ylabel is not None:
+            ax.set_ylabel(ylabel)
         fig.tight_layout(pad=0.1)
 
         figName = self.plotSavePath + fileName + ".pdf"

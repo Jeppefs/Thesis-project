@@ -3,15 +3,15 @@ import pandas as pandas
 from collections import OrderedDict
 import make_parameters as mp 
 
-func = "features"
+func = "simple"
 name = ""
 notes = ""
-SameyGamma = True
+SameyGamma = False
 
 def OptimalGamma(a, b = 1.0):
     return (2.0*a*b**2.0)**(1.0/3.0) - b
 
-##-------------------------------------------------------------------------------##
+##--------------------------------------------- ----------------------------------##
 def standard(name = "standard", notes = "Standard data for non-systematic tests"):
     
     folder = "data"

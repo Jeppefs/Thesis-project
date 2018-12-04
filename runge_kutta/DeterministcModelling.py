@@ -1,6 +1,7 @@
 import numpy as np 
 import matplotlib.pyplot as plt
 import matplotlib 
+import seaborn as sns
 import RungeKutta as RK
 import DifferentialSystems as DS
 from Latexifier import LatexifierFunctions as LF 
@@ -18,10 +19,9 @@ def PlotSimple(func, initial, param, legend, runs = 50000, xlabel = "", ylabel =
             ax.plot(q.times, q.savedValues[i,:], linewidth = 1.0) 
         else:
             ax.plot(q.times, q.savedValues[i,:], linewidth = 1.0, color = color[i])
-    ax.legend(legend)
+    ax.legend(legend, ncol=1)
     ax.set_xlabel(xlabel)
     ax.set_ylabel(ylabel)
-    LF.format_axes(ax)
     fig.tight_layout(pad = 0.1)
     fig.savefig("runge_kutta/plots/"+filename+".pdf", format="pdf")
     return
@@ -67,13 +67,13 @@ def ReplacementParameterRasta(filename="temp"):
     alphaList = np.array([0.6, 0.8, 0.95, 1.05])
     fig, ax = plt.subplots()
     for alpha in alphaList:
+        print(alpha)
         q.param[0] = alpha
         endingValues = q.ParameterSearch(paramIndex = 2, paramList = paramList, runs = 20000) 
         ax.plot(paramList, endingValues[1,:] + endingValues[2,:], linewidth=1.0)
     ax.legend([r"$\alpha=0.60$", r"$\alpha=0.80$", r"$\alpha=0.95$", r"$\alpha=1.05$"])
     ax.set_xlabel(r"$\gamma$")
     ax.set_ylabel("Proportion infected")
-    LF.format_axes(ax)
     fig.tight_layout(pad=0.1)
     fig.savefig("runge_kutta/plots/"+filename+".pdf", format="pdf")
     return
@@ -121,8 +121,9 @@ def ReplacementRastaScan():
     ax2.grid(False)
     ax2.set_xlabel(r"$\gamma$")
     ax2.set_ylabel(r"$\alpha$")
-    fig2.colorbar(im)
-    ax2.tick_params()
+    cbar = fig2.colorbar(im, ticks=[0.0, 0.05, 0.1, 0.15, 0.2, 0.25])
+    ax2.set_xticks([0.0, 0.25, 0.5, 0.75, 1.0])
+    ax2.set_yticks([0.5, 0.7, 0.9, 1.1])
     ax2.set_aspect('auto')
     fig2.tight_layout(pad = 0.1)
     fig2.savefig("runge_kutta/plots/replacement_gridInfected.pdf", format="pdf")
@@ -143,19 +144,28 @@ def ReplacementRastaScan():
 
 """Latexify. fig_width is 12.65076*0.99 for full page fig and 6.19893 for sub plots"""
 standard_width = 6.19893
-full_width = 12.65076
+full_width = 12.64896
+
 
 plt.style.use("seaborn")
-LF.Latexify(fig_width = standard_width, label_size = [1.0, 1.0])
+sns.set_color_codes()
+p = sns.color_palette()
+sns.set_palette(palette=p)
+
+#sns.palplot(p)
+LF.Latexify(fig_width = 6.19893, label_size = [1.0, 1.0])
 matplotlib.rc('font',**{'family':'serif', 'serif':['Computer Modern Roman']})
 matplotlib.rc('text', usetex=True)
+#matplotlib.rcParams.update({'axes.spines.left': False, 'axes.spines.bottom': False})
+#matplotlib.rcParams['axes.prop_cycle'] = cycler(p)
+
 
 """Epedimic Models"""
-#PlotSimple(DS.SIR, initial = [0.99, 0.01, 0.0], param = [0.95, 1.0], legend = ["S", "I", "R"], runs = 4000, xlabel = "Time", ylabel = "Proportion", filename="SIR1")
-#PlotSimple(DS.SIR, initial = [0.99, 0.01, 0.0], param = [1.5, 1.0], legend = ["S", "I", "R"], runs = 4000, xlabel = "Time", ylabel = "Proportion", filename="SIR2")
-#PlotSimple(DS.SI, initial = [0.99, 0.01], param = [0.5, 1.0], legend = ["S", "I"], runs = 1000, xlabel = "Time", ylabel = "Proportion", filename="SI1")
-#PlotSimple(DS.SI, initial = [0.99, 0.01], param = [1.5, 1.0], legend = ["S", "I"], runs = 1000, xlabel = "Time", ylabel = "Proportion", filename="SI2")
-#PlotSimple(DS.SIR_vital, initial = [0.9, 0.1, 0.0], param = [0.95, 1.0, 0.5], legend = ["S", "I", "R"], runs = 4000, xlabel = "Time", ylabel = "Proportion", filename="SIR_vital1")
+PlotSimple(DS.SIR, initial = [0.99, 0.01, 0.0], param = [0.95, 1.0], legend = ["S", "I", "R"], runs = 4000, xlabel = "Time", ylabel = "Proportion", filename="SIR1")
+PlotSimple(DS.SIR, initial = [0.99, 0.01, 0.0], param = [1.25, 1.0], legend = ["S", "I", "R"], runs = 4000, xlabel = "Time", ylabel = "Proportion", filename="SIR2")
+#PlotSimple(DS.SI, initial = [0.99, 0.01], param = [0.5, 1.0], legend = ["S", "I"], runs = 1000, xlabel = "Time", ylabel = "Proportion", filename="SIS1")
+#PlotSimple(DS.SI, initial = [0.99, 0.01], param = [1.5, 1.0], legend = ["S", "I"], runs = 1000, xlabel = "Time", ylabel = "Proportion", filename="SIS2")
+#PlotSimple(DS.SIR_vital, initial = [0.9, 0.1, 0.0], param = [1.5, 1.0, 0.5], legend = ["S", "I", "R"], runs = 4000, xlabel = "Time", ylabel = "Proportion", filename="SIR_vital1")
 #PlotSimple(DS.SIR_vital, initial = [0.9, 0.1, 0.0], param = [1.5, 1.0, 0.1], legend = ["S", "I", "R"], runs = 4000, xlabel = "Time", ylabel = "Proportion", filename="SIR_vital2")
 #SIR_vitalRastaScan()
 
@@ -164,17 +174,23 @@ matplotlib.rc('text', usetex=True)
 # xlabel="Iterations", ylabel="Proportion infected", filename= "Ross1")
 
 """Simple function and plotting"""
-#PlotSimple(func = DS.SimpleInfection, initial = [0.99, 0.01, 0.0, 0.0], param = [0.9, 1.0], legend = ["$S$", "$I$", "$I_R$", "$S_R$"], runs=10000, xlabel="Iteration", ylabel="Proportion")
-#PlotSimple(func = DS.SimpleInfectionSteadyState, initial = [0.99, 0.01], param = [1.1, 1.0], legend = ["$I_R$", "$S_R$"], runs=10000, xlabel="Iteration", ylabel="Proportion", color = ['g','r'])
+#PlotSimple(func = DS.SimpleInfection, initial = [0.99, 0.01, 0.0, 0.0], param = [0.9, 1.0], legend = ["$S$", "$I$", "$I_R$", "$S_R$"], runs=10000,
+# xlabel="Time", ylabel="Proportion", color = [p[0], p[3], p[1], p[2]], filename="simpleR_0_9")
+#PlotSimple(func = DS.SimpleInfection, initial = [0.99, 0.01, 0.0, 0.0], param = [1.1, 1.0], legend = ["$S$", "$I$", "$I_R$", "$S_R$"], runs=10000,
+# xlabel="Time", ylabel="Proportion", color=[p[0], p[3], p[1], p[2]], filename="simpleR_1_1")
+#PlotSimple(func = DS.SimpleInfectionSteadyState, initial = [0.99, 0.01], param = [0.9, 1.0], legend = ["$I_R$", "$S_R$"], runs=10000,
+# xlabel="Time", ylabel="Proportion", color = [p[1], p[2]], filename="simpleSteadyR_0_9")
+#PlotSimple(func = DS.SimpleInfectionSteadyState, initial = [0.99, 0.01], param = [1.1, 1.0], legend = ["$I_R$", "$S_R$"], runs=10000,
+# xlabel="Time", ylabel="Proportion", color = [p[1], p[2]], filename="simpleSteadyR_1_1")
 
 """Replacement"""
 #PlotSimple(DS.Replacement, initial = [0.99, 0.01, 0.0, 0.0], param = [0.95, 1.0, 0.01], legend = ["S","I","$I_R$", "$S_R$"], runs=10000,
-#  xlabel="Iteration", ylabel="Proportion", filename="replacement_deterministic_0_01")
+#  xlabel="Time", ylabel="Proportion", color = [p[0], p[3], p[1], p[2]], filename="replacement_deterministic_0_01")
 #PlotSimple(DS.Replacement, initial = [0.99, 0.01, 0.0, 0.0], param = [0.95, 1.0, 0.1], legend = ["S","I","$I_R$", "$S_R$"], runs=10000,
-# xlabel="Iteration", ylabel="Proportion", filename="replacement_deterministic_0_1")
+# xlabel="Time", ylabel="Proportion", color = [p[0], p[3], p[1], p[2]], filename="replacement_deterministic_0_1")
 #ReplacementParameterRasta(filename="replacement_deterministic_gamma")
 #LF.Latexify(fig_width=full_width*0.8)
-ReplacementRastaScan()
+#ReplacementRastaScan()
 
 
 

@@ -4,7 +4,9 @@ import matplotlib.pyplot as plt
 import newPlotting as PN
 import oldPlotting as PO
 import pandas as pandas
+import seaborn as sns
 import malaria_statistics as MS
+import cycler
 from Latexifier import LatexifierFunctions as LF
 
 
@@ -15,13 +17,19 @@ Use 1.0cm for both margins (though should be corrected, but I do not have the in
 """
 
 plt.style.use("seaborn")
-LF.Latexify(fig_width = 6.19893, label_size=[1.0, 1.0])
+sns.set_color_codes()
+sns.set_palette(palette='deep')
+#p = sns.color_palette()
+#sns.palplot(p)
+LF.Latexify(fig_width = 6.19893, label_size = [1.0, 1.0])
 matplotlib.rc('font',**{'family':'serif', 'serif':['Computer Modern Roman']})
 matplotlib.rc('text', usetex=True)
-
+#matplotlib.rcParams.update({'axes.spines.left': False, 'axes.spines.bottom': False})
+#matplotlib.rcParams['axes.prop_cycle'] = cycler(p)
 
 print("Plotting started")
-PN.mutationTimeSeries()
+#PN.mutation2D()
+PO.features()
 print("Congrats! All done!")
 plt.show()
 

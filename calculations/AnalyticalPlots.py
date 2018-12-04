@@ -1,6 +1,7 @@
 import numpy as np
+import matplotlib
 import matplotlib.pyplot as plt
-
+import seaborn as sns
 from Latexifier import LatexifierFunctions as LF 
 
 def OptimalGamma(a):
@@ -12,7 +13,14 @@ def GammaDeath(a):
 
 alphas = np.arange(0.5,2.0,0.01)
 
-LF.Latexify(fig_width=6.19893,label_size = [1.05, 1.05])
+sns.set_color_codes()
+sns.set_palette(palette='deep')
+p = sns.color_palette()
+plt.style.use("seaborn")
+LF.Latexify(fig_width = 6.19893, label_size = [1.0, 1.0])
+matplotlib.rc('font',**{'family':'serif', 'serif':['Computer Modern Roman']})
+matplotlib.rc('text', usetex=True)
+matplotlib.rcParams.update({'axes.spines.left': False, 'axes.spines.bottom': False})
 
 fig1, ax1 = plt.subplots()
 fig2, ax2 = plt.subplots()
@@ -24,8 +32,6 @@ ax2.set_xlabel(r"$\alpha$")
 ax2.set_ylabel(r"$\gamma$")
 fig1.tight_layout(pad=0.1)
 fig2.tight_layout(pad=0.1)
-LF.format_axes(ax1)
-LF.format_axes(ax2)
 fig1.savefig("replacement_optimal.pdf", format="pdf")
 fig2.savefig("replacement_death.pdf", format="pdf")
 

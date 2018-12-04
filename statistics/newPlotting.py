@@ -60,7 +60,7 @@ def mutation():
     ax3.set_xticks([0, 5, 10, 15, 20])
     ax3.set_yticks([0, 5, 10, 15, 20])
     q.PlotNiceAndSave(fig1, ax1, "Initial strains", ylabel = "Extinction time (gen)", fileName = "mutation_extinctionTime")
-    q.PlotNiceAndSave(fig2, ax2, "Initial strains", ylabel = "Mean infected", fileName = "mutation_mean")
+    q.PlotNiceAndSave(fig2, ax2, "Initial strains", ylabel = "Proportion infected", fileName = "mutation_mean")
     q.PlotNiceAndSave(fig3, ax3, "Initial strains", ylabel = "Number of end strains", fileName = "mutation_strains")
     
     return
@@ -69,25 +69,41 @@ def mutation2D():
     q = MS.MalariaStatistics("mutation2D")
     mus = np.sort(q.parameters["MutationSpeed"].unique())
 
-    for mu in mus:
-        q = MS.MalariaStatistics("mutation2D")
-        mask = (q.parameters["MutationSpeed"][:] == mu).values
-        q.ApplyMask(mask)
+    #for mu in mus:
+    #    q = MS.MalariaStatistics("mutation2D")
+    #    mask = (q.parameters["MutationSpeed"][:] == mu).values
+    #    q.ApplyMask(mask)
+#
+    #    fig, ax = plt.subplots()
+    #    q.Plot2D(fig, ax, "MaxAntigenValue", "InfectionSpeed", "run", ticks = [0,500,1000,1500,2000])
+    #    ax.grid(False)
+    #    ax.set_xticks([1,5,10,15,20,25])
+    #    q.PlotNiceAndSave(fig, ax, "Strains", r"$\alpha$", "mutation2D_extinctionTime" + "{:.0E}".format(mu))
+#
+    #    fig, ax = plt.subplots()
+    #    q.Plot2D(fig, ax, "MaxAntigenValue", "InfectionSpeed", "mean", ticks = [0,0.1,0.2,0.3,0.4,0.5])
+    #    ax.grid(False)
+    #    ax.set_xticks([1,5,10,15,20,25])
+    #    q.PlotNiceAndSave(fig, ax, "Strains", r"$\alpha$", "mutation2D_mean" + "{:.0E}".format(mu))
+#
+    #    """Find out where extinction time is at 2000"""
+    #    print(mu, np.min(q.parameters.loc[q.dataEnd["run"]>1980, "InfectionSpeed"]))
 
-        fig, ax = plt.subplots()
-        q.Plot2D(fig, ax, "MaxAntigenValue", "InfectionSpeed", "run", ticks = [0,500,1000,1500,2000])
-        ax.grid(False)
-        ax.set_xticks([1,5,10,15,20,25])
-        q.PlotNiceAndSave(fig, ax, "Strains", r"$\alpha$", "mutation2D_extinctionTime" + "{:.0E}".format(mu))
+    q1 = MS.MalariaStatistics("features2D")
+    q2 = MS.MalariaStatistics("mutation2D")
+    mask = (q2.parameters["MutationSpeed"][:] == mus[1]).values
+    q2.ApplyMask(mask) 
+    qDiff = MS.MalariaStatistics("mutation2D")
+    mask = (qDiff.parameters["MutationSpeed"][:] == mus[0]).values
+    qDiff.ApplyMask(mask) 
 
-        fig, ax = plt.subplots()
-        q.Plot2D(fig, ax, "MaxAntigenValue", "InfectionSpeed", "mean", ticks = [0,0.1,0.2,0.3,0.4,0.5])
-        ax.grid(False)
-        ax.set_xticks([1,5,10,15,20,25])
-        q.PlotNiceAndSave(fig, ax, "Strains", r"$\alpha$", "mutation2D_mean" + "{:.0E}".format(mu))
+    qDiff.dataEnd.loc[:, "mean"] = q2.dataEnd.loc[:, "mean"].values - q1.dataEnd.loc[:, "mean"].values
 
-        """Find out where extinction time is at 2000"""
-        print(mu, np.min(q.parameters.loc[q.dataEnd["run"]>1980, "InfectionSpeed"]))
+    fig, ax = plt.subplots()
+    qDiff.Plot2D(fig, ax, "MaxAntigenValue", "InfectionSpeed", "mean", ticks = [0,0.05,0.1,0.15,0.2])
+    ax.grid(False)
+    ax.set_xticks([1,5,10,15,20,25])
+    qDiff.PlotNiceAndSave(fig, ax, "Strains", r"$\alpha$", "mutation2D_diff1")
 
     return
 
