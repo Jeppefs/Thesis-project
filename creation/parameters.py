@@ -3,10 +3,11 @@ import pandas as pandas
 from collections import OrderedDict
 import make_parameters as mp 
 
-func = "simple"
+func = "crossSwitchingTime"
 name = ""
 notes = ""
-SameyGamma = False
+SameyGamma = True
+b = 2/3
 
 def OptimalGamma(a, b = 1.0):
     return (2.0*a*b**2.0)**(1.0/3.0) - b
@@ -193,9 +194,36 @@ def crossSwitchingTime(name = "crossSwitchingTime", notes = "cross and cross big
     
     parameters["InfectionSpeed"] = np.arange(0.4, 0.5+0.000001, 0.01)
     parameters["MutationSpeed"] = np.array([10**-4])
-    settings["Runs"] = [200000000] 
+    settings["Runs"] = [500000000] 
+    settings["Repeat"] = [10]
+    parameters["SpecificStrains"] = ["cross", "crossBig"]
+
+    return folder, name, parameters, settings, notes
+
+def crossThree(name = "crossThree", notes = "The system with all the combinations. "):
+    folder, name, parameters, settings, notes = simple(name = name, notes = notes)
+    
+    parameters["InfectionSpeed"] = np.arange(0.3, 0.5+0.000001, 0.01)
+    parameters["MutationSpeed"] = np.array([10**-4])
+    parameters["NAntigens"] = np.array([3])
+    parameters["MaxAntigenValue"] = np.array([5])
+
+    settings["Runs"] = [50000000] 
     settings["Repeat"] = [5]
-    parameters["SpecificStrains"] = ["cross", "crossBig", "odd"]
+    
+
+    parameters["SpecificStrains"] = ["all"]
+
+    return folder, name, parameters, settings, notes
+
+def crossNonCrossLowReplacement(name = "crossNonCrossLowReplacement", notes = "Simulation with and without cross immunity but with 1/4 of optimal replacement"):
+    folder, name, parameters, settings, notes = simple(name = name, notes = notes)
+
+    parameters["InfectionSpeed"] = np.arange(0.35, 0.6+0.000001, 0.01)
+    parameters["MutationSpeed"] = np.array([10**-4])
+    parameters["SpecificStrains"] = ["cross"]
+
+    settings["ShouldSaveDataWhileRunning"] = ["True"] 
 
     return folder, name, parameters, settings, notes
 
@@ -205,8 +233,9 @@ mp.CreateParametersAndSettings(eval(func), name, notes)
 if SameyGamma == True:
     q = pandas.pandas.read_csv("data/" + func + "/parameters.csv")
     alphas = q["InfectionSpeed"].unique()
-    gammas = OptimalGamma(a = alphas, b = 1)
+    gammas = OptimalGamma(a = alphas, b = b) 
 
-    q.loc[:, ("ReplacementSpeed")] = OptimalGamma(q.loc[:, ("InfectionSpeed")], b = 1)
+    q.loc[:, ("ReplacementSpeed")] = OptimalGamma(q.loc[:, ("InfectionSpeed")], b = b) 
 
     q.to_csv("data/" + func + "/parameters.csv", index=False)
+

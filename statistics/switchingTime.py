@@ -69,7 +69,7 @@ def getSwitchTime(pairs, strainCounter):
             print("Start and end not equal!", start, end)
         switch_time = np.array(end) - np.array(start)
     #print(start, end)
-    print(state_counter[0]/(sum(state_counter)))
+    #print(state_counter[0]/(sum(state_counter)))
     return switch_time, state_counter[0]/(sum(state_counter))
 
 def getAllSwitchingTimes(name, strain_name, pairs):
@@ -81,6 +81,8 @@ def getAllSwitchingTimes(name, strain_name, pairs):
     switching_times_means = []
     switching_times_errors = []
     time_in_shared_mean = []
+    time_in_shared_errors = []
+    switch_time_lengths = []
 
     for infection_rate in infection_rates:
         switch_time = np.array([])
@@ -96,23 +98,31 @@ def getAllSwitchingTimes(name, strain_name, pairs):
             #print(switch_time)
             #fig, ax = plt.subplots()
             #q.PlotStrainCounter(ax, skip = 10)
-
+        
         switch_time_mean = np.mean(switch_time)
         switch_time_variance = np.var(switch_time)
 
         time_in_shared_mean = np.append(time_in_shared_mean, np.mean(time_in_shared))
+        time_in_shared_errors = np.append(time_in_shared_errors, np.sqrt(np.var(time_in_shared)/len(time_in_shared)))
 
         switching_times_means.append(switch_time_mean)
         switching_times_errors.append(np.sqrt(switch_time_variance/len(switch_time)))
 
-        print(infection_rate, switch_time)
+        switch_time_lengths.append(len(switch_time))
+
+        print(infection_rate, "Number of data points:", len(switch_time))
+        print(infection_rate, "Switch times:", switch_time)
         print(infection_rate, "mean", switch_time_mean)
         print(infection_rate, "error:", np.sqrt(switch_time_variance/len(switch_time)))
 
-    return switching_times_means, switching_times_errors, infection_rates, time_in_shared_mean
 
-switching_times_means, switching_times_errors, infection_rates, time_in_shared = getAllSwitchingTimes("crossSwitchingTime", "cross", [[0,2], [1,3]])
-switching_times_means_big, switching_times_errors_big, infection_rates_big, time_in_shared_big = getAllSwitchingTimes("crossSwitchingTime", "crossBig", [[0,2,4], [1,3,5]])
+    return switching_times_means, switching_times_errors, infection_rates, time_in_shared_mean, time_in_shared_errors, switch_time_lengths
+
+switching_times_means, switching_times_errors, infection_rates, time_in_shared, time_in_shared_errors, switch_time_lengths = getAllSwitchingTimes("crossSwitchingTime", "cross", [[0,2], [1,3]])
+switching_times_means_big, switching_times_errors_big, infection_rates_big, time_in_shared_big, time_in_shared_big_errors, switch_time_lengths_big = getAllSwitchingTimes("crossSwitchingTime", "crossBig", [[0,2,4], [1,3,5]])
+
+print(switch_time_lengths)
+print(switch_time_lengths_big)
 
 plt.style.use("seaborn")
 LF.Latexify(fig_width = 6.19893, label_size=[1.0, 1.0])
@@ -120,10 +130,11 @@ matplotlib.rc('font',**{'family':'serif', 'serif':['Computer Modern Roman']})
 matplotlib.rc('text', usetex=True)
 
 fig, ax = plt.subplots()
-ax.errorbar(infection_rates, switching_times_means, switching_times_errors, fmt='-o', markersize=5, linewidth=1.0, elinewidth=0.75, capssize=1.0, zorder=1)
-ax.errorbar(infection_rates_big, switching_times_means_big, switching_times_errors_big, fmt='-o', markersize=5, linewidth=1.0, elinewidth=0.75, capsize=1.0, zorder=1)
+ax.errorbar(infection_rates, switching_times_means, switching_times_errors, fmt='-o', markersize=3, linewidth=0.5, elinewidth=1.0, zorder=1)
+ax.errorbar(infection_rates_big, switching_times_means_big, switching_times_errors_big, fmt='-o', markersize=3, linewidth=0.5, elinewidth=1.0, zorder=1)
 
 ax.set_xticks([0.4, 0.42, 0.44, 0.46, 0.48, 0.5])
+ax.set_yticks([0, 10000, 20000, 30000, 40000, 50000])
 ax.legend(["Cross", "Cross big"])
 ax.set_xlabel(r"$\alpha$")
 ax.set_ylabel("Switching time (gen)")
@@ -134,8 +145,9 @@ figName = fileName + ".pdf"
 fig.savefig(figName + "", format="pdf")
 
 fig, ax = plt.subplots()
-ax.plot(infection_rates, time_in_shared, '-o', markersize=5, linewidth=1.0, zorder=1)
-ax.plot(infection_rates_big, time_in_shared_big, '-o', markersize=5, linewidth=1.0, zorder=1)
+
+ax.errorbar(infection_rates, time_in_shared, time_in_shared_errors, fmt='-o', markersize=3, linewidth=0.5, elinewidth=1.0, zorder=1)
+ax.errorbar(infection_rates_big, time_in_shared_big, time_in_shared_big_errors, fmt='-o', markersize=3, linewidth=0.5, elinewidth=1.0, zorder=1)
 
 ax.set_xticks([0.4, 0.42, 0.44, 0.46, 0.48, 0.5])
 ax.set_yticks([0.0, 0.2, 0.4, 0.6, 0.8, 1.0])

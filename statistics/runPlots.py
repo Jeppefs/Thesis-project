@@ -18,7 +18,7 @@ Use 1.0cm for both margins (though should be corrected, but I do not have the in
 
 plt.style.use("seaborn")
 sns.set_color_codes()
-sns.set_palette(palette='deep')
+#sns.set_palette(palette='deep')
 #p = sns.color_palette()
 #sns.palplot(p)
 LF.Latexify(fig_width = 6.19893, label_size = [1.0, 1.0])
@@ -28,8 +28,8 @@ matplotlib.rc('text', usetex=True)
 #matplotlib.rcParams['axes.prop_cycle'] = cycler(p)
 
 print("Plotting started")
-#PN.mutation2D()
-PO.features()
+PN.crossNonCross()
+#PO.features()
 print("Congrats! All done!")
 plt.show()
 

@@ -10,7 +10,7 @@ import (
 )
 
 // We define a set of global constant
-const path = "data/" + "features/"
+const path = "data/" + "crossSwitchingTime/"
 
 // main
 func main() {

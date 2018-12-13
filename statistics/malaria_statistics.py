@@ -175,7 +175,7 @@ class MalariaStatistics():
         return
 
     def PlotAvgResistances(self, ax, vary):
-        ax.plot(self.parameters[vary], self.dataEnd["avgResistances"], '-o', markersize=4, linewidth=0.5, zorder=1)
+        ax.plot(self.parameters[vary], self.dataEnd["avgResistances"], '-o', markersize=3.0, linewidth=0.5, zorder=1)
         return
 
     def PlotTimeline(self, ax, skip = 1):

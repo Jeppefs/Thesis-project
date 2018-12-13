@@ -21,8 +21,8 @@ def SIR_vital(p, v, t):
 def SI(param, values, t):
     valuesRate = np.zeros(len(values))
 
-    valuesRate[0] = - param[0] * values[0] + param[1] * values[1]
-    valuesRate[1] = param[0] * values[0] - param[1] * values[1]
+    valuesRate[0] = - param[0] * values[0] * values[1] + param[1] * values[1]
+    valuesRate[1] = param[0] * values[0] * values[1] - param[1] * values[1]
 
     return valuesRate
 

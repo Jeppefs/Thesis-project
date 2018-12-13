@@ -148,14 +148,14 @@ def features():
     ax3.set_xticks([0, 5, 10, 15, 20, 25])     
     ax3.set_yticks([0, 5, 10, 15, 20, 25])
     ax4.set_xticks([0, 5, 10, 15, 20, 25])
-    ax3.set_yticks([0.0, 0.1, 0.2, 0.3, 0.4])    
+    ax4.set_yticks([0.0, 0.1, 0.2, 0.3, 0.4])    
     ax1.legend([r"$\alpha$=0.6",r"$\alpha$=0.8",r"$\alpha$=0.95",r"$\alpha$=1.05"], ncol=1)
-    ax2.legend([r"$\alpha$=0.6",r"$\alpha$=0.8",r"$\alpha$=0.95",r"$\alpha$=1.05"], ncol=2)
+    ax2.legend([r"$\alpha$=0.6",r"$\alpha$=0.8",r"$\alpha$=0.95",r"$\alpha$=1.05"], ncol=2, handletextpad=0.1, columnspacing=0.1)
     ax3.legend([r"$\alpha$=0.6",r"$\alpha$=0.8",r"$\alpha$=0.95",r"$\alpha$=1.05"], ncol=1)
     ax4.legend([r"$\alpha$=0.6",r"$\alpha$=0.8",r"$\alpha$=0.95",r"$\alpha$=1.05"], ncol=2)
     q.PlotNiceAndSave(fig1, ax1, "Strains", ylabel = "Extinction time (gen)", fileName = "features_extinctionTime")
     q.PlotNiceAndSave(fig2, ax2, "Strains", ylabel = "Proportion infected", fileName = "features_mean")
-    q.PlotNiceAndSave(fig3, ax3, "Strains", ylabel = "End infected", fileName = "features_endStrains")
+    q.PlotNiceAndSave(fig3, ax3, "Strains", ylabel = "End strains", fileName = "features_endStrains")
     q.PlotNiceAndSave(fig4, ax4, "Strains", ylabel = "Avg. resistances per strain", fileName = "features_resistances")
 
     """Time-series"""

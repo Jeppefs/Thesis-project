@@ -149,29 +149,28 @@ full_width = 12.64896
 
 plt.style.use("seaborn")
 sns.set_color_codes()
-p = sns.color_palette()
-sns.set_palette(palette=p)
-
-#sns.palplot(p)
-LF.Latexify(fig_width = 6.19893, label_size = [1.0, 1.0])
+sns.set_palette(palette='deep')
+LF.Latexify(fig_width = standard_width, label_size = [1.0, 1.0])
 matplotlib.rc('font',**{'family':'serif', 'serif':['Computer Modern Roman']})
 matplotlib.rc('text', usetex=True)
-#matplotlib.rcParams.update({'axes.spines.left': False, 'axes.spines.bottom': False})
-#matplotlib.rcParams['axes.prop_cycle'] = cycler(p)
+
 
 
 """Epedimic Models"""
-PlotSimple(DS.SIR, initial = [0.99, 0.01, 0.0], param = [0.95, 1.0], legend = ["S", "I", "R"], runs = 4000, xlabel = "Time", ylabel = "Proportion", filename="SIR1")
-PlotSimple(DS.SIR, initial = [0.99, 0.01, 0.0], param = [1.25, 1.0], legend = ["S", "I", "R"], runs = 4000, xlabel = "Time", ylabel = "Proportion", filename="SIR2")
-#PlotSimple(DS.SI, initial = [0.99, 0.01], param = [0.5, 1.0], legend = ["S", "I"], runs = 1000, xlabel = "Time", ylabel = "Proportion", filename="SIS1")
-#PlotSimple(DS.SI, initial = [0.99, 0.01], param = [1.5, 1.0], legend = ["S", "I"], runs = 1000, xlabel = "Time", ylabel = "Proportion", filename="SIS2")
+#PlotSimple(DS.SIR, initial = [0.99, 0.01, 0.0], param = [0.95, 1.0], legend = ["S", "I", "R"], runs = 4000, xlabel = "Time", ylabel = "Proportion", filename="SIR1")
+#PlotSimple(DS.SIR, initial = [0.99, 0.01, 0.0], param = [1.25, 1.0], legend = ["S", "I", "R"], runs = 4000, xlabel = "Time", ylabel = "Proportion", filename="SIR2")
+#PlotSimple(DS.SI, initial = [0.5, 0.5], param = [0.95, 1.0], legend = ["S", "I"], runs = 1000, xlabel = "Time", ylabel = "Proportion", filename="SIS1")
+#PlotSimple(DS.SI, initial = [0.9, 0.1], param = [1.5, 1.0], legend = ["S", "I"], runs = 2000, xlabel = "Time", ylabel = "Proportion", filename="SIS2")
 #PlotSimple(DS.SIR_vital, initial = [0.9, 0.1, 0.0], param = [1.5, 1.0, 0.5], legend = ["S", "I", "R"], runs = 4000, xlabel = "Time", ylabel = "Proportion", filename="SIR_vital1")
 #PlotSimple(DS.SIR_vital, initial = [0.9, 0.1, 0.0], param = [1.5, 1.0, 0.1], legend = ["S", "I", "R"], runs = 4000, xlabel = "Time", ylabel = "Proportion", filename="SIR_vital2")
 #SIR_vitalRastaScan()
 
 """Ross"""
 #PlotSimple(func = DS.Ross, initial = [0.1, 0.1], param = [0.05, 0.2, 2.0, 0.01, 0.5, 0.1], legend = ["$I_h$","$I_m$"], runs=100000,
-# xlabel="Iterations", ylabel="Proportion infected", filename= "Ross1")
+# xlabel="Time", ylabel="Proportion infected", filename= "Ross1")
+#PlotSimple(func = DS.Ross, initial = [0.1, 0.1], param = [0.1, 0.2, 2.0, 0.01, 0.5, 0.1], legend = ["$I_h$","$I_m$"], runs=100000,
+# xlabel="Time", ylabel="Proportion infected", filename= "Ross2")
+
 
 """Simple function and plotting"""
 #PlotSimple(func = DS.SimpleInfection, initial = [0.99, 0.01, 0.0, 0.0], param = [0.9, 1.0], legend = ["$S$", "$I$", "$I_R$", "$S_R$"], runs=10000,
