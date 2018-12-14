@@ -134,3 +134,10 @@ func (m *Malaria) MutateParasite(hostIndex int, replacedIndex int, newStrain int
 	m.StrainCounter[newStrain]++
 	return
 }
+
+// InjectVaccines : Give all hosts an antibody of given number
+func (m *Malaria) InjectVaccines(antibodyTarget int) {
+	for hostIndex := 0; hostIndex < m.NHosts; hostIndex++ {
+		m.Hosts[hostIndex].Antibodies[antibodyTarget] = true
+	}
+}

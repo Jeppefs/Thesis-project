@@ -336,3 +336,13 @@ func TestCountAverageResistances(t *testing.T) {
 	CheckIfEqual(t, "Is average resistances correct", CountAverageResistances(&m[1]), 0.1)
 
 }
+
+func TestInjectVaccines(t *testing.T) {
+	m := CreateMalariaStructsInSlice()
+
+	m[1].InjectVaccines(1)
+	for hostIndex := 0; hostIndex < m[1].NHosts; hostIndex++ {
+		CheckIfEqual(t, "Is antibody gained after vaccine injection", m[1].Hosts[hostIndex].Antibodies[1], true)
+		CheckIfEqual(t, "Is antibody not gained after vaccine injection", m[1].Hosts[hostIndex].Antibodies[0], false)
+	}
+}

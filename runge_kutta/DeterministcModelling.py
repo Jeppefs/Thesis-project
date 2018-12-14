@@ -78,6 +78,20 @@ def ReplacementParameterRasta(filename="temp"):
     fig.savefig("runge_kutta/plots/"+filename+".pdf", format="pdf")
     return
 
+def SIR_rasta(filename="temp"):
+    q = RK.RungeKutta(initialConditions = [0.99, 0.01, 0.0, 0.0], param = [0.0, 1.0], equation = DS.SIR, dt = 0.01)
+    paramList = np.arange(0, 10+0.00001, 0.01)
+    fig, ax = plt.subplots()
+
+    endingValues = q.ParameterSearch(paramIndex = 0, paramList = paramList, runs = 20000) 
+    ax.plot(paramList, endingValues[2,:], linewidth=1.0)
+
+    ax.set_xlabel("$R_0$")
+    ax.set_ylabel("Proportion recovered")
+    fig.tight_layout(pad=0.1)
+    fig.savefig("runge_kutta/plots/"+filename+".pdf", format="pdf")
+    return
+
 def ReplacementRastaScan():
     
     alphaStep = 0.01 #0.01
@@ -154,7 +168,8 @@ LF.Latexify(fig_width = standard_width, label_size = [1.0, 1.0])
 matplotlib.rc('font',**{'family':'serif', 'serif':['Computer Modern Roman']})
 matplotlib.rc('text', usetex=True)
 
-
+"""Defence plots"""
+SIR_rasta(filename="SIR_rasta")
 
 """Epedimic Models"""
 #PlotSimple(DS.SIR, initial = [0.99, 0.01, 0.0], param = [0.95, 1.0], legend = ["S", "I", "R"], runs = 4000, xlabel = "Time", ylabel = "Proportion", filename="SIR1")
@@ -190,9 +205,6 @@ matplotlib.rc('text', usetex=True)
 #ReplacementParameterRasta(filename="replacement_deterministic_gamma")
 #LF.Latexify(fig_width=full_width*0.8)
 #ReplacementRastaScan()
-
-
-
 
 # a, b, m, r, c, \mu 
 

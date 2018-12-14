@@ -227,6 +227,8 @@ def crossNonCrossLowReplacement(name = "crossNonCrossLowReplacement", notes = "S
 
     return folder, name, parameters, settings, notes
 
+#def cross
+
 ##-------------------------------------------------------------------------------##
 mp.CreateParametersAndSettings(eval(func), name, notes)
 
