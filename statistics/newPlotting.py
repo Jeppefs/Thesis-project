@@ -171,6 +171,10 @@ def crossNonCross():
         x_ticks = [0.35, 0.4, 0.45, 0.5, 0.55, 0.6]   
 
         axes[2].set_yticks( np.arange(0, np.max(q.dataEnd["strains"].values) + 1) )
+        axes[0].set_yticks([0.0, 0.1, 0.2, 0.3, 0.4])
+        axes[1].set_yticks([0.0, 0.1, 0.2, 0.3, 0.4])
+        axes[2].set_yticks([0.0, 0.1, 0.2, 0.3, 0.4])
+        axes[3].set_yticks([0.0, 0.1, 0.2, 0.3, 0.4])
         for ax in axes:
             ax.legend(legend)
             ax.set_xticks(x_ticks)

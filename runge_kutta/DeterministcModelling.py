@@ -147,7 +147,9 @@ def ReplacementRastaScan():
     ax3.grid(False)
     ax3.set_xlabel(r"$\gamma$")
     ax3.set_ylabel(r"$\alpha$")
-    fig3.colorbar(im)
+    ax3.set_xticks([0.0, 0.25, 0.5, 0.75, 1.0])
+    ax3.set_yticks([0.5, 0.7, 0.9, 1.1])
+    fig3.colorbar(im, ticks=[0.0, 0.2, 0.4, 0.6, 0.8, 1.0])
     ax3.tick_params()
     ax3.set_aspect('auto')
     fig3.tight_layout(pad = 0.1) 
@@ -169,7 +171,7 @@ matplotlib.rc('font',**{'family':'serif', 'serif':['Computer Modern Roman']})
 matplotlib.rc('text', usetex=True)
 
 """Defence plots"""
-SIR_rasta(filename="SIR_rasta")
+#SIR_rasta(filename="SIR_rasta")
 
 """Epedimic Models"""
 #PlotSimple(DS.SIR, initial = [0.99, 0.01, 0.0], param = [0.95, 1.0], legend = ["S", "I", "R"], runs = 4000, xlabel = "Time", ylabel = "Proportion", filename="SIR1")
@@ -204,7 +206,7 @@ SIR_rasta(filename="SIR_rasta")
 # xlabel="Time", ylabel="Proportion", color = [p[0], p[3], p[1], p[2]], filename="replacement_deterministic_0_1")
 #ReplacementParameterRasta(filename="replacement_deterministic_gamma")
 #LF.Latexify(fig_width=full_width*0.8)
-#ReplacementRastaScan()
+ReplacementRastaScan()
 
 # a, b, m, r, c, \mu 
 

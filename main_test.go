@@ -346,3 +346,10 @@ func TestInjectVaccines(t *testing.T) {
 		CheckIfEqual(t, "Is antibody not gained after vaccine injection", m[1].Hosts[hostIndex].Antibodies[0], false)
 	}
 }
+
+func TestGetMaxAndIndexIntSlice(t *testing.T) {
+	s := []int{1, 2, 4, 7, 3, 1, 3, 6}
+	value, index := GetMaxAndIndexIntSlice(s)
+	CheckIfEqual(t, "value", value, 7)
+	CheckIfEqual(t, "index", index, 3)
+}

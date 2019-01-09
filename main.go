@@ -10,7 +10,7 @@ import (
 )
 
 // We define a set of global constant
-const path = "data/" + "crossSwitchingTime/"
+const path = "data/" + "crossNonCrossInjectionFast/"
 
 // main
 func main() {
@@ -125,7 +125,7 @@ func StartModel(param Parameters, settings ModelSettings, dataFileName string) (
 // RunBurnIn : Runs the model N times given by the burnin settings. None of the data will be saved.
 func (m *Malaria) RunBurnIn(param Parameters, burnIn int) {
 	for run := 0; run < burnIn; run++ {
-		m.EventHappens(param)
+		m.EventHappens(param, run)
 		if m.NInfectedHosts == 0 {
 			fmt.Println("Malaria is dead in", burnIn, "runs. This Happened in burnin")
 			return
@@ -144,7 +144,7 @@ func (m *Malaria) RunModel(param Parameters, setting ModelSettings, dataFileName
 
 	for run = 0; run < setting.Runs; run++ {
 
-		m.EventHappens(param)
+		m.EventHappens(param, run)
 		if run%setting.SkipSaving == 0 {
 			SaveTimeline(file, &run, &m.NInfectedHosts)
 			SaveStrainCounter(file_strainCounter, &m.StrainCounter)

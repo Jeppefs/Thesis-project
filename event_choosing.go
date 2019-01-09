@@ -1,9 +1,29 @@
 package main
 
-import "math/rand"
+import (
+	"fmt"
+	"math/rand"
+)
 
 // EventHappens : Choose and event and make it happen.
-func (m *Malaria) EventHappens(param Parameters) {
+func (m *Malaria) EventHappens(param Parameters, run int) {
+
+	// Decide if vaccines should be put into the system. Simply every 100 generation
+
+	if run%(10*m.NHosts) == 0 {
+		if run != 0 {
+			_, index := GetMaxAndIndexIntSlice(m.StrainCounter)
+			for _, antibodyForVaccine := range m.Strains[index] {
+				//randomAntibodyForVaccine := rand.Intn(m.MaxAntigenValue)
+				//m.InjectVaccines(randomAntibodyForVaccine)
+				fmt.Println(run/m.NHosts, m.Strains[index], m.StrainCounter, int(antibodyForVaccine))
+				m.InjectVaccines(int(antibodyForVaccine) - 1)
+
+			}
+		}
+	}
+
+	// Choose event
 	event := ChooseEvent(m, param)
 	switch event {
 	case 0:

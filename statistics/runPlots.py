@@ -3,6 +3,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 import newPlotting as PN
 import oldPlotting as PO
+import DefencePlots as PD
 import pandas as pandas
 import seaborn as sns
 import malaria_statistics as MS
@@ -28,8 +29,9 @@ matplotlib.rc('text', usetex=True)
 #matplotlib.rcParams['axes.prop_cycle'] = cycler(p)
 
 print("Plotting started")
-PN.crossNonCross()
+#PN.crossNonCross()
 #PO.features()
+PD.crossInjectionTimeSeries()
 print("Congrats! All done!")
 plt.show()
 

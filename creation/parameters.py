@@ -3,11 +3,12 @@ import pandas as pandas
 from collections import OrderedDict
 import make_parameters as mp 
 
-func = "crossSwitchingTime"
+func = "crossNonCrossInjectionFast"
 name = ""
 notes = ""
 SameyGamma = True
 b = 2/3
+factor = 1.0
 
 def OptimalGamma(a, b = 1.0):
     return (2.0*a*b**2.0)**(1.0/3.0) - b
@@ -227,7 +228,58 @@ def crossNonCrossLowReplacement(name = "crossNonCrossLowReplacement", notes = "S
 
     return folder, name, parameters, settings, notes
 
-#def cross
+def crossNonCrossInjection(name = "crossNonCrossInjection", notes = "Simulation with and without cross immunity but with injections every hundred generation"):
+    folder, name, parameters, settings, notes = simple(name = name, notes = notes)
+
+    #parameters["InfectionSpeed"] = np.array([0.42, 0.43, 0.44, 0.45])
+    parameters["InfectionSpeed"] = np.arange(0.35, 0.6+0.000001, 0.01)
+    parameters["MutationSpeed"] = np.array([10**-4])
+    parameters["SpecificStrains"] = ["nonCross", "cross", "simple"]
+
+    settings["Repeat"] = [5]
+    settings["ShouldSaveDataWhileRunning"] = ["True"] 
+
+    return folder, name, parameters, settings, notes
+
+def crossNonCrossInjectionLow(name = "crossNonCrossInjectionLow", notes = "Simulation with and without cross immunity but with injections every hundred generation with 1/4 replacement"):
+    folder, name, parameters, settings, notes = simple(name = name, notes = notes)
+
+    #parameters["InfectionSpeed"] = np.array([0.42, 0.43, 0.44, 0.45])
+    parameters["InfectionSpeed"] = np.arange(0.35, 0.6+0.000001, 0.01)
+    parameters["MutationSpeed"] = np.array([10**-4])
+    parameters["SpecificStrains"] = ["nonCross", "cross", "simple"]
+
+    settings["Repeat"] = [5]
+    settings["ShouldSaveDataWhileRunning"] = ["True"] 
+
+    return folder, name, parameters, settings, notes
+
+def crossNonCrossLow(name = "crossNonCrossLow", notes = "Simulation with and without cross immunity with 1/4 replacement"):
+    folder, name, parameters, settings, notes = simple(name = name, notes = notes)
+
+    #parameters["InfectionSpeed"] = np.array([0.42, 0.43, 0.44, 0.45])
+    parameters["InfectionSpeed"] = np.arange(0.35, 0.6+0.000001, 0.01)
+    parameters["MutationSpeed"] = np.array([10**-4])
+    parameters["SpecificStrains"] = ["nonCross", "cross", "simple"]
+
+    settings["Repeat"] = [5]
+    settings["ShouldSaveDataWhileRunning"] = ["True"] 
+
+    return folder, name, parameters, settings, notes
+
+def crossNonCrossInjectionFast(name = "crossNonCrossInjectionFast", notes = "Simulation with and without cross immunity with vaccine injections at every 10'th generation."):
+    folder, name, parameters, settings, notes = simple(name = name, notes = notes)
+
+    #parameters["InfectionSpeed"] = np.array([0.42, 0.43, 0.44, 0.45])
+    parameters["InfectionSpeed"] = np.arange(0.35, 0.6+0.000001, 0.01)
+    parameters["MutationSpeed"] = np.array([10**-4])
+    parameters["SpecificStrains"] = ["nonCross", "cross", "simple"]
+
+    settings["Repeat"] = [5]
+    settings["ShouldSaveDataWhileRunning"] = ["True"] 
+
+    return folder, name, parameters, settings, notes
+
 
 ##-------------------------------------------------------------------------------##
 mp.CreateParametersAndSettings(eval(func), name, notes)
@@ -235,9 +287,9 @@ mp.CreateParametersAndSettings(eval(func), name, notes)
 if SameyGamma == True:
     q = pandas.pandas.read_csv("data/" + func + "/parameters.csv")
     alphas = q["InfectionSpeed"].unique()
-    gammas = OptimalGamma(a = alphas, b = b) 
+    gammas = OptimalGamma(a = alphas, b = b) * factor
 
-    q.loc[:, ("ReplacementSpeed")] = OptimalGamma(q.loc[:, ("InfectionSpeed")], b = b) 
+    q.loc[:, ("ReplacementSpeed")] = OptimalGamma(q.loc[:, ("InfectionSpeed")], b = b) * factor
 
     q.to_csv("data/" + func + "/parameters.csv", index=False)
 

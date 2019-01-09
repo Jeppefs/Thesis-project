@@ -220,3 +220,18 @@ func (m *Malaria) GetRandomInfectedHost() (Host, int, int) {
 	host := m.Hosts[hostIndex]
 	return host, hostIndex, infectedHostIndex
 }
+
+// GetMaxAndIndexIntSlice : Finds the maximum value and corresponding index of an []int
+func GetMaxAndIndexIntSlice(s []int) (int, int) {
+	var value int
+	var index int
+
+	for i, v := range s {
+		if i == 0 || v > value {
+			value = v
+			index = i
+		}
+	}
+
+	return value, index
+}
